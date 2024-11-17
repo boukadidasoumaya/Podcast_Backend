@@ -1,6 +1,7 @@
 import {
   Column,
   Entity,
+  OneToMany,
   PrimaryGeneratedColumn,
   TableInheritance,
 } from 'typeorm';
@@ -8,6 +9,7 @@ import { TimestampEntity } from '../../shared/entities/timestamps.entity';
 import { Exclude } from 'class-transformer';
 import { UserRoleEnum } from '../../shared/Enums/user-role.enum';
 import { ApiProperty } from '@nestjs/swagger';
+import { Payment } from '../../payment/entities/payment.entity';
 
 @Entity('user')
 @TableInheritance({
@@ -28,6 +30,18 @@ export class User extends TimestampEntity {
 
   @Column({ nullable: true, length: 500 })
   photo: string;
+
+  @Column({ nullable: true })
+  profession: string;
+
+  @Column({ nullable: true })
+  facebookLink: string;
+
+  @Column({ nullable: true })
+  linkedinLink: string;
+
+  @Column({ nullable: true })
+  instagramLink: string;
 
   @Exclude()
   @Column()
@@ -50,4 +64,8 @@ export class User extends TimestampEntity {
 
   @Column({ type: 'timestamp', nullable: true })
   resetCodeExpiration: Date;
+
+  @OneToMany(() => Payment, (payment) => payment.user, { nullable: true })
+  payments: Payment[];
+
 }

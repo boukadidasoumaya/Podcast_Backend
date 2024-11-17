@@ -18,7 +18,7 @@ import { User } from '../user/entities/user.entity';
 import { SuperAdmin } from '../user/entities/superAdmin.entity';
 import { UserRoleEnum } from '../shared/Enums/user-role.enum';
 import { CreateSuperAdminDto } from '../user/dto/create-superadmin.dto';
-import { TypedEventEmitter } from '../shared/event-emitter/typed-event-emitter.class';
+import { EmailService } from '../email/email.service';
 
 @Injectable()
 export class AuthService {
@@ -30,7 +30,7 @@ export class AuthService {
     private userRepository: Repository<User>,
     @InjectRepository(SuperAdmin)
     private superAdminRepository: Repository<SuperAdmin>,
-    private readonly eventEmitter: TypedEventEmitter,
+    private readonly mailService: EmailService,
   ) {}
 
   async createAdmin(
@@ -43,7 +43,7 @@ export class AuthService {
     const user = this.adminRepository.create({
       ...adminData,
     });
-    // Un mot de passe crypté par défaut (utilisant son nom) est créé pour l'Admin et sera envoyé par e-mail
+    // Un mot de passe crypté par défaut (utilisant son nom) est créé pour l'Admin et sera envoyé par e-email
     const password = crypto.randomBytes(4).toString('hex');
     user.password = password;
     user.salt = await bcrypt.genSalt();
@@ -53,8 +53,7 @@ export class AuthService {
     } catch (e) {
       throw new ConflictException('Cet email existe déjà');
     }
-    // Service de mailing pour le mot de passe
-    this.eventEmitter.emit('admin.create', {
+    await this.mailService.sendRegistrationEmail({
       name: adminData.firstName + ' ' + adminData.lastName,
       email: adminData.email,
       password: password,
@@ -82,8 +81,8 @@ export class AuthService {
       } catch (e) {
         throw new ConflictException('Cet email existe déjà');
       }
-      this.eventEmitter.emit('admin.create', {
-        name: adminData.firstName + " " + adminData.lastName,
+      await this.mailService.sendRegistrationEmail({
+        name: adminData.firstName + ' ' + adminData.lastName,
         email: adminData.email,
         password: adminData.password,
       });
@@ -107,7 +106,7 @@ export class AuthService {
       ...userData,
     });
 
-    user.role = this.superAdminRepository.metadata.targetName;
+    user.role = this.userRepository.metadata.targetName;
     user.salt = await bcrypt.genSalt();
     user.password = await bcrypt.hash(userData.password, user.salt);
 
@@ -166,8 +165,10 @@ export class AuthService {
     user.resetCodeExpiration = resetCodeExpiration;
     await this.userRepository.save(user);
 
-    // Envoyer le code de sécurité par e-mail
-    this.eventEmitter.emit('forgot.password', {
+    console.log('hiii');
+
+    // Appeler directement la fonction sendReinitialisationEmail
+    await this.mailService.sendReinitialisationEmail({
       resetcode: user.resetCode,
       email: user.email,
       name: user.firstName + ' ' + user.lastName,
@@ -175,7 +176,7 @@ export class AuthService {
   }
 
   async verifyResetCode(email: string, code: string): Promise<boolean> {
-    // Trouver l'admin par e-mail
+    // Trouver l'admin par e-email
     const user = await this.userRepository.findOneBy({ email });
 
     // Vérifier si l'admin existe et si le code de réinitialisation correspond et n'est pas expiré

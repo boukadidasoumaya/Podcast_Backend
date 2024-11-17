@@ -9,7 +9,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { JwtStrategy } from './strategy/passport-jwt.strategy';
 import { Admin } from '../user/entities/admin.entity';
 import { SuperAdmin } from '../user/entities/superAdmin.entity';
-import { TypedEventEmitter } from '../shared/event-emitter/typed-event-emitter.class';
+import { EmailService } from '../email/email.service';
 
 dotenv.config();
 
@@ -24,7 +24,7 @@ dotenv.config();
       },
     }),
   ],
-  providers: [AuthService, JwtStrategy],
+  providers: [AuthService, JwtStrategy, EmailService],
   controllers: [AuthController],
 })
 export class AuthModule {}

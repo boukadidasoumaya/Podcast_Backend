@@ -6,6 +6,10 @@ import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
+  app.enableCors({
+    origin: [process.env.FRONTEND_PORT],
+    credentials: true,
+  });
   const config = new DocumentBuilder()
     .setTitle('JEI API')
     .setDescription('This the API for the JEI website')

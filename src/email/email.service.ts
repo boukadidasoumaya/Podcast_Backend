@@ -1,24 +1,17 @@
-import { ISendMailOptions, MailerService } from '@nestjs-modules/mailer';
+import { MailerService } from '@nestjs-modules/mailer';
 import { Injectable } from '@nestjs/common';
-import { EventPayloads } from '../shared/interface/event-types.interface';
-import { OnEvent } from '@nestjs/event-emitter';
-
 
 @Injectable()
 export class EmailService {
-  constructor(
-    private readonly mailerService: MailerService) {}
+  constructor(private readonly mailerService: MailerService) {}
 
-  private readonly BATCH_EMAIL_SIZE = 30;
-
-  @OnEvent('admin.create')
-  async sendRegistrationEmail(data: EventPayloads['admin.create']) {
+  async sendRegistrationEmail(data) {
     const { name, email, password } = data;
-    const subject = `Bienvenue dans Junior Entreprise INSAT`;
+    const subject = `Welcome to Potcast-eha`;
     await this.mailerService.sendMail({
       to: email,
       subject,
-      template: 'create-admin',
+      template: 'create-admin', // Référence au fichier templates/create-admin.ejs
       context: {
         name,
         email,
@@ -26,14 +19,14 @@ export class EmailService {
       },
     });
   }
-  @OnEvent('forgot.password')
-  async sendReinitialisationEmail(data: EventPayloads['forgot.password']) {
+
+  async sendReinitialisationEmail(data) {
     const { resetcode, email, name } = data;
     const subject = `Code de réinitialisation du mot de passe`;
     await this.mailerService.sendMail({
       to: email,
       subject,
-      template: 'forgot-password-admin',
+      template: 'forgot-password-admin', // Référence au fichier templates/forgot-password-admin.ejs
       context: {
         name,
         resetcode,

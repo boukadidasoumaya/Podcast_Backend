@@ -5,6 +5,7 @@ import { MailerModule } from '@nestjs-modules/mailer';
 import { EjsAdapter } from '@nestjs-modules/mailer/dist/adapters/ejs.adapter';
 import * as process from 'node:process';
 import { join } from 'path';
+import { cwd } from 'process';
 
 @Module({
   imports: [
@@ -17,9 +18,12 @@ import { join } from 'path';
           user: process.env.EMAIL,
           pass: process.env.EMAIL_PASSWORD,
         },
+        tls: {
+          rejectUnauthorized: false, // Allow self-signed certificates
+        },
       },
       defaults: {
-        from: '"From JEI" <JEI@gmail.com>',
+        from: '"From Podcast" <helpdesk.gtickets@gmail.com>',
       },
       template: {
         dir: join(__dirname, 'templates'),

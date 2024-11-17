@@ -9,6 +9,8 @@ import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
 import { TypedEventEmitterModule } from './shared/event-emitter/typed-event-emitter.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
+import { EmailModule } from './email/email.module';
+import { PaymentModule } from './payment/payment.module';
 @Module({
   imports: [
     EventEmitterModule.forRoot(),
@@ -25,7 +27,9 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
     }),
     AuthModule,
     UserModule,
+    EmailModule,
     TypedEventEmitterModule,
+    PaymentModule,
   ],
   controllers: [AppController],
   providers: [AppService],
