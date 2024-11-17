@@ -10,7 +10,7 @@ import { UserModule } from './user/user.module';
 import { TypedEventEmitterModule } from './shared/event-emitter/typed-event-emitter.module';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { EmailModule } from './email/email.module';
-import { EpisodeModule } from './episode/episode.module';
+import { PaymentModule } from './payment/payment.module';
 @Module({
   imports: [
     EventEmitterModule.forRoot(),
@@ -29,7 +29,7 @@ import { EpisodeModule } from './episode/episode.module';
     UserModule,
     EmailModule,
     TypedEventEmitterModule,
-    EpisodeModule,
+    PaymentModule,
   ],
   controllers: [AppController],
   providers: [AppService],

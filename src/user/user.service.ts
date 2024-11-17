@@ -11,13 +11,18 @@ import { IsNull, Not, Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { ChangePasswordDto } from './dto/change-password.dto';
 import { UserRoleEnum } from '../shared/Enums/user-role.enum';
+import { PaymentService } from '../payment/payment.service';
+import { CreatePaymentDto } from '../payment/dto/create-payment.dto';
+import { Payment } from '../payment/entities/payment.entity';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User)
     private userRepository: Repository<User>,
- ) {}
+    @InjectRepository(Payment)
+    private readonly paymentService: PaymentService,
+  ) {}
 
   async findAllUsers(currentUser: User) {
     if (currentUser.role == UserRoleEnum.SUPER_ADMIN) {
@@ -151,7 +156,27 @@ export class UserService {
 
     throw new UnauthorizedException('Non autorisé');
   }
-  
+  async upgradeUserToPremium(
+    userId: number,
+    createPaymentDto: CreatePaymentDto,
+  ): Promise<{ message: string; premiumUntil: Date }> {
+    const user = await this.userRepository.findOne({
+      where: { id: userId },
+      relations: ['payments'], // Charger les paiements existants
+    });
 
-   
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    // Créer le paiement via le PaymentService
+    await this.paymentService.createPayment(user, createPaymentDto);
+
+    // Retourner un message de succès avec la date d'expiration
+    return {
+      message:
+        'Le paiement a été effectué avec succès. Vous êtes maintenant Premium.',
+      premiumUntil: createPaymentDto.expirationDate,
+    };
+  }
 }
