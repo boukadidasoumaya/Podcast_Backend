@@ -9,7 +9,6 @@ import { TimestampEntity } from '../../shared/entities/timestamps.entity';
 import { Exclude } from 'class-transformer';
 import { UserRoleEnum } from '../../shared/Enums/user-role.enum';
 import { ApiProperty } from '@nestjs/swagger';
-import { Payment } from '../../payment/entities/payment.entity';
 
 @Entity('user')
 @TableInheritance({
@@ -65,7 +64,6 @@ export class User extends TimestampEntity {
   @Column({ type: 'timestamp', nullable: true })
   resetCodeExpiration: Date;
 
-  @OneToMany(() => Payment, (payment) => payment.user, { nullable: true })
-  payments: Payment[];
+  
 
 }

@@ -2,8 +2,8 @@ import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 import { HasId } from '../../common/hasid.interface';
 @Entity('episodes') // This specifies the table name in PostgreSQL
 export class Episode implements HasId {
-  @PrimaryGeneratedColumn('uuid') // Using UUID for the id
-  id: string;
+    @PrimaryGeneratedColumn()
+    id: number;
   @Column({ type: 'varchar', length: 255 })
   name: string; // Name of the episode
 
