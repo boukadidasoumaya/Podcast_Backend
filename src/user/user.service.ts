@@ -14,15 +14,18 @@ import { UserRoleEnum } from '../shared/Enums/user-role.enum';
 import { PaymentService } from '../payment/payment.service';
 import { CreatePaymentDto } from '../payment/dto/create-payment.dto';
 import { Payment } from '../payment/entities/payment.entity';
+import { CrudService } from 'src/common/common.service';
 
 @Injectable()
-export class UserService {
+export class UserService extends CrudService<User> {
   constructor(
     @InjectRepository(User)
     private userRepository: Repository<User>,
     @InjectRepository(Payment)
     private readonly paymentService: PaymentService,
-  ) {}
+  ) {
+    super(userRepository);
+  }
 
   async findAllUsers(currentUser: User) {
     if (currentUser.role == UserRoleEnum.SUPER_ADMIN) {
@@ -40,56 +43,38 @@ export class UserService {
     throw new UnauthorizedException('Non autorisé');
   }
 
-  async findOne(id: number, currentUser: User) {
-    if (currentUser.role == UserRoleEnum.ADMIN) {
-      id = currentUser.id;
-    }
-    const user = await this.userRepository.findOneBy({
-      id,
-      deletedAt: IsNull(),
-    });
-    if (!user) {
-      throw new ConflictException('Utilisateur non trouvé');
-    }
-    return {
-      id: user.id,
-      firstnName: user.firstName,
-      lastName: user.lastName,
-      email: user.email,
-      role: user.role,
-    };
-  }
+
 
   async findOneByEmail(email: string) {
     return await this.userRepository.findOneBy({ email });
   }
 
-  async update(id: number, updateUserDto: UpdateUserDto, currentUser: User) {
-    // Éliminer la mise à jour du mot de passe
-    if (updateUserDto.password) {
-      throw new UnauthorizedException('Non autorisé');
-    }
+  // async update(id: number, updateUserDto: UpdateUserDto, currentUser: User) {
+  //   // Éliminer la mise à jour du mot de passe
+  //   if (updateUserDto.password) {
+  //     throw new UnauthorizedException('Non autorisé');
+  //   }
 
-    // Vérifier si l'email est unique
-    if (updateUserDto.email) {
-      const existingUser = await this.userRepository.findOneBy({
-        email: updateUserDto.email,
-        id: Not(id),
-      });
-      if (existingUser) {
-        throw new ConflictException('Cet email est déjà utilisé');
-      }
-    }
+  //   // Vérifier si l'email est unique
+  //   if (updateUserDto.email) {
+  //     const existingUser = await this.userRepository.findOneBy({
+  //       email: updateUserDto.email,
+  //       id: Not(id),
+  //     });
+  //     if (existingUser) {
+  //       throw new ConflictException('Cet email est déjà utilisé');
+  //     }
+  //   }
 
-    if (
-      currentUser.id === id ||
-      currentUser.role === UserRoleEnum.SUPER_ADMIN
-    ) {
-      return await this.userRepository.update(id, updateUserDto);
-    }
+  //   if (
+  //     currentUser.id === id ||
+  //     currentUser.role === UserRoleEnum.SUPER_ADMIN
+  //   ) {
+  //     return await this.userRepository.update(id, updateUserDto);
+  //   }
 
-    throw new UnauthorizedException('Non autorisé');
-  }
+  //   throw new UnauthorizedException('Non autorisé');
+  // }
 
   async changePassword(user: User, changePasswordDto: ChangePasswordDto) {
     const { oldPassword, newPassword } = changePasswordDto;

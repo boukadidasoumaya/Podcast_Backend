@@ -55,31 +55,31 @@ export class UserController {
   @ApiBadRequestResponse({
     description: 'Requête incorrecte, veuillez vérifier votre demande',
   })
-  async findOne(
-    @Param('id', ParseIntPipe) id: number,
-    @CurrentUser() user: User,
-  ) {
-    return await this.userService.findOne(id, user);
-  }
+  // async findOne(
+  //   @Param('id', ParseIntPipe) id: number,
+  //   @CurrentUser() user: User,
+  // ) {
+  //   return await this.userService.findOne(id, user);
+  // }
 
-  @Patch(':id')
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth('JWT-auth')
-  @ApiOkResponse({
-    type: User,
-    description: 'Utilisateur mis à jour avec succès',
-  })
-  @ApiResponse({
-    status: 401,
-    description: 'Non autorisé',
-  })
-  async update(
-    @Param('id', ParseIntPipe) id: number,
-    @Body() updateUserDto: UpdateUserDto,
-    @CurrentUser() user: User,
-  ) {
-    return await this.userService.update(id, updateUserDto, user);
-  }
+  // @Patch(':id')
+  // @UseGuards(JwtAuthGuard)
+  // @ApiBearerAuth('JWT-auth')
+  // @ApiOkResponse({
+  //   type: User,
+  //   description: 'Utilisateur mis à jour avec succès',
+  // })
+  // @ApiResponse({
+  //   status: 401,
+  //   description: 'Non autorisé',
+  // })
+  // async update(
+  //   @Param('id', ParseIntPipe) id: number,
+  //   @Body() updateUserDto: UpdateUserDto,
+  //   @CurrentUser() user: User,
+  // ) {
+  //   return await this.userService.update(id, updateUserDto, user);
+  // }
 
   @Put('change-password')
   @UseGuards(JwtAuthGuard)
