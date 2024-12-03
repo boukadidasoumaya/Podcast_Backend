@@ -11,6 +11,7 @@ import { TypedEventEmitterModule } from './shared/event-emitter/typed-event-emit
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { EmailModule } from './email/email.module';
 import { PaymentModule } from './payment/payment.module';
+import { PodcastModule } from './podcast/podcast.module';
 @Module({
   imports: [
     EventEmitterModule.forRoot(),
@@ -30,6 +31,7 @@ import { PaymentModule } from './payment/payment.module';
     EmailModule,
     TypedEventEmitterModule,
     PaymentModule,
+    PodcastModule,
   ],
   controllers: [AppController],
   providers: [AppService],
