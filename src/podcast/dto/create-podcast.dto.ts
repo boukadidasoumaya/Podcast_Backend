@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { IsString, IsNumber, Min, Max } from 'class-validator';
+import { IsString, IsNumber, Min, Max , IsOptional, IsUrl } from 'class-validator';
 
 export class CreatePodcastDto {
   @IsString()
@@ -14,9 +14,9 @@ export class CreatePodcastDto {
   @IsString()
   description: string;
 
-  /*@IsUrl()
+  @IsUrl()
   @IsOptional()
-  image?: string;*/
+  image?: string;
 
   @IsNumber()
   @Min(0)
