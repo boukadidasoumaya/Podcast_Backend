@@ -1,37 +1,34 @@
-import { Injectable } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { PodcastService } from './podcast.service';
 import { CreatePodcastDto } from './dto/create-podcast.dto';
 import { UpdatePodcastDto } from './dto/update-podcast.dto';
-import { Podcast } from './entities/podcast.entity';
 
-@Injectable()
-export class PodcastService {
-  private podcasts: Podcast[] = [];
-  private idCounter = 1;
+@Controller('podcast')
+export class PodcastController { 
+  constructor(private readonly podcastService: PodcastService) {}
 
-  create(createPodcastDto: CreatePodcastDto): Podcast {
-    const newPodcast: Podcast = { id: this.idCounter++, ...createPodcastDto };
-    this.podcasts.push(newPodcast);
-    return newPodcast;
+  @Post()
+  create(@Body() createPodcastDto: CreatePodcastDto) {
+    return this.podcastService.create(createPodcastDto);
   }
 
-  findAll(): Podcast[] {
-    return this.podcasts;
+  @Get()
+  findAll() {
+    return this.podcastService.findAll();
   }
 
-  findOne(id: number): Podcast {
-    return this.podcasts.find(podcast => podcast.id === id);
+  @Get(':id')
+  findOne(@Param('id') id: string) {
+    return this.podcastService.findOne(+id);
   }
 
-  update(id: number, updatePodcastDto: UpdatePodcastDto): Podcast {
-    const podcastIndex = this.podcasts.findIndex(podcast => podcast.id === id);
-    if (podcastIndex === -1) {
-      throw new Error('Podcast not found');
-    }
-    this.podcasts[podcastIndex] = { ...this.podcasts[podcastIndex], ...updatePodcastDto };
-    return this.podcasts[podcastIndex];
+  @Patch(':id')
+  update(@Param('id') id: string, @Body() updatePodcastDto: UpdatePodcastDto) {
+    return this.podcastService.update(+id, updatePodcastDto);
   }
 
-  remove(id: number): void {
-    this.podcasts = this.podcasts.filter(podcast => podcast.id !== id);
+  @Delete(':id')
+  remove(@Param('id') id: string) {
+    return this.podcastService.remove(+id);
   }
 }

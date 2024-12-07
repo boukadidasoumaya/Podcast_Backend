@@ -1,12 +1,9 @@
 /* eslint-disable prettier/prettier */
-import { IsString, IsNumber, Min, Max , IsOptional, IsUrl } from 'class-validator';
+import { IsString, IsOptional, IsUrl } from 'class-validator';
 
 export class CreatePodcastDto {
   @IsString()
   name: string;
-
-  @IsNumber()
-  views: number;
 
   @IsString()
   duration: string;
@@ -14,15 +11,7 @@ export class CreatePodcastDto {
   @IsString()
   description: string;
 
-  @IsUrl()
+  /*@IsUrl()
   @IsOptional()
-  image?: string;
-
-  @IsNumber()
-  @Min(0)
-  @Max(5)
-  rating: number;
-
-  @IsNumber()
-  download_Count: number;
+  image?: string;*/
 }
