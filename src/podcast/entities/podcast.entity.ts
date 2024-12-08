@@ -27,4 +27,9 @@ export class Podcast {
 
     @Column({ default: 0 })
     download_Count: number;
+
+    @Column({ default: 0 })
+    nbre_episode: number;
+
+
   }

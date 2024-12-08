@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { IsString, IsOptional, IsUrl } from 'class-validator';
+import { IsString, IsOptional, IsUrl, IsNumber } from 'class-validator';
 
 export class CreatePodcastDto {
   @IsString()
@@ -10,6 +10,10 @@ export class CreatePodcastDto {
 
   @IsString()
   description: string;
+  
+  @IsNumber()
+  nbre_episode: number;
+
 
   /*@IsUrl()
   @IsOptional()
