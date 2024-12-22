@@ -14,6 +14,7 @@ import { PaymentModule } from './payment/payment.module';
 import { CommentModule } from './comment/comment.module';
 import { LikeModule } from './like/like.module';
 import { EpisodeModule } from './episode/episode.module';
+import { PodcastModule } from './podcast/podcast.module';
 @Module({
   imports: [
     EventEmitterModule.forRoot(),
@@ -36,6 +37,7 @@ import { EpisodeModule } from './episode/episode.module';
     CommentModule,
     LikeModule,
     EpisodeModule,
+    PodcastModule,
   ],
   controllers: [AppController],
   providers: [AppService],
