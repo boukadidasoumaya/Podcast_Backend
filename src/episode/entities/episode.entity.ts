@@ -8,13 +8,11 @@ export class Episode implements HasId {
     @PrimaryGeneratedColumn()
     id: number;
   @Column({ type: 'varchar', length: 255 })
-  name: string; // Name of the episode
+  Title: string; // Name of the episode
 
   @Column({ type: 'int' })
   number: number; // Episode number
 
-  @Column({ type: 'boolean', default: false })
-  premium: boolean; // Whether the episode is premium or not
 
   @Column({ type: 'int' }) // Store duration in seconds (e.g., 1200 seconds = 20 minutes)
   duration: number;
@@ -25,4 +23,6 @@ export class Episode implements HasId {
   deletedAt: Date;
   @OneToMany(() => Bookmark, (bookmark) => bookmark.episode)
   bookmarks: Bookmark[];
+  @Column({ default: 0 }) // Initialize with 0 views
+  views: number;
 }

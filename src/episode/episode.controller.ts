@@ -31,4 +31,10 @@ export class EpisodeController {
   remove(@Param('id') id: number) {
     return this.episodeService.remove(id);
   }
+  @Post(':id/views')
+  async incrementViews(@Param('id') id: number): Promise<{ message: string; views: number }> {
+    const episode = await this.episodeService.incrementViews(+id);
+    return { message: 'View count updated', views: episode.views };
+  }
+
 }
