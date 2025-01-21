@@ -2,11 +2,11 @@ import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 import { DeleteDateColumn } from 'typeorm';
 import { OneToMany } from 'typeorm';
 import { Bookmark } from '../../bookmark/entities/bookmark.entity';
-import { HasId } from '../../common/hasid.interface';
+import { TimestampEntity } from '../../shared/entities/timestamps.entity';
 @Entity('episodes') // This specifies the table name in PostgreSQL
-export class Episode implements HasId {
-    @PrimaryGeneratedColumn()
-    id: number;
+export class Episode extends TimestampEntity {
+  @PrimaryGeneratedColumn()
+  id: number;
   @Column({ type: 'varchar', length: 255 })
   name: string; // Name of the episode
 

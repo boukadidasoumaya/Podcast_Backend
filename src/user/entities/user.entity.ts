@@ -29,6 +29,8 @@ export class User extends TimestampEntity {
 
   @Column()
   lastName: string;
+  @Column()
+  username: string;
 
   @Column({ nullable: true, length: 500 })
   photo: string;
@@ -69,11 +71,11 @@ export class User extends TimestampEntity {
 
   @OneToMany(() => Payment, (payment) => payment.user, { nullable: true })
   payments: Payment[];
-  
-  @OneToMany(() => Comment, (comment) => comment.user, { nullable: true }) 
-  comments: Comment[];  
-  @OneToMany(() => Like, (like) => like.user, { nullable: true }) 
-  likes: Like[];  
+
+  @OneToMany(() => Comment, (comment) => comment.user, { nullable: true })
+  comments: Comment[];
+  @OneToMany(() => Like, (like) => like.user, { nullable: true })
+  likes: Like[];
 
   @OneToMany(() => Bookmark, (bookmark) => bookmark.user)
   bookmarks: Bookmark[];

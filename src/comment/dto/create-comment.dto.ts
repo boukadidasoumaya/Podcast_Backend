@@ -1,5 +1,9 @@
 import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { Podcast } from '../../podcast/entities/podcast.entity';
+import { User } from '../../user/entities/user.entity';
+import { Comment } from '../entities/comment.entity';
+import { Episode } from '../../episode/entities/episode.entity';
 
 export class CreateCommentDto {
   @ApiProperty({
@@ -16,15 +20,9 @@ export class CreateCommentDto {
   })
   @IsNotEmpty()
   @IsNumber()
-  readonly podcastId: number;
+  readonly podcast: Podcast;
 
-  @ApiProperty({
-    description: 'ID of the user making the comment',
-    example: 3,
-  })
-  @IsNotEmpty()
-  @IsNumber()
-  readonly userId: number;
+
 
   @ApiPropertyOptional({
     description: 'ID of the parent comment (for nested comments)',
@@ -32,12 +30,12 @@ export class CreateCommentDto {
   })
   @IsOptional()
   @IsNumber()
-  readonly parentId?: number;
+  readonly parent?: Comment;
 
   @ApiPropertyOptional({
     description: 'ID of the episode being commented on (if applicable)',
     example: 1,
   })
   @IsNumber()
-  readonly episodeId?: number;
+  readonly episode?: Episode;
 }
