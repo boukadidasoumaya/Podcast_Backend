@@ -1,9 +1,10 @@
 /* eslint-disable prettier/prettier */
 
 import { Entity, PrimaryGeneratedColumn, Column  } from "typeorm";
+import { TimestampEntities } from '../../Generics/timestamp.entities';
 
 @Entity('podcast')
-export class Podcast {
+export class Podcast extends TimestampEntities{
     @PrimaryGeneratedColumn()
     id: number;
 
