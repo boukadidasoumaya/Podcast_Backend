@@ -10,7 +10,8 @@ import { Exclude } from 'class-transformer';
 import { UserRoleEnum } from '../../shared/Enums/user-role.enum';
 import { ApiProperty } from '@nestjs/swagger';
 import { Payment } from '../../payment/entities/payment.entity';
-import { Bookmark } from '../../bookmark/entities/bookmark.entity';
+import { Comment } from 'src/comment/entities/comment.entity';
+import { Like } from 'src/like/entities/like.entity';import { Bookmark } from '../../bookmark/entities/bookmark.entity';
 @Entity('user')
 @TableInheritance({
   column: { type: 'varchar', name: 'role', enum: UserRoleEnum },
@@ -67,6 +68,11 @@ export class User extends TimestampEntity {
 
   @OneToMany(() => Payment, (payment) => payment.user, { nullable: true })
   payments: Payment[];
+  
+  @OneToMany(() => Comment, (comment) => comment.user, { nullable: true }) 
+  comments: Comment[];  
+  @OneToMany(() => Like, (like) => like.user, { nullable: true }) 
+  likes: Like[];  
   @OneToMany(() => Bookmark, (bookmark) => bookmark.user)
   bookmarks: Bookmark[];
 }

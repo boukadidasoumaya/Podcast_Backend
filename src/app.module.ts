@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import {  Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -11,7 +11,10 @@ import { TypedEventEmitterModule } from './shared/event-emitter/typed-event-emit
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { EmailModule } from './email/email.module';
 import { PaymentModule } from './payment/payment.module';
+import { CommentModule } from './comment/comment.module';
+import { LikeModule } from './like/like.module';
 import { EpisodeModule } from './episode/episode.module';
+import { PodcastModule } from './podcast/podcast.module';
 import { BookmarkModule } from './bookmark/bookmark.module';
 @Module({
   imports: [
@@ -32,10 +35,14 @@ import { BookmarkModule } from './bookmark/bookmark.module';
     EmailModule,
     TypedEventEmitterModule,
     PaymentModule,
+    CommentModule,
+    LikeModule,
     EpisodeModule,
+    PodcastModule,
     BookmarkModule,
   ],
   controllers: [AppController],
   providers: [AppService],
 })
 export class AppModule {}
+
