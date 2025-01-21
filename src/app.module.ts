@@ -12,6 +12,7 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
 import { EmailModule } from './email/email.module';
 import { PaymentModule } from './payment/payment.module';
 import { EpisodeModule } from './episode/episode.module';
+import { BookmarkModule } from './bookmark/bookmark.module';
 @Module({
   imports: [
     EventEmitterModule.forRoot(),
@@ -32,6 +33,7 @@ import { EpisodeModule } from './episode/episode.module';
     TypedEventEmitterModule,
     PaymentModule,
     EpisodeModule,
+    BookmarkModule,
   ],
   controllers: [AppController],
   providers: [AppService],
