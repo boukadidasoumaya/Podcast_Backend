@@ -1,6 +1,7 @@
 import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 import { DeleteDateColumn } from 'typeorm';
-
+import { OneToMany } from 'typeorm';
+import { Bookmark } from '../../bookmark/entities/bookmark.entity';
 import { HasId } from '../../common/hasid.interface';
 @Entity('episodes') // This specifies the table name in PostgreSQL
 export class Episode implements HasId {
@@ -22,4 +23,6 @@ export class Episode implements HasId {
   filepath: string; // Path to the file on the server
   @DeleteDateColumn()
   deletedAt: Date;
+  @OneToMany(() => Bookmark, (bookmark) => bookmark.episode)
+  bookmarks: Bookmark[];
 }

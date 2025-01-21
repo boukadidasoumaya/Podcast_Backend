@@ -15,6 +15,7 @@ import { CommentModule } from './comment/comment.module';
 import { LikeModule } from './like/like.module';
 import { EpisodeModule } from './episode/episode.module';
 import { PodcastModule } from './podcast/podcast.module';
+import { BookmarkModule } from './bookmark/bookmark.module';
 @Module({
   imports: [
     EventEmitterModule.forRoot(),
@@ -38,6 +39,7 @@ import { PodcastModule } from './podcast/podcast.module';
     LikeModule,
     EpisodeModule,
     PodcastModule,
+    BookmarkModule,
   ],
   controllers: [AppController],
   providers: [AppService],
