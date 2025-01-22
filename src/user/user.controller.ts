@@ -38,6 +38,7 @@ export class UserController {
     description: 'Utilisateurs trouvés avec succès',
   })
   async findAllUsers(@CurrentUser() user) {
+    console.log(user);
     return await this.userService.findAllUsers(user);
   }
   @UseInterceptors(ClassSerializerInterceptor)

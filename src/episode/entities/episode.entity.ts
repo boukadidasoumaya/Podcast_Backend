@@ -3,7 +3,8 @@ import { DeleteDateColumn } from 'typeorm';
 import { OneToMany } from 'typeorm';
 import { Bookmark } from '../../bookmark/entities/bookmark.entity';
 import { TimestampEntity } from '../../shared/entities/timestamps.entity';
-@Entity('episodes') // This specifies the table name in PostgreSQL
+import { Comment } from '../../comment/entities/comment.entity';
+@Entity('episode') // This specifies the table name in PostgreSQL
 export class Episode extends TimestampEntity {
   @PrimaryGeneratedColumn()
   id: number;
@@ -25,4 +26,6 @@ export class Episode extends TimestampEntity {
   deletedAt: Date;
   @OneToMany(() => Bookmark, (bookmark) => bookmark.episode)
   bookmarks: Bookmark[];
+  @OneToMany(() => Comment, (comment) => comment.episode)
+  comments: Comment[];
 }

@@ -20,7 +20,6 @@ export class PodcastService {
   async findAll(): Promise<Podcast[]> {
     return await this.podcastRepository.find();
   }
-
   async findOne(id: number): Promise<Podcast> {
     return await this.podcastRepository.findOne({ where: { id } });
   }

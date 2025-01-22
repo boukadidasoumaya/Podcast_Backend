@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { CommentService } from './comment.service';
-import { CommentController } from './comment.controller';
+import { CommentGateway } from './comment.gateway';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Comment } from './entities/comment.entity';
 import { Podcast } from '../podcast/entities/podcast.entity';
@@ -17,7 +17,6 @@ import { EpisodeModule } from '../episode/episode.module';
     PodcastModule, // Ajouté pour résoudre PodcastService
     EpisodeModule, // Ajouté pour résoudre EpisodeService
   ],
-  controllers: [CommentController],
-  providers: [CommentService],
+  providers: [CommentGateway,CommentService],
 })
 export class CommentModule {}

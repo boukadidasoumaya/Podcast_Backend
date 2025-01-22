@@ -74,6 +74,7 @@ export class User extends TimestampEntity {
 
   @OneToMany(() => Comment, (comment) => comment.user, { nullable: true })
   comments: Comment[];
+
   @OneToMany(() => Like, (like) => like.user, { nullable: true })
   likes: Like[];
 
