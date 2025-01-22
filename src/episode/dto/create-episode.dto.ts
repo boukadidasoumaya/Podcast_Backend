@@ -8,7 +8,7 @@ export class CreateEpisodeDto {
   })
   @IsString()
   @IsNotEmpty()
-  name: string; // Name of the episode
+  Title: string; // Name of the episode
 
   @ApiProperty({
     description: 'Episode number in the series',

@@ -14,9 +14,7 @@ export class Episode extends TimestampEntity {
   @Column({ type: 'int' })
   number: number; // Episode number
 
-  @Column({ type: 'boolean', default: false })
-  premium: boolean; // Whether the episode is premium or not
-
+  
   @Column({ type: 'int' }) // Store duration in seconds (e.g., 1200 seconds = 20 minutes)
   duration: number;
 
@@ -24,6 +22,9 @@ export class Episode extends TimestampEntity {
   filepath: string; // Path to the file on the server
   @DeleteDateColumn()
   deletedAt: Date;
+
+  @Column({ type: 'int', default: 0 }) // Number of views
+  views: number;
   @OneToMany(() => Bookmark, (bookmark) => bookmark.episode)
   bookmarks: Bookmark[];
   @OneToMany(() => Comment, (comment) => comment.episode)
