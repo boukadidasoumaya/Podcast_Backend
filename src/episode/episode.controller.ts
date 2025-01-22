@@ -41,7 +41,7 @@ export class EpisodeController {
   @Post(':id/views')
   async incrementViews(@Param('id') id: number): Promise<{ message: string; views: number }> {
     const episode = await this.episodeService.incrementViews(+id);
-    this.episodeGateway.notifyViewUpdate(episode.id, episode.views); // Notify clients about view count update
+    this.episodeGateway.notifyViewUpdate( episode.id, episode.views); // Notify clients about view count update
     this.episodeGateway.notifyEpisodeUpdate(episode);  // Notify clients with full updated episode data
     return { message: 'View count updated', views: episode.views };
   }
