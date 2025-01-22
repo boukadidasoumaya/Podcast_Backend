@@ -33,7 +33,8 @@ export class UserService extends CrudService<User> {
       return users.map((user) => {
         return {
           id: user.id,
-          firstnName: user.firstName,
+          username: user.username,
+          firstName: user.firstName,
           lastName: user.lastName,
           email: user.email,
           role: user.role,

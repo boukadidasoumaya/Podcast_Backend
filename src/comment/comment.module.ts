@@ -1,14 +1,22 @@
 import { Module } from '@nestjs/common';
 import { CommentService } from './comment.service';
-import { CommentController } from './comment.controller';
+import { CommentGateway } from './comment.gateway';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Comment } from './entities/comment.entity';
-import { UserService } from 'src/user/user.service';
-import { UserModule } from 'src/user/user.module';
+import { Podcast } from '../podcast/entities/podcast.entity';
+import { Episode } from '../episode/entities/episode.entity';
+import { User } from '../user/entities/user.entity';
+import { UserModule } from '../user/user.module';
+import { PodcastModule } from '../podcast/podcast.module';
+import { EpisodeModule } from '../episode/episode.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Comment]),UserModule],
-  controllers: [CommentController],
-  providers: [CommentService],
+  imports: [
+    TypeOrmModule.forFeature([Comment, User, Podcast, Episode]),
+    UserModule, // Ajouté pour résoudre UserService
+    PodcastModule, // Ajouté pour résoudre PodcastService
+    EpisodeModule, // Ajouté pour résoudre EpisodeService
+  ],
+  providers: [CommentGateway,CommentService],
 })
 export class CommentModule {}
