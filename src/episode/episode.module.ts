@@ -7,5 +7,6 @@ import { Episode } from './entities/episode.entity';
     imports: [TypeOrmModule.forFeature([Episode])], // Add this line to import the repository for Episode
   controllers: [EpisodeController],
   providers: [EpisodeService],
+  exports: [EpisodeService],
 })
 export class EpisodeModule {}

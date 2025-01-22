@@ -17,19 +17,25 @@ export class Comment extends TimestampEntities {
 
   @Column()
   content: string;
-  @ManyToOne(() => User)
-  @JoinColumn({ name: 'userId' })
+  @ManyToOne(() => User, {
+    nullable: false,
+  })
   user: User;
 
-  @ManyToOne(() => Podcast)
-  @JoinColumn({ name: 'podcastId' })
+  @ManyToOne(() => Podcast, {
+    nullable: false,
+  })
   podcast: Podcast;
 
-  @ManyToOne(() => Episode)
-  @JoinColumn({ name: 'episodeId' })
+  @ManyToOne(() => Episode, {
+    nullable: false,
+  })
   episode: Episode;
 
-  @OneToMany(() => Comment, (comment) => comment.parent)
+  @OneToMany(() => Comment, (comment) => comment.parent, {
+    nullable: true,
+    cascade: ['soft-remove'],
+  })
   replies: Comment[];
 
   @ManyToOne(() => Comment, (comment) => comment.replies, { nullable: true })
