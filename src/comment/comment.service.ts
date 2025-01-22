@@ -28,17 +28,20 @@ export class CommentService {
     @InjectRepository(User)
     private userService: UserService,
   ) {}
+  clientToUser: any = {};
 
-  async create(createCommentDto: CreateCommentDto, user: User) {
+  async create(createCommentDto: CreateCommentDto) {
+    console.log(typeof createCommentDto.user);
+    console.log(typeof createCommentDto.podcast);
+    console.log(typeof createCommentDto.episode);
     const newComment = this.commentRepository.create({
       ...createCommentDto,
-      user: user,
     });
     console.log(createCommentDto);
 
     await this.commentRepository.save(newComment);
 
-    return 'Commentaire créé avec succès';
+    return newComment;
   }
 
   private organizeMessages(messages: any[]): any[] {

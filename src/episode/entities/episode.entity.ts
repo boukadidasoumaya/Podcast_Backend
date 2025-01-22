@@ -3,16 +3,19 @@ import { DeleteDateColumn } from 'typeorm';
 import { OneToMany } from 'typeorm';
 import { Bookmark } from '../../bookmark/entities/bookmark.entity';
 import { TimestampEntity } from '../../shared/entities/timestamps.entity';
-@Entity('episodes') // This specifies the table name in PostgreSQL
+import { Comment } from '../../comment/entities/comment.entity';
+@Entity('episode') // This specifies the table name in PostgreSQL
 export class Episode extends TimestampEntity {
   @PrimaryGeneratedColumn()
   id: number;
   @Column({ type: 'varchar', length: 255 })
-  Title: string; // Name of the episode
+  name: string; // Name of the episode
 
   @Column({ type: 'int' })
   number: number; // Episode number
 
+  @Column({ type: 'boolean', default: false })
+  premium: boolean; // Whether the episode is premium or not
 
   @Column({ type: 'int' }) // Store duration in seconds (e.g., 1200 seconds = 20 minutes)
   duration: number;
@@ -23,6 +26,6 @@ export class Episode extends TimestampEntity {
   deletedAt: Date;
   @OneToMany(() => Bookmark, (bookmark) => bookmark.episode)
   bookmarks: Bookmark[];
-  @Column({ default: 0 }) // Initialize with 0 views
-  views: number;
+  @OneToMany(() => Comment, (comment) => comment.episode)
+  comments: Comment[];
 }

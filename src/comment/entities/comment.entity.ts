@@ -17,17 +17,18 @@ export class Comment extends TimestampEntities {
 
   @Column()
   content: string;
-  @ManyToOne(() => User, {
+
+  @ManyToOne(() => User, (user) => user.comments, {
     nullable: false,
   })
   user: User;
 
-  @ManyToOne(() => Podcast, {
+  @ManyToOne(() => Podcast, (podcast) => podcast.comments,{
     nullable: false,
   })
   podcast: Podcast;
 
-  @ManyToOne(() => Episode, {
+  @ManyToOne(() => Episode,(episode) => episode.comments, {
     nullable: false,
   })
   episode: Episode;

@@ -1,7 +1,8 @@
 /* eslint-disable prettier/prettier */
 
-import { Entity, PrimaryGeneratedColumn, Column  } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 import { TimestampEntities } from '../../Generics/timestamp.entities';
+import { Comment } from '../../comment/entities/comment.entity';
 
 @Entity('podcast')
 export class Podcast extends TimestampEntities{
@@ -31,6 +32,7 @@ export class Podcast extends TimestampEntities{
 
     @Column({ default: 0 })
     nbre_episode: number;
-
+    @OneToMany(() => Comment, (comment) => comment.podcast)
+    comments: Comment[];
 
   }
