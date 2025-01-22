@@ -7,28 +7,8 @@ import { UpdateOwnerDto } from './dto/update-owner.dto';
 export class OwnerController {
   constructor(private readonly ownerService: OwnerService) {}
 
-  @Post()
-  create(@Body() createOwnerDto: CreateOwnerDto) {
-    return this.ownerService.create(createOwnerDto);
-  }
-
   @Get()
-  findAll() {
-    return this.ownerService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.ownerService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateOwnerDto: UpdateOwnerDto) {
-    return this.ownerService.update(+id, updateOwnerDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.ownerService.remove(+id);
+  async getAllOwners() {
+    return this.ownerService.getOwnersWithInterests();
   }
 }
