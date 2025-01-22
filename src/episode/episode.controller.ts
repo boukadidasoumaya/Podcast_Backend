@@ -14,7 +14,6 @@ export class EpisodeController {
   @Post()
   async create(@Body() createEpisodeDto: CreateEpisodeDto) {
       const episode = await this.episodeService.create(createEpisodeDto);
-      this.episodeGateway.notifyEpisodeUpdate(episode);  // Notify clients with full episode data
       return episode;
     }
 
@@ -31,7 +30,6 @@ export class EpisodeController {
   @Put(':id')
   async update(@Param('id') id: number, @Body() updateEpisodeDto: UpdateEpisodeDto) {
     const updatedEpisode = await this.episodeService.update(id, updateEpisodeDto);
-    this.episodeGateway.notifyEpisodeUpdate(updatedEpisode);  // Notify clients with full updated episode data
     return updatedEpisode;
   }
 
