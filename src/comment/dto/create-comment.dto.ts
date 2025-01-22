@@ -1,5 +1,7 @@
+import { IsNotEmpty, IsString } from "class-validator";
+
 export class CreateCommentDto {
-    readonly content: string;
-    readonly podcastId: number;
-    readonly userId: number;
+  @IsString()
+  @IsNotEmpty({ message: 'Content cannot be empty' })
+  readonly content: string;
 }

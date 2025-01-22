@@ -21,6 +21,7 @@ export class CommentService {
   ) {}
 
   async create(createCommentDto: CreateCommentDto, user: User) {
+    console.log(createCommentDto);
     const newComment = this.commentRepository.create({
       ...createCommentDto,
       user: user,  
