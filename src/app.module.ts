@@ -17,6 +17,8 @@ import { EpisodeModule } from './episode/episode.module';
 import { PodcastModule } from './podcast/podcast.module';
 import { BookmarkModule } from './bookmark/bookmark.module';
 import { EventsModule } from './test/events.module';
+import { OwnerResolver } from './owner/owner.resolver';
+import { OwnerModule } from './owner/owner.module';
 @Module({
   imports: [
     EventEmitterModule.forRoot(),
@@ -41,10 +43,11 @@ import { EventsModule } from './test/events.module';
     EpisodeModule,
     PodcastModule,
     BookmarkModule,
-    EventsModule
+    EventsModule,
+    OwnerModule
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, OwnerResolver],
 })
 export class AppModule {}
 
