@@ -13,11 +13,11 @@ export class OwnerService {
   ) {}
   async getOwnersWithInterests(): Promise<{ name: string; interests: string[] }[]> {
     const owners = await this.ownerRepository.find();
-
-
+  
     return owners.map(owner => ({
       name: owner.username, 
-      interests: owner.interests, 
+      interests: owner.interests.map(interest => interest.toString()), 
     }));
   }
+  
 }

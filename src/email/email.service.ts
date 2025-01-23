@@ -33,4 +33,17 @@ export class EmailService {
       },
     });
   }
+  async sendSubscribeEmail(data) {
+    const {  email } = data;
+    const subject = `You're In! Discover What's New on Podcast-eha`;
+    await this.mailerService.sendMail({
+      to: email,
+      subject,
+      template: 'subscribe-all', 
+      context: {
+        email,
+      },
+     
+    });
+  }
 }
