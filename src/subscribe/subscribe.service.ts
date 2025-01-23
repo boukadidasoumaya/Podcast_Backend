@@ -26,12 +26,11 @@ export class SubscribeService {
     const subscriber = this.subscriberRepository.create({
       email,
     });
-    await this.mailService.sendRegistrationEmail({email : email});
+    await this.mailService.sendSubscribeEmail({email : email});
 
     return await this.subscriberRepository.save(subscriber);
   }
 
-  
 
   findAll() {
     return `This action returns all subscribe`;
