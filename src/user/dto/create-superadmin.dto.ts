@@ -4,7 +4,7 @@ import { IsEmail, IsNotEmpty } from 'class-validator';
 export class CreateSuperAdminDto {
   @IsNotEmpty()
   @IsEmail()
-  @ApiProperty({ example: 'example@test.com' })
+  @ApiProperty({ example: 'soumaya.boukadida@insat.ucar.tn' })
   email: string;
 
   @IsNotEmpty()

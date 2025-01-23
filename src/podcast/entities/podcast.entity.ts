@@ -1,9 +1,11 @@
 /* eslint-disable prettier/prettier */
 
-import { Entity, PrimaryGeneratedColumn, Column  } from "typeorm";
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import { TimestampEntities } from '../../Generics/timestamp.entities';
+import { Comment } from '../../comment/entities/comment.entity';
 
 @Entity('podcast')
-export class Podcast {
+export class Podcast extends TimestampEntities{
     @PrimaryGeneratedColumn()
     id: number;
 
@@ -27,4 +29,10 @@ export class Podcast {
 
     @Column({ default: 0 })
     download_Count: number;
+
+    @Column({ default: 0 })
+    nbre_episode: number;
+    @OneToMany(() => Comment, (comment) => comment.podcast)
+    comments: Comment[];
+
   }
