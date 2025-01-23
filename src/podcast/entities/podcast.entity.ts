@@ -1,6 +1,7 @@
 /* eslint-disable prettier/prettier */
 
-import { Entity, PrimaryGeneratedColumn, Column  } from "typeorm";
+import { User } from "src/user/entities/user.entity";
+import { Entity, PrimaryGeneratedColumn, Column, ManyToMany  } from "typeorm";
 
 @Entity('podcast')
 export class Podcast {
@@ -12,9 +13,6 @@ export class Podcast {
 
     @Column({ default: 0 })
     views: number;
-
-    @Column()
-    duration: string;
 
     @Column()
     description: string;
@@ -30,6 +28,11 @@ export class Podcast {
 
     @Column({ default: 0 })
     nbre_episode: number;
+    
+    @ManyToMany(() => User, (user) => user.subscriptions)
+    subscribers: User[];
+
+    
 
 
   }

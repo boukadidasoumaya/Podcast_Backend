@@ -1,6 +1,10 @@
+/* eslint-disable prettier/prettier */
+
 import {
   Column,
   Entity,
+  JoinTable,
+  ManyToMany,
   OneToMany,
   PrimaryGeneratedColumn,
   TableInheritance,
@@ -10,6 +14,7 @@ import { Exclude } from 'class-transformer';
 import { UserRoleEnum } from '../../shared/Enums/user-role.enum';
 import { ApiProperty } from '@nestjs/swagger';
 import { Payment } from '../../payment/entities/payment.entity';
+import { Podcast } from 'src/podcast/entities/podcast.entity';
 
 @Entity('user')
 @TableInheritance({
@@ -68,4 +73,7 @@ export class User extends TimestampEntity {
   @OneToMany(() => Payment, (payment) => payment.user, { nullable: true })
   payments: Payment[];
 
+  @ManyToMany(() => Podcast, (podcast) => podcast.subscribers)
+  @JoinTable()
+  subscriptions: Podcast[];
 }
