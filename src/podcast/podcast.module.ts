@@ -11,5 +11,6 @@ import { User } from 'src/user/entities/user.entity';
   imports: [TypeOrmModule.forFeature([Podcast,User])],
   controllers: [PodcastController],
   providers: [PodcastService],
+  exports: [PodcastService],
 })
 export class PodcastModule {}

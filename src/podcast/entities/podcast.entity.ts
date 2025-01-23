@@ -1,10 +1,11 @@
 /* eslint-disable prettier/prettier */
 
+import { TimestampEntities } from "src/Generics/timestamp.entities";
 import { User } from "src/user/entities/user.entity";
 import { Entity, PrimaryGeneratedColumn, Column, ManyToMany  } from "typeorm";
 
 @Entity('podcast')
-export class Podcast {
+export class Podcast extends TimestampEntities{
     @PrimaryGeneratedColumn()
     id: number;
 
@@ -28,11 +29,9 @@ export class Podcast {
 
     @Column({ default: 0 })
     nbre_episode: number;
-    
+
     @ManyToMany(() => User, (user) => user.subscriptions)
     subscribers: User[];
-
-    
 
 
   }

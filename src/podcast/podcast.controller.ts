@@ -1,4 +1,15 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+/* eslint-disable prettier/prettier */
+
+
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { PodcastService } from './podcast.service';
 import { CreatePodcastDto } from './dto/create-podcast.dto';
 import { UpdatePodcastDto } from './dto/update-podcast.dto';

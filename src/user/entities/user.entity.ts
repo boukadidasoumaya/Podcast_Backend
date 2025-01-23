@@ -32,6 +32,8 @@ export class User extends TimestampEntity {
 
   @Column()
   lastName: string;
+  @Column()
+  username: string;
 
   @Column({ nullable: true, length: 500 })
   photo: string;
@@ -76,4 +78,5 @@ export class User extends TimestampEntity {
   @ManyToMany(() => Podcast, (podcast) => podcast.subscribers)
   @JoinTable()
   subscriptions: Podcast[];
+
 }
