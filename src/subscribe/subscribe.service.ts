@@ -3,7 +3,6 @@ import { CreateSubscribeDto } from './dto/create-subscribe.dto';
 import { UpdateSubscribeDto } from './dto/update-subscribe.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { EmailService } from 'src/email/email.service';
 import { SubscribeAll } from './entities/subscribe.entity';
 
 @Injectable()
@@ -11,7 +10,6 @@ export class SubscribeService {
   constructor(
     @InjectRepository(SubscribeAll)
     private subscriberRepository: Repository<SubscribeAll>,
-    private readonly mailService: EmailService,
   ) {}
 
   async create(createSubscribeDto: CreateSubscribeDto) {
@@ -33,9 +31,11 @@ export class SubscribeService {
   }
 
 
-  findAll() {
-    return `This action returns all subscribe`;
+  async findAll() {
+    return await this.subscriberRepository.find();
+  
   }
+  
 
   findOne(id: number) {
     return `This action returns a #${id} subscribe`;

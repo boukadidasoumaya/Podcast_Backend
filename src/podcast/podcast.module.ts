@@ -10,9 +10,12 @@ import { Episode } from 'src/episode/entities/episode.entity';
 import { EmailService } from 'src/email/email.service';
 import { UserService } from 'src/user/user.service';
 import { Payment } from 'src/payment/entities/payment.entity';
+import { SubscribeService } from 'src/subscribe/subscribe.service';
+import { SubscribeAll } from 'src/subscribe/entities/subscribe.entity';
+import { SubscribeModule } from 'src/subscribe/subscribe.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Podcast,User,Episode,Payment])],
+  imports: [TypeOrmModule.forFeature([Podcast,User,Episode,Payment]),SubscribeModule],
   controllers: [PodcastController],
   providers: [PodcastService,EmailService,UserService],
   exports: [PodcastService],

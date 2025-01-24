@@ -6,6 +6,8 @@ import { EjsAdapter } from '@nestjs-modules/mailer/dist/adapters/ejs.adapter';
 import * as process from 'node:process';
 import { join } from 'path';
 import { cwd } from 'process';
+import { SubscribeService } from 'src/subscribe/subscribe.service';
+import { SubscribeModule } from 'src/subscribe/subscribe.module';
 
 @Module({
   imports: [
