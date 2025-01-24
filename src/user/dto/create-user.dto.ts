@@ -1,7 +1,8 @@
-import { IsEmail, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsArray, IsEmail, IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { IsDateString, IsEnum } from 'class-validator';
 import { UserRoleEnum } from 'src/shared/Enums/user-role.enum';
+import { InterestsEnum } from 'src/shared/Enums/interests.enum';
 
 export class CreateUserDto {
   @IsNotEmpty()
@@ -74,4 +75,17 @@ export class CreateUserDto {
   @IsEnum(UserRoleEnum)
   @ApiProperty({ example: UserRoleEnum.USER, enum: UserRoleEnum })
   role: UserRoleEnum;
+
+
+  @IsNotEmpty()
+  @IsArray()
+  @IsEnum(InterestsEnum, { each: true })
+  @ApiProperty({
+    example: ['MUSIC', 'SPORTS'],
+    type: [String],
+    enum: InterestsEnum,
+    isArray: true,
+    description: 'An array of interests',
+  })
+  interests: InterestsEnum[];
 }

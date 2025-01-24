@@ -17,7 +17,6 @@ import { EpisodeModule } from './episode/episode.module';
 import { PodcastModule } from './podcast/podcast.module';
 import { BookmarkModule } from './bookmark/bookmark.module';
 import { EventsModule } from './test/events.module';
-import { OwnerModule } from './owner/owner.module';
 import { SubscribeModule } from './subscribe/subscribe.module';
 @Module({
   imports: [
@@ -44,11 +43,11 @@ import { SubscribeModule } from './subscribe/subscribe.module';
     PodcastModule,
     BookmarkModule,
     EventsModule,
-    OwnerModule,
     SubscribeModule
   ],
   controllers: [AppController],
   providers: [AppService],
 })
 export class AppModule {}
+
 

@@ -9,6 +9,7 @@ import { Podcast } from './entities/podcast.entity';
 import { User } from 'src/user/entities/user.entity';
 import { EmailService } from 'src/email/email.service';
 import { UserService } from 'src/user/user.service';
+import { SubscribeService } from 'src/subscribe/subscribe.service';
 
 @Injectable()
 export class PodcastService {
@@ -19,10 +20,30 @@ export class PodcastService {
     private readonly userRepository: Repository<User>,
     private readonly mailService: EmailService,
     private readonly UserService:UserService,
+    private readonly subscribeAllService : SubscribeService
   ) {}
 
   async create(createPodcastDto: CreatePodcastDto): Promise<Podcast> {
     const newPodcast = this.podcastRepository.create(createPodcastDto);
+    const {name} = createPodcastDto;
+    const subscribers = await this.subscribeAllService.findAll();
+    if (!subscribers.length) {
+      throw new Error('No subscribers found in the SubscribeAll table.');
+    }
+    for (const subscriber of subscribers) {
+      const { email } = subscriber;
+      try {
+        await this.mailService.sendSubscribeAllEmail({
+          name: name,
+          email: email
+        });
+        console.log(`Email successfully sent to: ${email}`);
+      } catch (error) {
+        console.error(`Failed to send email to: ${email}`, error);
+      }
+    }
+
+
     return await this.podcastRepository.save(newPodcast);
   }
 

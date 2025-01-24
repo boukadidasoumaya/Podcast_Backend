@@ -18,6 +18,7 @@ import { Comment } from 'src/comment/entities/comment.entity';
 import { Like } from 'src/like/entities/like.entity';
 import { Bookmark } from '../../bookmark/entities/bookmark.entity';
 import { Podcast } from 'src/podcast/entities/podcast.entity';
+import { InterestsEnum } from 'src/shared/Enums/interests.enum';
 @Entity('user')
 @TableInheritance({
   column: { type: 'varchar', name: 'role', enum: UserRoleEnum },
@@ -74,6 +75,15 @@ export class User extends TimestampEntity {
     enum: UserRoleEnum,
   })
   role: string;
+  @Column({
+    type: 'simple-json',
+  })
+  interests: InterestsEnum[];
+  @Column({
+    default: false,
+  })
+  isOwner: boolean;
+
   @Column({ nullable: true })
   resetCode: string;
 

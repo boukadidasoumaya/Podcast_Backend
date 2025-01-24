@@ -29,6 +29,10 @@ import { User } from './entities/user.entity';
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
+  @Get('owner-details')
+  async getOwnerDetails() {
+    return await this.userService.getOwnerDetails();
+  }
 
   @Get('users')
   @UseGuards(JwtAuthGuard)
@@ -164,4 +168,6 @@ export class UserController {
   ) {
     return await this.userService.restoreUserByEmail(email, user);
   }
+
+
 }

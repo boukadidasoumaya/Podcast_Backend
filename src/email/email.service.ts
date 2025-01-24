@@ -3,7 +3,8 @@ import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class EmailService {
-  constructor(private readonly mailerService: MailerService) {}
+  constructor(
+  private readonly mailerService: MailerService) {}
 
   async sendRegistrationEmail(data) {
     const { name, email, password } = data;
@@ -33,18 +34,22 @@ export class EmailService {
       },
     });
   }
-  async sendSubscribeEmail(data) {
-    const {  email } = data;
-    const subject = `You're In! Discover What's New on Podcast-eha`;
-    await this.mailerService.sendMail({
-      to: email,
-      subject,
-      template: 'subscribe-all', 
-      context: {
-        email,
-      },
+  async sendSubscribeAllEmail(data) {
+  
+    const {  email, name } = data;
+      const subject = `You're In! Discover What's New on Podcast-eha`;
+  
+        await this.mailerService.sendMail({
+          to: email,
+          subject,
+          template: 'subscribe-all', 
+          context: {
+            name,
+            email, 
+          },
+        });
      
-    });
+    
   }
 
   async sendSubscriptionEmail(data) {
