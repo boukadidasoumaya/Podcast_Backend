@@ -41,6 +41,13 @@ export class UserController {
     console.log(user);
     return await this.userService.findAllUsers(user);
   }
+
+  
+  @Get('withpods')
+  getuserswithpods(){
+    return this.userService.getuserswithpods();
+  }
+
   @UseInterceptors(ClassSerializerInterceptor)
   @Get(':id')
   @UseGuards(JwtAuthGuard)

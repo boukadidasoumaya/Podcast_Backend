@@ -1,3 +1,5 @@
+/* eslint-disable prettier/prettier */
+
 import { MailerService } from '@nestjs-modules/mailer';
 import { Injectable } from '@nestjs/common';
 
@@ -32,5 +34,22 @@ export class EmailService {
         resetcode,
       },
     });
+  }
+
+  async sendSubscriptionEmail(data) {
+    const { name, email, podcast } = data;
+    const subject = `Potcast-eha Subscription`;
+    await this.mailerService.sendMail({
+      to: email,
+      subject,
+      template: 'subscription',
+      context: {
+        name,
+        email,
+        podcast,
+      },
+    });
+
+
   }
 }

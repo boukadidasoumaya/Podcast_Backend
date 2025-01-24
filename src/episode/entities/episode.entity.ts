@@ -1,9 +1,12 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+/* eslint-disable prettier/prettier */
+
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
 import { DeleteDateColumn } from 'typeorm';
 import { OneToMany } from 'typeorm';
 import { Bookmark } from '../../bookmark/entities/bookmark.entity';
 import { TimestampEntity } from '../../shared/entities/timestamps.entity';
 import { Comment } from '../../comment/entities/comment.entity';
+import { Podcast } from 'src/podcast/entities/podcast.entity';
 @Entity('episode') // This specifies the table name in PostgreSQL
 export class Episode extends TimestampEntity {
   @PrimaryGeneratedColumn()
@@ -28,4 +31,8 @@ export class Episode extends TimestampEntity {
   bookmarks: Bookmark[];
   @OneToMany(() => Comment, (comment) => comment.episode)
   comments: Comment[];
+
+  @ManyToOne(() => Podcast, (podcast) => podcast.episodes)
+  podcast: Podcast;
+
 }

@@ -7,6 +7,8 @@ import { CreatePodcastDto } from './dto/create-podcast.dto';
 import { UpdatePodcastDto } from './dto/update-podcast.dto';
 import { Podcast } from './entities/podcast.entity';
 import { User } from 'src/user/entities/user.entity';
+import { EmailService } from 'src/email/email.service';
+import { UserService } from 'src/user/user.service';
 
 @Injectable()
 export class PodcastService {
@@ -15,6 +17,8 @@ export class PodcastService {
     private readonly podcastRepository: Repository<Podcast>,
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+    private readonly mailService: EmailService,
+    private readonly UserService:UserService,
   ) {}
 
   async create(createPodcastDto: CreatePodcastDto): Promise<Podcast> {
@@ -64,6 +68,7 @@ export class PodcastService {
 
     const podcast = await this.podcastRepository.findOne({
       where: { id: podcastId },
+      relations: ['subscribers'],
     });
 
     if (!podcast) {
@@ -75,11 +80,83 @@ export class PodcastService {
     }
 
     user.subscriptions.push(podcast);
+    podcast.subscribers.push(user);
 
     await this.userRepository.save(user);
+
+    await this.mailService.sendSubscriptionEmail({
+      name: user.username + ' ' + user.lastName,
+      email: user.email,
+      podcast: podcast.name,
+    });
 
     return 'Subscribed successfully';
   }
 
+
+  async unsubscribe(userId: number, podcastId: number): Promise<string> {
+    const user = await this.userRepository.findOne({
+      where: { id: userId },
+      relations: ['subscriptions'],
+    });
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    const podcast = await this.podcastRepository.findOne({
+      where: { id: podcastId },
+    });
+
+    if (!podcast) {
+      throw new NotFoundException('Podcast not found');
+    }
+
+    if (!user.subscriptions.some((p) => p.id === podcast.id)) {
+      return 'You are not subscribed to this podcast';
+    }
+
+    user.subscriptions = user.subscriptions.filter((p) => p.id !== podcast.id);
+
+    await this.userRepository.save(user);
+
+    return 'Unsubscribed successfully';
+
+
+  }
+
+  async getpodsparuser(id:number):Promise<Podcast[]>{
+    const user = await this.userRepository.findOne({
+      where: { id },
+      relations: ['subscriptions'],
+    });
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    return user.subscriptions;
+  }
+
+  async getpodswithusers():Promise<Podcast[]>{
+    const Pods= await this.podcastRepository.find({
+      relations: ['subscribers'],
+    })
+    return Pods 
+
+  }
+
+  async getpodswithepisodes():Promise<Podcast[]>{
+    const Pods= await this.podcastRepository.find({
+      relations: ['episodes'],
+    })
+    return Pods 
+
+  }
+
+
+  // async getepisodesbyPodcast(id:number):Promise<Podcast>{
+    
+  // }
 
 }
