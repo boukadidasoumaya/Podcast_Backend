@@ -16,6 +16,7 @@ export class OwnerService {
   
     return owners.map(owner => ({
       name: owner.username, 
+      photo:owner.photo,
       interests: owner.interests.map(interest => interest.toString()), 
     }));
   }

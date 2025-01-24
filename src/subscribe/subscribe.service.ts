@@ -1,21 +1,22 @@
 import { Injectable } from '@nestjs/common';
 import { CreateSubscribeDto } from './dto/create-subscribe.dto';
 import { UpdateSubscribeDto } from './dto/update-subscribe.dto';
-import { Subscriber } from './entities/subscribe.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { EmailService } from 'src/email/email.service';
+import { SubscribeAll } from './entities/subscribe.entity';
 
 @Injectable()
 export class SubscribeService {
   constructor(
-    @InjectRepository(Subscriber)
-    private subscriberRepository: Repository<Subscriber>,
+    @InjectRepository(SubscribeAll)
+    private subscriberRepository: Repository<SubscribeAll>,
     private readonly mailService: EmailService,
   ) {}
 
   async create(createSubscribeDto: CreateSubscribeDto) {
     const { email } = createSubscribeDto;
+    console.log(email)
         const existingSubscriber = await this.subscriberRepository.findOne({
       where: { email },
     });
@@ -26,7 +27,7 @@ export class SubscribeService {
     const subscriber = this.subscriberRepository.create({
       email,
     });
-    await this.mailService.sendSubscribeEmail({email : email});
+   
 
     return await this.subscriberRepository.save(subscriber);
   }
