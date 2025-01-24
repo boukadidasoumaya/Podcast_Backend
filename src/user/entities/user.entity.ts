@@ -43,14 +43,20 @@ export class User extends TimestampEntity {
   @Column({ nullable: true })
   profession: string;
 
-  @Column({ nullable: true })
-  facebookLink: string;
-
-  @Column({ nullable: true })
+  /*@Column({ nullable: true })
   linkedinLink: string;
-
+*/
   @Column({ nullable: true })
   instagramLink: string;
+
+  @Column({ nullable: true })
+  whatsappUser: string; 
+
+  @Column({ nullable: true })
+  birthday: Date;
+
+  @Column({ nullable: true })
+  country: string; 
 
   @Exclude()
   @Column()
