@@ -1,4 +1,4 @@
-import {  Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -17,6 +17,8 @@ import { EpisodeModule } from './episode/episode.module';
 import { PodcastModule } from './podcast/podcast.module';
 import { BookmarkModule } from './bookmark/bookmark.module';
 import { EventsModule } from './test/events.module';
+import { OwnerModule } from './owner/owner.module';
+import { SubscribeModule } from './subscribe/subscribe.module';
 @Module({
   imports: [
     EventEmitterModule.forRoot(),
@@ -29,7 +31,7 @@ import { EventsModule } from './test/events.module';
       database: process.env.DB_NAME,
       entities: ['dist/**/*.entity{.ts,.js}'],
       autoLoadEntities: true,
-      synchronize: true,
+      synchronize: false,
     }),
     AuthModule,
     UserModule,
@@ -41,7 +43,9 @@ import { EventsModule } from './test/events.module';
     EpisodeModule,
     PodcastModule,
     BookmarkModule,
-    EventsModule
+    EventsModule,
+    OwnerModule,
+    SubscribeModule
   ],
   controllers: [AppController],
   providers: [AppService],
