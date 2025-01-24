@@ -4,18 +4,35 @@ import { Repository } from 'typeorm';
 import { Episode } from './entities/episode.entity';
 import { CreateEpisodeDto } from './dto/create-episode.dto';
 import { UpdateEpisodeDto } from './dto/update-episode.dto';
+import { Podcast } from 'src/podcast/entities/podcast.entity';
 
 @Injectable()
 export class EpisodeService {
   constructor(
     @InjectRepository(Episode)
     private readonly episodeRepository: Repository<Episode>,
+    @InjectRepository(Podcast)
+    private readonly podcastRepository: Repository<Podcast>,
   ) {}
+    
 
   // Create a new episode
   async create(createEpisodeDto: CreateEpisodeDto): Promise<Episode> {
-    const episode = this.episodeRepository.create(createEpisodeDto);
-    return this.episodeRepository.save(episode);
+    // Ensure the podcast exists before creating the episode
+    const podcast = await this.podcastRepository.findOne({where: { id: createEpisodeDto.podcastId }});
+    
+    if (!podcast) {
+      throw new Error('Podcast not found');
+    }
+  
+    // Create a new episode and associate it with the podcast
+    const episode = this.episodeRepository.create({
+      ...createEpisodeDto, // Spread the other properties from the DTO
+      podcast, // Associate the found podcast with the episode
+    });
+  
+    // Save the episode to the database
+    return await this.episodeRepository.save(episode);
   }
 
   // Get all episodes

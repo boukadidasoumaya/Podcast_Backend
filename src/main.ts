@@ -6,8 +6,10 @@ import { ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
+  const frontendUrl = `${process.env.FRONTEND_URL}:${process.env.FRONTEND_PORT}`;
+
   app.enableCors({
-    origin: 'http://localhost:4200', // Replace with your frontend URL
+    origin: frontendUrl, // Replace with your frontend URL
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     credentials: true, // Allow cookies and credentials
     allowedHeaders: 'Content-Type, Authorization, X-Requested-With, Accept',

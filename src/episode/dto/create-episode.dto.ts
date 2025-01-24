@@ -1,4 +1,4 @@
-import { IsString, IsBoolean, IsNumber, IsNotEmpty } from 'class-validator';
+import { IsString, IsBoolean, IsNumber, IsNotEmpty, IsOptional } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class CreateEpisodeDto {
@@ -8,7 +8,7 @@ export class CreateEpisodeDto {
   })
   @IsString()
   @IsNotEmpty()
-  Title: string; // Name of the episode
+  name: string; // Name of the episode (this matches the 'name' column in the entity)
 
   @ApiProperty({
     description: 'Episode number in the series',
@@ -16,7 +16,7 @@ export class CreateEpisodeDto {
   })
   @IsNumber()
   @IsNotEmpty()
-  number: number; // Episode number
+  number: number; // Episode number (this matches the 'number' column in the entity)
 
   @ApiProperty({
     description: 'Indicates if the episode is premium content',
@@ -24,7 +24,7 @@ export class CreateEpisodeDto {
   })
   @IsBoolean()
   @IsNotEmpty()
-  premium: boolean; // Whether the episode is premium
+  premium: boolean; // This property is not in the entity but you can keep it for logic purposes
 
   @ApiProperty({
     description: 'Duration of the episode in seconds',
@@ -32,7 +32,7 @@ export class CreateEpisodeDto {
   })
   @IsNumber()
   @IsNotEmpty()
-  duration: number; // Duration of the episode in seconds
+  duration: number; // Duration in seconds (this matches the 'duration' column in the entity)
 
   @ApiProperty({
     description: 'Filepath to the episode file',
@@ -40,5 +40,13 @@ export class CreateEpisodeDto {
   })
   @IsString()
   @IsNotEmpty()
-  filepath: string; // Filepath to the episode file
+  filepath: string; // Filepath to the episode file (this matches the 'filepath' column in the entity)
+
+  @ApiProperty({
+    description: 'Podcast ID the episode belongs to',
+    example: 1,
+  })
+  @IsNumber()
+  @IsNotEmpty()
+  podcastId: number; // Added for the relation to Podcast (corresponds to 'podcast' field in the entity)
 }

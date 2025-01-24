@@ -31,4 +31,8 @@ export class PodcastController {
   remove(@Param('id') id: string) {
     return this.podcastService.remove(+id);
   }
+  @Get(':id/episodes')
+  findAllEpisodesByPodcastId(@Param('id') id: string){
+    return this.podcastService.findAllEpisodesByPodcastId(+id);  // +id to convert string to number
+  }
 }

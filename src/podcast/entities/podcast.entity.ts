@@ -3,7 +3,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 import { TimestampEntities } from '../../Generics/timestamp.entities';
 import { Comment } from '../../comment/entities/comment.entity';
-
+import { Episode } from 'src/episode/entities/episode.entity';
 @Entity('podcast')
 export class Podcast extends TimestampEntities{
     @PrimaryGeneratedColumn()
@@ -35,4 +35,6 @@ export class Podcast extends TimestampEntities{
     @OneToMany(() => Comment, (comment) => comment.podcast)
     comments: Comment[];
 
+    @OneToMany(() => Episode, episode => episode.podcast)  // One-to-many relation
+    episodes: Episode[];  // This will hold the episodes associated with this podcast
   }

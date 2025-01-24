@@ -4,12 +4,15 @@ import { Repository } from 'typeorm';
 import { CreatePodcastDto } from './dto/create-podcast.dto';
 import { UpdatePodcastDto } from './dto/update-podcast.dto';
 import { Podcast } from './entities/podcast.entity';
+import { Episode } from 'src/episode/entities/episode.entity';
 
 @Injectable()
 export class PodcastService {
   constructor(
     @InjectRepository(Podcast)
     private readonly podcastRepository: Repository<Podcast>,
+    @InjectRepository(Episode) 
+    private readonly  episodeRepository: Repository<Episode>
   ) {}
 
   async create(createPodcastDto: CreatePodcastDto): Promise<Podcast> {
@@ -39,5 +42,13 @@ export class PodcastService {
       throw new Error(`Podcast with ID ${id} not found.`);
     }
     await this.podcastRepository.delete(id);
+  }
+  async findAllEpisodesByPodcastId(podcastId: number): Promise<Episode[]> {
+ 
+   
+    return  this.episodeRepository.find({
+      where: { podcast: { id: podcastId } },
+      relations: ['podcast'],  // Ensure the relationship is loaded
+    });
   }
 }
