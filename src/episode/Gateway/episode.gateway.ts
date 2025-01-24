@@ -1,21 +1,31 @@
-import { WebSocketGateway, WebSocketServer, OnGatewayConnection, OnGatewayDisconnect } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-
+import { WebSocketGateway, OnGatewayInit, WebSocketServer, SubscribeMessage, MessageBody } from '@nestjs/websockets';
 import { Episode } from '../entities/episode.entity';
-@WebSocketGateway()
-export class EpisodeGateway implements OnGatewayConnection, OnGatewayDisconnect {
-  @WebSocketServer() server: Server;
+import { ConnectedSocket } from '@nestjs/websockets';
+@WebSocketGateway(
+    8001, { cors: '*' },
+)
 
-  // Notify clients about episode data updates
+export class EpisodeGateway implements OnGatewayInit {
+    @WebSocketServer()
+    server: Server;
+    @SubscribeMessage('episodeUpdate')
+
+    afterInit(server: Server) {
+      console.log('WebSocket server initialized');
+      server.emit('WebSocket server initialized')
+    }
+  
+@SubscribeMessage('episodeUpdate')
   notifyEpisodeUpdate(episode: Episode) {
     this.server.emit('episodeUpdate', episode);  // Send the full episode data to clients
   }
-
-  // Notify clients about the view count update
-  notifyViewUpdate(episodeId: number, views: number) {
-    this.server.emit('viewUpdate', { episodeId, views });
+@SubscribeMessage('viewUpdate')
+    notifyViewUpdate(id: number, views: number) {
+    console.log('View count updated:', views);
+      // Emit updated view count to all connected clients
+    this.server.emit('viewUpdate', { id, views });
   }
-
   handleConnection(client: Socket) {
     console.log('Client connected:', client.id);
   }
