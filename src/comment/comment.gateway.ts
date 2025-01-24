@@ -1,14 +1,4 @@
-import {
-  Controller,
-  Get,
-  Param,
-  Body,
-  Post,
-  Delete,
-  Req,
-  BadRequestException,
-} from '@nestjs/common';
-import { Request } from 'express';
+
 import { CommentService } from './comment.service';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { UserService } from 'src/user/user.service';
@@ -25,6 +15,7 @@ import {
 import { Server, Socket } from 'socket.io';
 import { DeleteCommentDto } from './dto/delete-comment.dto';
 import { FindCommentDto } from './dto/find-comment.dto';
+import { Comment } from './entities/comment.entity';
 
 @WebSocketGateway(8001, { cors: '*' })
 export class CommentGateway {
@@ -71,6 +62,7 @@ export class CommentGateway {
       );
     }
   }
+
 
   @SubscribeMessage('deleteComment')
   async remove(@MessageBody() comment: DeleteCommentDto): Promise<void> {
