@@ -8,16 +8,17 @@ import { Owner } from './entities/owner.entity';
 @Injectable()
 export class OwnerService {
   constructor(
-    @InjectRepository(Owner) 
+    @InjectRepository(Owner)
     private readonly ownerRepository: Repository<Owner>,
   ) {}
-  async getOwnersWithInterests(): Promise<{ name: string; interests: string[] }[]> {
+  async getOwnersWithInterests(): Promise<
+    { name: string; interests: string[] }[]
+  > {
     const owners = await this.ownerRepository.find();
-  
-    return owners.map(owner => ({
-      name: owner.username, 
-      interests: owner.interests.map(interest => interest.toString()), 
+
+    return owners.map((owner) => ({
+      name: owner.username,
+      interests: owner.interests.map((interest) => interest.toString()),
     }));
   }
-  
 }
