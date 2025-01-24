@@ -7,10 +7,6 @@ export class Owner extends PartialType(User) {
     @PrimaryGeneratedColumn()
     id: number;
 
-  @Column({
-    type: 'enum',
-    enum: InterestsEnum,
-  })
-  interests : string[];
+
 
 }

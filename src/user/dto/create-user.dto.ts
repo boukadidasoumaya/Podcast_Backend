@@ -1,5 +1,6 @@
-import { IsEmail, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsArray, IsEmail, IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { InterestsEnum } from 'src/shared/Enums/interests.enum';
 
 export class CreateUserDto {
   @IsNotEmpty()
@@ -55,4 +56,16 @@ export class CreateUserDto {
     required: false,
   })
   photo: string;
+
+  @IsNotEmpty()
+  @IsArray()
+  @IsEnum(InterestsEnum, { each: true })
+  @ApiProperty({
+    example: ['MUSIC', 'SPORTS'],
+    type: [String],
+    enum: InterestsEnum,
+    isArray: true,
+    description: 'An array of interests',
+  })
+  interests: InterestsEnum[];
 }
