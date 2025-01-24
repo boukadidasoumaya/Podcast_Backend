@@ -118,33 +118,6 @@ export class CommentService {
     });
     return comment;
   }
-  async findOneByEpisode(id: number): Promise<any> {
-    // Récupérer le commentaire en question
-    const comment = await this.commentRepository.findOne({
-      where: { id },
-      relations: ['parent', 'user', 'podcast', 'episode'],
-    });
-
-    if (!comment) {
-      throw new NotFoundException(`Commentaire avec l'ID ${id} non trouvé`);
-    }
-
-    // Organiser les réponses comme dans `findAllByEpisode`
-    const organizedMessages = this.organizeMessages([comment]);
-
-    // Ajouter les détails utilisateur au commentaire
-    const commentWithUserDetails = {
-      ...organizedMessages[0],
-      user: {
-        photo: comment.user.photo,
-        username: comment.user.username,
-        role: comment.user.role,
-        id: comment.user.id,
-      },
-    };
-
-    return commentWithUserDetails;
-  }
 
   async findOneByUser(commentId: number, userId: number) {
     const comment = await this.commentRepository.findOne({
