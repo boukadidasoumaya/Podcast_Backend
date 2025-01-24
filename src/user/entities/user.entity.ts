@@ -1,6 +1,10 @@
+/* eslint-disable prettier/prettier */
+
 import {
   Column,
   Entity,
+  JoinTable,
+  ManyToMany,
   OneToMany,
   PrimaryGeneratedColumn,
   TableInheritance,
@@ -13,6 +17,7 @@ import { Payment } from '../../payment/entities/payment.entity';
 import { Comment } from 'src/comment/entities/comment.entity';
 import { Like } from 'src/like/entities/like.entity';
 import { Bookmark } from '../../bookmark/entities/bookmark.entity';
+import { Podcast } from 'src/podcast/entities/podcast.entity';
 @Entity('user')
 @TableInheritance({
   column: { type: 'varchar', name: 'role', enum: UserRoleEnum },
@@ -80,4 +85,8 @@ export class User extends TimestampEntity {
 
   @OneToMany(() => Bookmark, (bookmark) => bookmark.user)
   bookmarks: Bookmark[];
+
+  @ManyToMany(() => Podcast, (podcast) => podcast.subscribers)
+  @JoinTable()
+  subscriptions: Podcast[];
 }

@@ -8,7 +8,15 @@ export class CreateEpisodeDto {
   })
   @IsString()
   @IsNotEmpty()
-  Title: string; // Name of the episode
+  title: string;
+
+  @ApiProperty({
+    description: 'Description of the episode',
+    example: 'Lorem Ipsum',
+  })
+  @IsString()
+  @IsNotEmpty()
+  description: string; // Name of the episode
 
   @ApiProperty({
     description: 'Episode number in the series',
@@ -16,15 +24,8 @@ export class CreateEpisodeDto {
   })
   @IsNumber()
   @IsNotEmpty()
-  number: number; // Episode number
+  number: number;
 
-  @ApiProperty({
-    description: 'Indicates if the episode is premium content',
-    example: true,
-  })
-  @IsBoolean()
-  @IsNotEmpty()
-  premium: boolean; // Whether the episode is premium
 
   @ApiProperty({
     description: 'Duration of the episode in seconds',
@@ -40,5 +41,5 @@ export class CreateEpisodeDto {
   })
   @IsString()
   @IsNotEmpty()
-  filepath: string; // Filepath to the episode file
+  coverImage: string; // Filepath to the episode file
 }
