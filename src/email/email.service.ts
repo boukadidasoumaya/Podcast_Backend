@@ -46,4 +46,21 @@ export class EmailService {
      
     });
   }
+
+  async sendSubscriptionEmail(data) {
+    const { name, email, podcast } = data;
+    const subject = `Potcast-eha Subscription`;
+    await this.mailerService.sendMail({
+      to: email,
+      subject,
+      template: 'subscription',
+      context: {
+        name,
+        email,
+        podcast,
+      },
+    });
+
+
+  }
 }

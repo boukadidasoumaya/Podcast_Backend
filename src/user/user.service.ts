@@ -165,4 +165,12 @@ export class UserService extends CrudService<User> {
       premiumUntil: createPaymentDto.expirationDate,
     };
   }
+
+  async getuserswithpods(): Promise<User[]> {
+    const users = await this.userRepository.find({
+      relations: ['subscriptions'],
+    })
+    return users 
+
+  }
 }
