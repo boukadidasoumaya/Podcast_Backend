@@ -39,8 +39,7 @@ export class Podcast extends TimestampEntities{
     @ManyToMany(() => User, (user) => user.subscriptions)
     subscribers: User[];
 
-    @OneToMany(()=>Episode, (episode)=>episode.podcast)
-    episodes: Episode[];
+
 
 
   }
