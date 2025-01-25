@@ -1,6 +1,5 @@
-import { IsArray, IsEmail, IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsArray, IsEmail, IsEnum, IsNotEmpty, IsOptional, IsString ,IsDateString} from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { IsDateString, IsEnum } from 'class-validator';
 import { UserRoleEnum } from 'src/shared/Enums/user-role.enum';
 import { InterestsEnum } from 'src/shared/Enums/interests.enum';
 
