@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Episode } from './entities/episode.entity';
@@ -34,7 +34,15 @@ export class EpisodeService {
 
   // Get a single episode by ID
   async findOne(id: number): Promise<Episode> {
-    return this.episodeRepository.findOne({ where: { id } });
+    const episode = await this.episodeRepository.findOne({
+      where: { id },
+      relations: ['podcast', 'likes', 'comments', 'podcast.user'],
+    });
+
+    if (!episode) {
+      throw new NotFoundException('Episode not found');
+    }
+    return episode;
   }
 
   // Update an existing episode

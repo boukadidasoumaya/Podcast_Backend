@@ -44,8 +44,9 @@ export class UserService extends CrudService<User> {
     throw new UnauthorizedException('Non autorisé');
   }
 
-
-
+  async findOne(id: number) {
+    return await this.userRepository.findOne({ where: { id } });
+  }
   async findOneByEmail(email: string) {
     return await this.userRepository.findOneBy({ email });
   }
@@ -169,8 +170,7 @@ export class UserService extends CrudService<User> {
   async getuserswithpods(): Promise<User[]> {
     const users = await this.userRepository.find({
       relations: ['subscriptions'],
-    })
-    return users 
-
+    });
+    return users;
   }
 }

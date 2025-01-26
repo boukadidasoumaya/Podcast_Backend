@@ -1,5 +1,5 @@
 import { CreateLikeEpisodeDto } from './create-like-episode.dto';
 
-export class UpdateLikeEpisodeDto extends CreateLikeEpisodeDto{
+export class DeleteLikeEpisodeDto extends CreateLikeEpisodeDto{
 
 }

@@ -48,27 +48,13 @@ export class UserController {
     return this.userService.getuserswithpods();
   }
 
-  @UseInterceptors(ClassSerializerInterceptor)
   @Get(':id')
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth('JWT-auth')
-  @ApiOkResponse({
-    type: User,
-    description: 'Utilisateur trouvé avec succès',
-  })
-  @ApiResponse({
-    status: 401,
-    description: 'Utilisateur non autorisé',
-  })
-  @ApiBadRequestResponse({
-    description: 'Requête incorrecte, veuillez vérifier votre demande',
-  })
-  // async findOne(
-  //   @Param('id', ParseIntPipe) id: number,
-  //   @CurrentUser() user: User,
-  // ) {
-  //   return await this.userService.findOne(id, user);
-  // }
+  // @UseGuards(JwtAuthGuard)
+  async findOne(
+    @Param('id', ParseIntPipe) id: number,
+  ) {
+    return await this.userService.findOne(id);
+  }
 
   // @Patch(':id')
   // @UseGuards(JwtAuthGuard)
