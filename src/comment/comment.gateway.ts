@@ -75,7 +75,25 @@ export class CommentGateway {
     }
   }
 
-
+  @SubscribeMessage('comments')
+  async findAllByjustEpisode(
+    @MessageBody('episodeId') episodeId: number, // Expect only the episode ID
+    @ConnectedSocket() socket: Socket,
+  ) {
+    try {
+      // Fetch comments by episode ID
+      const comments = await this.commentService.findAllByEpisodeId(episodeId);
+  
+      // Emit the fetched comments to the client
+      this.server.to(socket.id).emit('comments', comments);
+    } catch (error) {
+      console.error('Error finding comments:', error);
+  
+      // Emit an error message to the client
+      socket.emit('errorMessage', 'An error occurred while fetching the comments');
+    }
+  }
+  
   @SubscribeMessage('deleteComment')
   async remove(@MessageBody() comment: DeleteCommentDto): Promise<void> {
     const { id, user } = comment;
