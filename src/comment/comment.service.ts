@@ -12,9 +12,10 @@ import { Repository } from 'typeorm';
 import { UserService } from '../user/user.service';
 import { User } from '../user/entities/user.entity';
 import { Podcast } from '../podcast/entities/podcast.entity';
+import { Episode } from '../episode/entities/episode.entity';
 import { EpisodeService } from '../episode/episode.service';
 import { PodcastService } from '../podcast/podcast.service';
-import { Episode } from '../episode/entities/episode.entity';
+
 @Injectable()
 export class CommentService {
   constructor(
@@ -42,17 +43,7 @@ export class CommentService {
 
     return newComment;
   }
-  async findAllByEpisodeId(episodeId: number): Promise<Comment[]> {
-    try {
-      // Replace this with your actual ORM or database query logic
-      return await this.commentRepository.find({
-        where: { episode: { id: episodeId } }, // Use the relation to filter by episode ID
-        relations: ['episode'], // Ensure the 'episode' relation is loaded
-      });    } catch (error) {
-      console.error('Error fetching comments from database:', error);
-      throw new Error('Failed to fetch comments');
-    }
-  }
+
   private organizeMessages(messages: any[]): any[] {
     const organizedMessages = [];
     const map = new Map();
