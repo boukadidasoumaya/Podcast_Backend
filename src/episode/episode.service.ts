@@ -19,7 +19,7 @@ export class EpisodeService {
   // Create a new episode
   async create(createEpisodeDto: CreateEpisodeDto): Promise<Episode> {
     // Ensure the podcast exists before creating the episode
-    const podcast = await this.podcastRepository.findOne({where: { id: createEpisodeDto.podcastId }});
+    const podcast = await this.podcastRepository.findOne({where: { id: createEpisodeDto.podcast.id }});
     
     if (!podcast) {
       throw new Error('Podcast not found');
@@ -80,6 +80,7 @@ export class EpisodeService {
       where: { id },
       relations: ['podcast', 'likes', 'comments', 'podcast.user'],
     });
+    console.log('fghjkl')
 
     if (!episode) {
       throw new NotFoundException('Episode not found');

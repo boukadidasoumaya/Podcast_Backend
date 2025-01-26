@@ -1,12 +1,6 @@
 import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
-import {
-  Entity,
-  Column,
-  PrimaryGeneratedColumn,
-  ManyToOne,
-  Unique,
-  JoinColumn,
-} from 'typeorm';
+import { Unique } from 'typeorm';
+import { JoinColumn } from 'typeorm';
 import { DeleteDateColumn } from 'typeorm';
 import { OneToMany } from 'typeorm';
 import { Bookmark } from '../../bookmark/entities/bookmark.entity';
@@ -19,36 +13,40 @@ import { LikeEpisode } from '../../like-episode/entities/like-episode.entity';
 export class Episode extends TimestampEntity {
   @PrimaryGeneratedColumn()
   id: number;
+
   @Column()
-  title: string;
+  name: string;
 
   @Column({ type: 'int' })
-  number: number;
+  number: number; // Unique number for each episode within the podcast
+
   @Column()
   description: string;
 
   @Column({ type: 'int' })
-  duration: number;
+  duration: number; // Duration in seconds (or minutes depending on your choice)
 
   @Column({ type: 'varchar', length: 255 })
-  coverImage: string;
-
+  coverImage: string; // URL or file path to cover image
+  @Column({ type: 'varchar', length: 255 })
+  filepath: string; // Path to the file on the server
   @Column({ type: 'int', default: 0 })
-  views: number;
+  views: number; // Number of views
 
+  // Relationship with Bookmark entity
   @OneToMany(() => Bookmark, (bookmark) => bookmark.episode)
   bookmarks: Bookmark[];
+
+  // Relationship with Comment entity
   @OneToMany(() => Comment, (comment) => comment.episode)
   comments: Comment[];
 
-  @ManyToOne(() => Podcast, (podcast) => podcast.episodes, {
-    onDelete: 'CASCADE',
-  })
+  // Many-to-One relationship with Podcast entity
+  @ManyToOne(() => Podcast, (podcast) => podcast.episodes, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'podcastId' })
   podcast: Podcast;
 
+  // Relationship with LikeEpisode entity
   @OneToMany(() => LikeEpisode, (like) => like.episode)
   likes: LikeEpisode[];
-
-
 }
