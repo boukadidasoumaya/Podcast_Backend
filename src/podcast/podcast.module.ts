@@ -1,3 +1,5 @@
+/* eslint-disable prettier/prettier */
+
 import { Module } from '@nestjs/common';
 import { PodcastService } from './podcast.service';
 import { PodcastController } from './podcast.controller';
@@ -8,7 +10,7 @@ import { Episode } from 'src/episode/entities/episode.entity';
 @Module({
   imports: [TypeOrmModule.forFeature([Podcast,Episode])],
   controllers: [PodcastController],
-  providers: [PodcastService],
+  providers: [PodcastService,EmailService,UserService],
   exports: [PodcastService],
 })
 export class PodcastModule {}

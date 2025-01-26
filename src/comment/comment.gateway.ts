@@ -24,6 +24,7 @@ import {
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { DeleteCommentDto } from './dto/delete-comment.dto';
+import { FindCommentDto } from './dto/find-comment.dto';
 
 @WebSocketGateway(8001, { cors: '*' })
 export class CommentGateway {
@@ -40,7 +41,6 @@ export class CommentGateway {
     @ConnectedSocket() socket: Socket,
   ): Promise<CreateCommentDto> {
     try {
-
       const sender = this.commentService.clientToUser[socket.id];
       const comment = await this.commentService.create(createCommentDto);
       this.server.emit('comment', comment);
@@ -56,15 +56,12 @@ export class CommentGateway {
 
   @SubscribeMessage('comments')
   async findAllByEpisode(
-    @MessageBody() podcast: Podcast,
-    @MessageBody() episode: Episode,
+    @MessageBody() findCommentDto: FindCommentDto,
     @ConnectedSocket() socket: Socket,
   ) {
     try {
-      const comments = await this.commentService.findAllByEpisode(
-        podcast,
-        episode,
-      );
+      const comments =
+        await this.commentService.findAllByEpisode(findCommentDto);
       this.server.emit('comments', comments);
     } catch (error) {
       console.error('Error finding comments:', error);
@@ -74,7 +71,6 @@ export class CommentGateway {
       );
     }
   }
-
   @SubscribeMessage('comments')
   async findAllByjustEpisode(
     @MessageBody('episodeId') episodeId: number, // Expect only the episode ID

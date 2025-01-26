@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Episode } from './entities/episode.entity';
@@ -37,16 +37,61 @@ export class EpisodeService {
 
   // Get all episodes
   async findAll(): Promise<Episode[]> {
-    return this.episodeRepository.find();
+    const episodes = await this.episodeRepository.find({
+      relations: ['podcast', 'likes', 'comments', 'podcast.user'],
+    });
+    return episodes.map((episode) => ({
+      ...episode,
+      numberOfLikes: episode.likes?.length || 0, // Compte le nombre de likes
+      numberOfComments: episode.comments?.length || 0, // Compte le nombre de commentaires
+    }));
+  }
+  // Get trending episodes (sorted by views in descending order)
+  async findAllTrending(): Promise<Episode[]> {
+    const episodes = await this.episodeRepository.find({
+      order: { views: 'DESC' },
+      relations: ['podcast', 'likes', 'comments', 'podcast.user'],
+      where: { deletedAt: null },
+    });
+    return episodes.map((episode) => ({
+      ...episode,
+      numberOfLikes: episode.likes?.length || 0,
+      numberOfComments: episode.comments?.length || 0,
+    }));
+  }
+
+  // Get the latest 4 episodes (sorted by createdAt in descending order)
+  async findAllLatest(): Promise<Episode[]> {
+    const episodes = await this.episodeRepository.find({
+      order: { createdAt: 'DESC' },
+      relations: ['podcast', 'likes', 'comments', 'podcast.user'],
+      where: { deletedAt: null },
+    });
+    return episodes.map((episode) => ({
+      ...episode,
+      numberOfLikes: episode.likes?.length || 0,
+      numberOfComments: episode.comments?.length || 0,
+    }));
   }
 
   // Get a single episode by ID
   async findOne(id: number): Promise<Episode> {
-    return this.episodeRepository.findOne({ where: { id } });
+    const episode = await this.episodeRepository.findOne({
+      where: { id },
+      relations: ['podcast', 'likes', 'comments', 'podcast.user'],
+    });
+
+    if (!episode) {
+      throw new NotFoundException('Episode not found');
+    }
+    return episode;
   }
 
   // Update an existing episode
-  async update(id: number, updateEpisodeDto: UpdateEpisodeDto): Promise<Episode> {
+  async update(
+    id: number,
+    updateEpisodeDto: UpdateEpisodeDto,
+  ): Promise<Episode> {
     const episode = await this.episodeRepository.findOne({ where: { id } });
     if (!episode) {
       throw new Error('Episode not found');
@@ -65,7 +110,7 @@ export class EpisodeService {
       throw new Error('Episode not found');
     }
 
-    await this.episodeRepository.softDelete(id);  // Soft delete
+    await this.episodeRepository.softDelete(id); // Soft delete
   }
 
   // Increment views for an episode

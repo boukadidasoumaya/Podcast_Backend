@@ -10,6 +10,7 @@ import {
 } from 'typeorm';
 import { Podcast } from '../../podcast/entities/podcast.entity';
 import { Episode } from '../../episode/entities/episode.entity';
+import { LikeComment } from '../../like-comment/entities/like-comment.entity';
 @Entity()
 export class Comment extends TimestampEntities {
   @PrimaryGeneratedColumn()
@@ -23,12 +24,12 @@ export class Comment extends TimestampEntities {
   })
   user: User;
 
-  @ManyToOne(() => Podcast, (podcast) => podcast.comments,{
+  @ManyToOne(() => Podcast, (podcast) => podcast.comments, {
     nullable: false,
   })
   podcast: Podcast;
 
-  @ManyToOne(() => Episode,(episode) => episode.comments, {
+  @ManyToOne(() => Episode, (episode) => episode.comments, {
     nullable: false,
   })
   episode: Episode;
@@ -41,4 +42,7 @@ export class Comment extends TimestampEntities {
 
   @ManyToOne(() => Comment, (comment) => comment.replies, { nullable: true })
   parent: Comment;
+
+  @OneToMany(() => LikeComment, (likecomment) => likecomment.comment)
+  likesComment: LikeComment[];
 }

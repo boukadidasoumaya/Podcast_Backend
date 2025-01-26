@@ -1,5 +1,7 @@
 import { IsString, IsBoolean, IsNumber, IsNotEmpty, IsOptional } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
+import { Podcast } from '../../podcast/entities/podcast.entity';
 
 export class CreateEpisodeDto {
   @ApiProperty({
@@ -40,13 +42,20 @@ export class CreateEpisodeDto {
   })
   @IsString()
   @IsNotEmpty()
-  filepath: string; // Filepath to the episode file (this matches the 'filepath' column in the entity)
+  coverImage: string; // Filepath to the episode file (this matches the 'filepath' column in the entity)
 
   @ApiProperty({
     description: 'Podcast ID the episode belongs to',
     example: 1,
   })
-  @IsNumber()
+ 
+
+  @ApiProperty({
+    description: 'Podcast',
+    example: 1,
+  })
   @IsNotEmpty()
-  podcastId: number; // Added for the relation to Podcast (corresponds to 'podcast' field in the entity)
+  @Type(() => Podcast)
+  podcast: Podcast;
+
 }

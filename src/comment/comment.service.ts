@@ -5,7 +5,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { CreateCommentDto } from './dto/create-comment.dto';
-import { UpdateCommentDto } from './dto/update-comment.dto';
+import { FindCommentDto } from './dto/find-comment.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Comment } from './entities/comment.entity';
 import { Repository } from 'typeorm';
@@ -89,14 +89,21 @@ export class CommentService {
 
     return organizedMessages;
   }
-  async findAllByEpisode(podcast: Podcast, episode: Episode): Promise<any[]> {
+  async findAllByEpisode(findCommentDto: FindCommentDto): Promise<any[]> {
+    const podcast = findCommentDto.podcast;
+    const episode = findCommentDto.episode;
 
+    console.log(`Podcast ID: ${podcast.id}, Episode ID: ${episode.id}`);
 
     const comments = await this.commentRepository.find({
-      where: { podcast: { id: podcast.id }, episode: { id: episode.id } },
+      where: {
+        podcast: { id: podcast.id },
+        episode: { id: episode.id }, // Condition pour filtrer par épisode
+      },
       relations: ['parent', 'user', 'podcast', 'episode'],
     });
-    const comentsWithUserDetails = comments.map((comment) => {
+
+    const commentsWithUserDetails = comments.map((comment) => {
       return {
         ...comment,
         podcast,
@@ -109,8 +116,8 @@ export class CommentService {
         },
       };
     });
-    //console.log('chatsWithAuthorDetails', chatsWithAuthorDetails);
-    return this.organizeMessages(comentsWithUserDetails);
+
+    return this.organizeMessages(commentsWithUserDetails);
   }
 
   async findOne(id: number) {
@@ -144,7 +151,7 @@ export class CommentService {
 
   // async update(
   //   id: number,
-  //   updateCommentDto: UpdateCommentDto,
+  //   updateCommentDto: FindCommentDto,
   //   user: User,
   // ): Promise<Comment> {
   //   const comment = await this.findOne(id);
