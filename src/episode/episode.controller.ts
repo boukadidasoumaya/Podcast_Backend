@@ -29,7 +29,15 @@ export class EpisodeController {
   findAll(): Promise<Episode[]> {
     return this.episodeService.findAll();
   }
+  @Get('trending')
+  async getTrendingEpisodes(): Promise<Episode[]> {
+    return this.episodeService.findAllTrending();
+  }
 
+  @Get('latest')
+  async getLatestEpisodes(): Promise<Episode[]> {
+    return this.episodeService.findAllLatest();
+  }
   @Get(':id')
   findOne(@Param('id') id: number): Promise<Episode> {
     return this.episodeService.findOne(id);

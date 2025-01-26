@@ -21,14 +21,39 @@ export class EpisodeService {
   // Get all episodes
   async findAll(): Promise<Episode[]> {
     const episodes = await this.episodeRepository.find({
-      relations: ['podcast', 'likes', 'comments', 'podcast.user'], // Charge les relations nécessaires
+      relations: ['podcast', 'likes', 'comments', 'podcast.user'],
     });
-
-    // Ajoute le nombre de likes et de commentaires à chaque épisode
     return episodes.map((episode) => ({
       ...episode,
       numberOfLikes: episode.likes?.length || 0, // Compte le nombre de likes
       numberOfComments: episode.comments?.length || 0, // Compte le nombre de commentaires
+    }));
+  }
+  // Get trending episodes (sorted by views in descending order)
+  async findAllTrending(): Promise<Episode[]> {
+    const episodes = await this.episodeRepository.find({
+      order: { views: 'DESC' },
+      relations: ['podcast', 'likes', 'comments', 'podcast.user'],
+      where: { deletedAt: null },
+    });
+    return episodes.map((episode) => ({
+      ...episode,
+      numberOfLikes: episode.likes?.length || 0,
+      numberOfComments: episode.comments?.length || 0,
+    }));
+  }
+
+  // Get the latest 4 episodes (sorted by createdAt in descending order)
+  async findAllLatest(): Promise<Episode[]> {
+    const episodes = await this.episodeRepository.find({
+      order: { createdAt: 'DESC' },
+      relations: ['podcast', 'likes', 'comments', 'podcast.user'],
+      where: { deletedAt: null },
+    });
+    return episodes.map((episode) => ({
+      ...episode,
+      numberOfLikes: episode.likes?.length || 0,
+      numberOfComments: episode.comments?.length || 0,
     }));
   }
 
