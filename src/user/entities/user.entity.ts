@@ -80,10 +80,14 @@ export class User extends TimestampEntity {
     enum: UserRoleEnum,
   })
   role: string;
+
+
   @Column({
-    type: 'simple-json',
+    type: 'json', // Utilisation du type JSON natif
+    nullable: true, // Permet de ne pas définir ce champ
   })
   interests: InterestsEnum[];
+
   @Column({
     default: false,
   })
