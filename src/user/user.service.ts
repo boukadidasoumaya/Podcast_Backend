@@ -149,7 +149,7 @@ export class UserService extends CrudService<User> {
   ): Promise<{ message: string; premiumUntil: Date }> {
     const user = await this.userRepository.findOne({
       where: { id: userId },
-      relations: ['payments'], // Charger les paiements existants
+      relations: ['payments'],
     });
 
     if (!user) {
@@ -173,4 +173,19 @@ export class UserService extends CrudService<User> {
     });
     return users;
   }
+
+  async getOwnerDetails(): Promise<{ firstName: string; photo: string; interests: string[] } | null> {
+    const owner = await this.userRepository.findOne({
+      where: { isOwner: true },
+      select: ['firstName', 'photo', 'interests'], 
+    });
+
+    return owner ? { 
+      firstName: owner.firstName, 
+      photo: owner.photo, 
+      interests: owner.interests 
+    } : null;
+  }
+
+  
 }

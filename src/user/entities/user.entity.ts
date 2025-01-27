@@ -19,6 +19,7 @@ import { Bookmark } from '../../bookmark/entities/bookmark.entity';
 import { LikeEpisode } from '../../like-episode/entities/like-episode.entity';
 import { LikeComment } from '../../like-comment/entities/like-comment.entity';
 import { Podcast } from '../../podcast/entities/podcast.entity';
+import { InterestsEnum } from 'src/shared/Enums/interests.enum';
 @Entity('user')
 @TableInheritance({
   column: { type: 'varchar', name: 'role', enum: UserRoleEnum },
@@ -44,14 +45,20 @@ export class User extends TimestampEntity {
   @Column({ nullable: true })
   profession: string;
 
-  @Column({ nullable: true })
-  facebookLink: string;
-
-  @Column({ nullable: true })
+  /*@Column({ nullable: true })
   linkedinLink: string;
-
+*/
   @Column({ nullable: true })
   instagramLink: string;
+
+  @Column({ nullable: true })
+  whatsappUser: string;
+
+  @Column({ nullable: true })
+  birthday: Date;
+
+  @Column({ nullable: true })
+  country: string;
 
   @Exclude()
   @Transform(() => undefined)
@@ -73,6 +80,15 @@ export class User extends TimestampEntity {
     enum: UserRoleEnum,
   })
   role: string;
+  @Column({
+    type: 'simple-json',
+  })
+  interests: InterestsEnum[];
+  @Column({
+    default: false,
+  })
+  isOwner: boolean;
+
   @Exclude()
   @Transform(() => undefined)
   @Column({ nullable: true })
