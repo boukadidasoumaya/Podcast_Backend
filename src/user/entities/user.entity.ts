@@ -110,13 +110,13 @@ export class User extends TimestampEntity {
   @OneToMany(() => LikeComment, (like) => like.user, { nullable: true })
   likesComment: LikeComment[];
 
-  @OneToMany(() => Bookmark, (bookmark) => bookmark.user)
+  @OneToMany(() => Bookmark, (bookmark) => bookmark.user,{ nullable: true })
   bookmarks: Bookmark[];
 
-  @ManyToMany(() => Podcast, (podcast) => podcast.subscribers)
+  @ManyToMany(() => Podcast, (podcast) => podcast.subscribers,{ nullable: true })
   @JoinTable()
   subscriptions: Podcast[];
 
-  @OneToMany(() => Podcast, (podcast) => podcast.user)
+  @OneToMany(() => Podcast, (podcast) => podcast.user,{ nullable: true })
   podcasts: Podcast[];
 }
