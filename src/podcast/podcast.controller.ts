@@ -28,7 +28,6 @@ export class PodcastController {
    @Body() body: { podcastData: any; episodesData: any[] },
  ) {
    const userId = req.user?.id;
-  console.log(userId)
    // Validate userId
    if (!userId || isNaN(Number(userId))) {
      throw new BadRequestException('Invalid or missing userId.');
