@@ -23,6 +23,7 @@ import { JwtAuthGuard } from '../auth/guard/jwt-auth.guard';
 import { CurrentUser } from '../shared/Decorators/user.decorator';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ChangePasswordDto } from './dto/change-password.dto';
+import { ChangeEmailDto } from './dto/change-email.dto';
 import { User } from './entities/user.entity';
 
 @ApiTags('User')
@@ -52,21 +53,46 @@ export class UserController {
     return this.userService.getuserswithpods();
   }
 
-  @UseInterceptors(ClassSerializerInterceptor)
-  @Get(':id')
+  @Get('profile')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth('JWT-auth')
   @ApiOkResponse({
     type: User,
-    description: 'Utilisateur trouvé avec succès',
+    description: 'Profile retrieved successfully',
   })
-  @ApiResponse({
-    status: 401,
-    description: 'Utilisateur non autorisé',
+  async getUserProfile(@CurrentUser() user: User) {
+    return user;
+  }
+  
+  @Put('profile')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('JWT-auth')
+  @ApiOkResponse({
+    type: User,
+    description: 'Profile updated successfully',
   })
-  @ApiBadRequestResponse({
-    description: 'Requête incorrecte, veuillez vérifier votre demande',
-  })
+  async updateProfile(
+    @CurrentUser() user: User,
+    @Body() updateUserDto: UpdateUserDto,
+  ) {
+    return await this.userService.update(user.id, updateUserDto);
+  }
+
+  // @UseInterceptors(ClassSerializerInterceptor)
+  // @Get(':id')
+  // @UseGuards(JwtAuthGuard)
+  // @ApiBearerAuth('JWT-auth')
+  // @ApiOkResponse({
+  //   type: User,
+  //   description: 'Utilisateur trouvé avec succès',
+  // })
+  // @ApiResponse({
+  //   status: 401,
+  //   description: 'Utilisateur non autorisé',
+  // })
+  // @ApiBadRequestResponse({
+  //   description: 'Requête incorrecte, veuillez vérifier votre demande',
+  // })
   // async findOne(
   //   @Param('id', ParseIntPipe) id: number,
   //   @CurrentUser() user: User,
@@ -112,6 +138,27 @@ export class UserController {
     @Body() changePasswordDto: ChangePasswordDto,
   ) {
     return await this.userService.changePassword(user, changePasswordDto);
+  }
+
+  @Put('update-email')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('JWT-auth')
+  @ApiOkResponse({
+    type: User,
+    description: 'Email changé avec succès',
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Utilisateur non autorisé',
+  })
+  @ApiBadRequestResponse({
+    description: 'Requête incorrecte, veuillez vérifier votre demande',
+  })
+  async changeEmail(
+    @CurrentUser() user: User,
+    @Body() changeEmailDto: ChangeEmailDto,
+  ) {
+    return await this.userService.changeEmail(user, changeEmailDto);
   }
 
   @Delete(':id')
@@ -168,6 +215,4 @@ export class UserController {
   ) {
     return await this.userService.restoreUserByEmail(email, user);
   }
-
-
 }
