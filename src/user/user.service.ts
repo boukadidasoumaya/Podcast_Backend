@@ -174,18 +174,18 @@ export class UserService extends CrudService<User> {
 
   }
 
-  async getOwnerDetails(): Promise<{ firstName: string; photo: string; interests: string[] } | null> {
+  async getOwnerDetails(): Promise<{ firstName: string; photo: string; interests: string[] }[] | null> {
     const owner = await this.userRepository.findOne({
       where: { isOwner: true },
-      select: ['firstName', 'photo', 'interests'], 
+      select: ['firstName', 'photo', 'interests'],
     });
-
-    return owner ? { 
-      firstName: owner.firstName, 
-      photo: owner.photo, 
-      interests: owner.interests 
-    } : null;
+  
+    return owner ? [{
+      firstName: owner.firstName,
+      photo: owner.photo,
+      interests: owner.interests
+    }] : null;
   }
-
+  
   
 }

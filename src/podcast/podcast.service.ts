@@ -37,6 +37,11 @@ export class PodcastService {
     if (!user) {
       throw new NotFoundException('User not found');
     }
+
+    if (!user.isOwner) {
+      user.isOwner = true;
+      await this.userRepository.save(user);
+    }
   
     // Step 2: Create the podcast with validated attributes
     const podcast = this.podcastRepository.create({
