@@ -61,8 +61,6 @@ export class User extends TimestampEntity {
   country: string;
 
   @Exclude()
-  @Transform(() => undefined)
-
   @Column()
   password: string;
 

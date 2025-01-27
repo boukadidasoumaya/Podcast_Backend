@@ -29,8 +29,8 @@ import { LikeCommentModule } from './like-comment/like-comment.module';
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
-      entities: ['dist/**/*.entity{.ts,.js}'],
       autoLoadEntities: true,
+      entities: ['dist/**/*.entity{.ts,.js}'],
       synchronize: false,
     }),
     AuthModule,
@@ -45,7 +45,9 @@ import { LikeCommentModule } from './like-comment/like-comment.module';
     PodcastModule,
     BookmarkModule,
     EventsModule,
-    SubscribeModule
+    SubscribeModule,
+    LikeEpisodeModule,
+    LikeCommentModule
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -13,7 +13,7 @@ import {
 import { PodcastService } from './podcast.service';
 import { CreatePodcastDto } from './dto/create-podcast.dto';
 import { UpdatePodcastDto } from './dto/update-podcast.dto';
-import { JwtAuthGuard } from '../auth/guard/jwt-auth.guard';
+import { JwtAuthGuard } from 'src/auth/guard/jwt-auth.guard';
 
 @Controller('podcast')
 export class PodcastController { 
