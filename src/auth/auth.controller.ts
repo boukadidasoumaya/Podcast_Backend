@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Body,
   Controller,
+  Get,
   Post,
   UseGuards,
 } from '@nestjs/common';
@@ -24,6 +25,7 @@ import { CurrentUser } from '../shared/Decorators/user.decorator';
 import { User } from '../user/entities/user.entity';
 import { CreateSuperAdminDto } from '../user/dto/create-superadmin.dto';
 import { SuperAdmin } from '../user/entities/superAdmin.entity';
+import { InterestsEnum } from 'src/shared/Enums/interests.enum';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -143,4 +145,14 @@ export class AuthController {
       );
     }
   }
+
+  @Get('interests')
+  @ApiOkResponse({
+    description: 'Liste des intérêts récupérée avec succès',
+    type: [String],
+  })
+  getInterests(): string[] {
+    return Object.values(InterestsEnum);
+  }
+
 }

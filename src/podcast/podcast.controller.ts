@@ -19,6 +19,7 @@ import { JwtAuthGuard } from '../auth/guard/jwt-auth.guard';
 export class PodcastController { 
   constructor(private readonly podcastService: PodcastService) {}
 
+  //@UseGuards(JwtAuthGuard)
   @Post()
 
   create(@Body() createPodcastDto: CreatePodcastDto) {
