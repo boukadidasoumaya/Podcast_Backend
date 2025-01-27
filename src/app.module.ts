@@ -12,12 +12,13 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
 import { EmailModule } from './email/email.module';
 import { PaymentModule } from './payment/payment.module';
 import { CommentModule } from './comment/comment.module';
-import { LikeModule } from './like/like.module';
 import { EpisodeModule } from './episode/episode.module';
 import { PodcastModule } from './podcast/podcast.module';
 import { BookmarkModule } from './bookmark/bookmark.module';
 import { EventsModule } from './test/events.module';
 import { SubscribeModule } from './subscribe/subscribe.module';
+import { LikeEpisodeModule } from './like-episode/like-episode.module';
+import { LikeCommentModule } from './like-comment/like-comment.module';
 @Module({
   imports: [
     EventEmitterModule.forRoot(),
@@ -28,8 +29,8 @@ import { SubscribeModule } from './subscribe/subscribe.module';
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
-      entities: ['dist/**/*.entity{.ts,.js}'],
       autoLoadEntities: true,
+      entities: ['dist/**/*.entity{.ts,.js}'],
       synchronize: false,
     }),
     AuthModule,
@@ -38,12 +39,15 @@ import { SubscribeModule } from './subscribe/subscribe.module';
     TypedEventEmitterModule,
     PaymentModule,
     CommentModule,
-    LikeModule,
+    LikeCommentModule,
+    LikeEpisodeModule,
     EpisodeModule,
     PodcastModule,
     BookmarkModule,
     EventsModule,
-    SubscribeModule
+    SubscribeModule,
+    LikeEpisodeModule,
+    LikeCommentModule
   ],
   controllers: [AppController],
   providers: [AppService],

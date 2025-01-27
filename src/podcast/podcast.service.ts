@@ -1,6 +1,6 @@
 /* eslint-disable prettier/prettier */
 
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreatePodcastDto } from './dto/create-podcast.dto';
@@ -10,6 +10,7 @@ import { User } from 'src/user/entities/user.entity';
 import { EmailService } from 'src/email/email.service';
 import { UserService } from 'src/user/user.service';
 import { SubscribeService } from 'src/subscribe/subscribe.service';
+import { Episode } from 'src/episode/entities/episode.entity';
 
 @Injectable()
 export class PodcastService {
@@ -18,35 +19,78 @@ export class PodcastService {
     private readonly podcastRepository: Repository<Podcast>,
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+    @InjectRepository(Episode)
+    private episodeRepository: Repository<Episode>,
     private readonly mailService: EmailService,
     private readonly UserService:UserService,
     private readonly subscribeAllService : SubscribeService
   ) {}
 
-  async create(createPodcastDto: CreatePodcastDto): Promise<Podcast> {
-    const newPodcast = this.podcastRepository.create(createPodcastDto);
-    const {name} = createPodcastDto;
+
+ 
+  async createPodcast(userId: number, podcastData: any, episodesData: any[]): Promise<Podcast> {
+    // Step 1: Validate user existence
+    if (isNaN(userId)) {
+      throw new BadRequestException('Invalid userId.');
+    }
+    const user = await this.userRepository.findOne({ where: { id: userId } });
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+  
+    // Step 2: Create the podcast with validated attributes
+    const podcast = this.podcastRepository.create({
+      name: podcastData.name,
+      description: podcastData.description,
+      image: podcastData.image || '',
+      duration: podcastData.duration,
+      user,
+      views: 0,
+      rating: 0,
+      download_Count: 0,
+      nbre_episode: episodesData.length,
+    });
+  
+    // Step 3: Validate and create episodes
+    const episodes = episodesData.map((episodeData, index) =>
+      this.episodeRepository.create({
+        title: episodeData.title,
+        number: episodeData.number ?? index + 1, // Assign number if not provided
+        description: episodeData.description,
+        duration: episodeData.duration,
+        coverImage: episodeData.coverImage || '',
+        views: 0,
+        podcast,
+      }),
+    );
+    podcast.episodes = await this.episodeRepository.save(episodes);
+  
+    // Step 4: Fetch subscribers
     const subscribers = await this.subscribeAllService.findAll();
     if (!subscribers.length) {
       throw new Error('No subscribers found in the SubscribeAll table.');
     }
+  
+    // Step 5: Notify subscribers
     for (const subscriber of subscribers) {
       const { email } = subscriber;
       try {
         await this.mailService.sendSubscribeAllEmail({
-          name: name,
-          email: email
+          name: podcastData.name, // Refers to the podcast name
+          email: email,
         });
         console.log(`Email successfully sent to: ${email}`);
       } catch (error) {
         console.error(`Failed to send email to: ${email}`, error);
       }
     }
-
-
-    return await this.podcastRepository.save(newPodcast);
+  
+    // Step 6: Save and return the new podcast
+    return await this.podcastRepository.save(podcast);
   }
-
+  
+  
+  
   async findAll(): Promise<Podcast[]> {
     return await this.podcastRepository.find();
   }

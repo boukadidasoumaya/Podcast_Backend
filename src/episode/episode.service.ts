@@ -20,7 +20,16 @@ export class EpisodeService {
 
   // Get all episodes
   async findAll(): Promise<Episode[]> {
-    return this.episodeRepository.find();
+    const episodes = await this.episodeRepository.find({
+      relations: ['podcast', 'likes', 'comments', 'podcast.user'], // Charge les relations nécessaires
+    });
+
+    // Ajoute le nombre de likes et de commentaires à chaque épisode
+    return episodes.map((episode) => ({
+      ...episode,
+      numberOfLikes: episode.likes?.length || 0, // Compte le nombre de likes
+      numberOfComments: episode.comments?.length || 0, // Compte le nombre de commentaires
+    }));
   }
 
   // Get a single episode by ID
@@ -29,7 +38,10 @@ export class EpisodeService {
   }
 
   // Update an existing episode
-  async update(id: number, updateEpisodeDto: UpdateEpisodeDto): Promise<Episode> {
+  async update(
+    id: number,
+    updateEpisodeDto: UpdateEpisodeDto,
+  ): Promise<Episode> {
     const episode = await this.episodeRepository.findOne({ where: { id } });
     if (!episode) {
       throw new Error('Episode not found');
@@ -48,7 +60,7 @@ export class EpisodeService {
       throw new Error('Episode not found');
     }
 
-    await this.episodeRepository.softDelete(id);  // Soft delete
+    await this.episodeRepository.softDelete(id); // Soft delete
   }
 
   // Increment views for an episode

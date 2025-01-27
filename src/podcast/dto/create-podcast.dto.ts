@@ -1,6 +1,8 @@
 /* eslint-disable prettier/prettier */
-import { IsString, IsOptional, IsUrl, IsNumber } from 'class-validator';
+import { IsString, IsOptional, IsUrl, IsNumber, IsNotEmpty } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
+import { User } from '../../user/entities/user.entity';
 
 export class CreatePodcastDto {
   @ApiProperty({
@@ -38,4 +40,12 @@ export class CreatePodcastDto {
   @IsUrl()
   @IsOptional()
   image?: string;
+  @ApiProperty({
+  description: 'Owner of the podcast',
+  example: 1,
+  })
+  @IsNotEmpty()
+  @Type(() => User)
+  user: User;
+
 }
