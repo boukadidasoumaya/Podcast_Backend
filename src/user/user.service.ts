@@ -175,16 +175,16 @@ export class UserService extends CrudService<User> {
   }
 
   async getOwnerDetails(): Promise<{ firstName: string; photo: string; interests: string[] }[] | null> {
-    const owner = await this.userRepository.findOne({
+    const owners = await this.userRepository.find({
       where: { isOwner: true },
       select: ['firstName', 'photo', 'interests'],
     });
   
-    return owner ? [{
+    return owners.length > 0 ? owners.map(owner => ({
       firstName: owner.firstName,
       photo: owner.photo,
-      interests: owner.interests
-    }] : null;
+      interests: owner.interests,
+    })) : null;
   }
   
   

@@ -33,19 +33,19 @@ export class CreatePodcastDto {
   @IsNumber()
   nbre_episode: number;
 
-  @ApiPropertyOptional({
-    description: 'URL of the podcast image',
-    example: 'https://example.com/podcast-image.jpg',
-  })
-  @IsUrl()
-  @IsOptional()
-  image?: string;
-  @ApiProperty({
-  description: 'Owner of the podcast',
-  example: 1,
-  })
-  @IsNotEmpty()
-  @Type(() => User)
-  user: User;
+  // @ApiPropertyOptional({
+  //   description: 'URL of the podcast image',
+  //   example: 'https://example.com/podcast-image.jpg',
+  // })
+  // @IsUrl()
+  // @IsOptional()
+  // image?: string;
+  // @ApiProperty({
+  // description: 'Owner of the podcast',
+  // example: 1,
+  // })
+  // @IsNotEmpty()
+  // @Type(() => User)
+  // user: User;
 
 }

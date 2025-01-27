@@ -16,6 +16,8 @@ import { CreatePodcastDto } from './dto/create-podcast.dto';
 import { UpdatePodcastDto } from './dto/update-podcast.dto';
 import { JwtAuthGuard } from 'src/auth/guard/jwt-auth.guard';
 import { Podcast } from './entities/podcast.entity';
+import { CurrentUser } from 'src/shared/Decorators/user.decorator';
+import { User } from 'src/user/entities/user.entity';
 
 @Controller('podcast')
 export class PodcastController { 
@@ -24,30 +26,12 @@ export class PodcastController {
   @UseGuards(JwtAuthGuard)
   @Post()
   async createPodcast(
-    @Req() req,
-   @Body() body: { podcastData: any; episodesData: any[] },
- ) {
-   const userId = req.user?.id;
-   // Validate userId
-   if (!userId || isNaN(Number(userId))) {
-     throw new BadRequestException('Invalid or missing userId.');
-   }
-   const numericUserId = Number(userId);
- 
-   // Validate request body
-   if (!body.podcastData || !body.episodesData) {
-     throw new BadRequestException('Missing podcastData or episodesData.');
-   }
-   if (!Array.isArray(body.episodesData)) {
-     throw new BadRequestException('Invalid episodesData: must be an array.');
-   }
- 
-   return await this.podcastService.createPodcast(
-     numericUserId,
-     body.podcastData,
-     body.episodesData,
-   );
- }
+    @Body() createPodcastDto: CreatePodcastDto,
+    @CurrentUser() currentUser: User 
+  ): Promise<Podcast> {
+    return this.podcastService.createPodcast(currentUser, createPodcastDto);
+  }
+  
  
 
   @Get()

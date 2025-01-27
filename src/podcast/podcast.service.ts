@@ -1,3 +1,4 @@
+
 /* eslint-disable prettier/prettier */
 
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
@@ -28,48 +29,11 @@ export class PodcastService {
 
 
  
-  async createPodcast(userId: number, podcastData: any, episodesData: any[]): Promise<Podcast> {
-    // Step 1: Validate user existence
-    if (isNaN(userId)) {
-      throw new BadRequestException('Invalid userId.');
-    }
-    const user = await this.userRepository.findOne({ where: { id: userId } });
-    if (!user) {
-      throw new NotFoundException('User not found');
-    }
-
-    if (!user.isOwner) {
-      user.isOwner = true;
-      await this.userRepository.save(user);
-    }
-  
-    // Step 2: Create the podcast with validated attributes
+  async createPodcast(currentUser: User , createPodcastDto :CreatePodcastDto ): Promise<Podcast> {
     const podcast = this.podcastRepository.create({
-      name: podcastData.name,
-      description: podcastData.description,
-      image: podcastData.image || '',
-      duration: podcastData.duration,
-      user,
-      views: 0,
-      rating: 0,
-      download_Count: 0,
-      nbre_episode: episodesData.length,
-    });
-  
-    // Step 3: Validate and create episodes
-    const episodes = episodesData.map((episodeData, index) =>
-      this.episodeRepository.create({
-        title: episodeData.title,
-        number: episodeData.number ?? index + 1, // Assign number if not provided
-        description: episodeData.description,
-        duration: episodeData.duration,
-        coverImage: episodeData.coverImage || '',
-        views: 0,
-        podcast,
-      }),
-    );
-    podcast.episodes = await this.episodeRepository.save(episodes);
-  
+      ...createPodcastDto,
+      user: currentUser,
+    });    
     // Step 4: Fetch subscribers
     const subscribers = await this.subscribeAllService.findAll();
   
@@ -79,7 +43,7 @@ export class PodcastService {
       const { email } = subscriber;
       try {
         await this.mailService.sendSubscribeAllEmail({
-          name: podcastData.name, 
+          name: createPodcastDto.name, 
           email: email,
         });
         console.log(`Email successfully sent to: ${email}`);
@@ -87,7 +51,11 @@ export class PodcastService {
         console.error(`Failed to send email to: ${email}`, error);
       }
     }}
-  
+
+      if (!currentUser.isOwner) {
+      currentUser.isOwner = true;
+      await this.userRepository.save(currentUser); 
+    }
     // Step 6: Save and return the new podcast
     return await this.podcastRepository.save(podcast);
   }

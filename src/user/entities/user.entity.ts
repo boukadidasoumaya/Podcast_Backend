@@ -75,7 +75,8 @@ export class User extends TimestampEntity {
   })
   role: string;
   @Column({
-    type: 'simple-json',
+    type: 'json',
+    nullable:true,
   })
   interests: InterestsEnum[];
   @Column({
