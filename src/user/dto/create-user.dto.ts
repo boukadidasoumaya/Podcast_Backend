@@ -1,5 +1,6 @@
-import { IsArray, IsEmail, IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsArray, IsEmail, IsEnum, IsNotEmpty, IsOptional, IsString ,IsDateString} from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { UserRoleEnum } from 'src/shared/Enums/user-role.enum';
 import { InterestsEnum } from 'src/shared/Enums/interests.enum';
 
 export class CreateUserDto {
@@ -20,23 +21,26 @@ export class CreateUserDto {
   @IsNotEmpty()
   @ApiProperty({ example: 'Foulen' })
   lastName: string;
-  @IsNotEmpty()
-  @ApiProperty({ example: 25033950 })
-  phone: number;
+  
   @ApiProperty({example:"Content Creator"})
   @IsOptional()
   @IsString()
   profession?: string;
 
-  @ApiProperty({example:"https://www.facebook.com/samychaffaiofficiel"})
+  /*@ApiProperty({example:"https://www.facebook.com/samychaffaiofficiel"})
   @IsOptional()
   @IsString()
   facebookLink?: string;
-
   @ApiProperty({example:"https://www.linkedin.com/in/samy-chaffa%C3%AF/"})
   @IsOptional()
   @IsString()
   linkedinLink?: string;
+*/
+
+  @IsOptional()
+  @ApiProperty({ example: '+21625033950' })
+  @IsString()
+  whatsappUser?: string;
 
   @ApiProperty({example:"https://www.instagram.com/samy.chaffai/"})
   @IsOptional()
@@ -45,8 +49,17 @@ export class CreateUserDto {
 
   @IsNotEmpty()
   @ApiProperty({ example: 12345678 })
-
   password: string;
+
+  @IsOptional()
+  @ApiProperty({ example: 'Tunisia' })
+  @IsString()
+  country?: string;
+
+  @IsOptional()
+  @ApiProperty({ example: '2000-01-01' })
+  @IsDateString()
+  birthday?: string;
 
   @IsOptional()
   @ApiProperty({
@@ -55,7 +68,13 @@ export class CreateUserDto {
     description: 'Photo of the user',
     required: false,
   })
-  photo: string;
+  photo?: string;
+
+  @IsNotEmpty()
+  @IsEnum(UserRoleEnum)
+  @ApiProperty({ example: UserRoleEnum.USER, enum: UserRoleEnum })
+  role: UserRoleEnum;
+
 
   @IsNotEmpty()
   @IsArray()

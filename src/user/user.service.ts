@@ -10,6 +10,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { IsNull, Not, Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { ChangePasswordDto } from './dto/change-password.dto';
+import { ChangeEmailDto } from './dto/change-email.dto';
 import { UserRoleEnum } from '../shared/Enums/user-role.enum';
 import { PaymentService } from '../payment/payment.service';
 import { CreatePaymentDto } from '../payment/dto/create-payment.dto';
@@ -43,8 +44,6 @@ export class UserService extends CrudService<User> {
     }
     throw new UnauthorizedException('Non autorisé');
   }
-
-
 
   async findOneByEmail(email: string) {
     return await this.userRepository.findOneBy({ email });
@@ -100,6 +99,26 @@ export class UserService extends CrudService<User> {
     };
   }
 
+  async changeEmail(user: User, changeEmailDto: ChangeEmailDto) {
+    const { oldEmail, newEmail } = changeEmailDto;
+    const userData = await this.userRepository.findOneBy({ id: user.id });
+    if (userData.email !== oldEmail) {
+      throw new NotFoundException('Email ancien invalide');
+    }
+    const salt = await bcrypt.genSalt();
+    user.email = newEmail;
+    user.salt = salt;
+    await this.userRepository.save(user);
+    return {
+      id: user.id,
+      email: user.email,
+      firstnName: user.firstName,
+      lastName: user.lastName,
+      role: user.role,
+    };
+  }
+
+
   async softRemove(id: number, currentUser: User) {
     if (currentUser.role == UserRoleEnum.SUPER_ADMIN) {
       return await this.userRepository.softDelete(id);
@@ -148,7 +167,7 @@ export class UserService extends CrudService<User> {
   ): Promise<{ message: string; premiumUntil: Date }> {
     const user = await this.userRepository.findOne({
       where: { id: userId },
-      relations: ['payments'], // Charger les paiements existants
+      relations: ['payments'],
     });
 
     if (!user) {
@@ -169,14 +188,14 @@ export class UserService extends CrudService<User> {
   async getuserswithpods(): Promise<User[]> {
     const users = await this.userRepository.find({
       relations: ['subscriptions'],
-    })
-    return users 
-
+    });
+    return users;
   }
 
   async getOwnerDetails(): Promise<{ firstName: string; photo: string; interests: string[] }[] | null> {
     const owners = await this.userRepository.find({
       where: { isOwner: true },
+      select: ['firstName', 'photo', 'interests'],
       select: ['firstName', 'photo', 'interests'],
     });
   
