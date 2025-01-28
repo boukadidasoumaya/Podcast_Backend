@@ -15,6 +15,7 @@ import { Podcast } from '../podcast/entities/podcast.entity';
 import { Episode } from '../episode/entities/episode.entity';
 import { EpisodeService } from '../episode/episode.service';
 import { PodcastService } from '../podcast/podcast.service';
+import { LikeComment } from '../like-comment/entities/like-comment.entity';
 
 @Injectable()
 export class CommentService {
@@ -27,6 +28,8 @@ export class CommentService {
     private podcastService: PodcastService,
     @InjectRepository(User)
     private userService: UserService,
+    @InjectRepository(LikeComment)
+    private likeCommentRepository: Repository<LikeComment>,
   ) {}
   clientToUser: any = {};
 
@@ -86,29 +89,38 @@ export class CommentService {
 
     console.log(`Podcast ID: ${podcast.id}, Episode ID: ${episode.id}`);
 
+    // Récupération des commentaires avec les relations nécessaires
     const comments = await this.commentRepository.find({
       where: {
         podcast: { id: podcast.id },
         episode: { id: episode.id }, // Condition pour filtrer par épisode
       },
-      relations: ['parent', 'user', 'podcast', 'episode'],
+      relations: ['parent', 'user', 'podcast', 'episode', 'likesComment'],
     });
 
-    const commentsWithUserDetails = comments.map((comment) => {
-      return {
-        ...comment,
-        podcast,
-        episode,
-        user: {
-          photo: comment.user.photo,
-          username: comment.user.username,
-          role: comment.user.role,
-          id: comment.user.id,
-        },
-      };
-    });
+    // Pour chaque commentaire, nous allons compter le nombre de likes
+    const commentsWithLikes = await Promise.all(
+      comments.map(async (comment) => {
+        const likesCount = await this.likeCommentRepository.count({
+          where: { comment: { id: comment.id } }, // Comptage des likes associés à ce commentaire
+        });
 
-    return this.organizeMessages(commentsWithUserDetails);
+        return {
+          ...comment,
+          likesCount,
+          podcast,
+          episode,
+          user: {
+            photo: comment.user.photo,
+            username: comment.user.username,
+            role: comment.user.role,
+            id: comment.user.id,
+          },
+        };
+      }),
+    );
+
+    return this.organizeMessages(commentsWithLikes);
   }
 
   async findOne(id: number) {
@@ -117,6 +129,11 @@ export class CommentService {
       relations: ['user'],
     });
     return comment;
+  }
+  async findAll(): Promise<Comment[]> {
+    return this.commentRepository.find({
+      relations: ['user'],
+    });
   }
 
   async findOneByUser(commentId: number, userId: number) {

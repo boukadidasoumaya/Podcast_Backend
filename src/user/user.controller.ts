@@ -46,19 +46,30 @@ export class UserController {
     return await this.userService.findAllUsers(user);
   }
 
-  
   @Get('withpods')
-  getuserswithpods(){
+  getuserswithpods() {
     return this.userService.getuserswithpods();
+  }
+  @Get('current-user')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('JWT-auth')
+  @ApiOkResponse({
+    type: [User],
+    description: 'Utilisateur trouvé avec succès',
+  })
+  async currentUser(@CurrentUser() user) {
+    console.log(user);
+    return await user;
   }
 
   @Get(':id')
-  // @UseGuards(JwtAuthGuard)
-  async findOne(
-    @Param('id', ParseIntPipe) id: number,
-  ) {
-    return await this.userService.findOne(id);
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('JWT-auth')
+
+  async findOne(@CurrentUser() user, @Param('id', ParseIntPipe) id: number) {
+    return await this.userService.findOne(user.id);
   }
+
 
   // @Patch(':id')
   // @UseGuards(JwtAuthGuard)
@@ -154,6 +165,4 @@ export class UserController {
   ) {
     return await this.userService.restoreUserByEmail(email, user);
   }
-
-
 }
