@@ -11,6 +11,7 @@ import {
 } from 'typeorm';
 import { TimestampEntity } from '../../shared/entities/timestamps.entity';
 import { Exclude, Transform } from 'class-transformer';
+import { Exclude, Transform } from 'class-transformer';
 import { UserRoleEnum } from '../../shared/Enums/user-role.enum';
 import { ApiProperty } from '@nestjs/swagger';
 import { Payment } from '../../payment/entities/payment.entity';
@@ -52,21 +53,25 @@ export class User extends TimestampEntity {
   instagramLink: string;
 
   @Column({ nullable: true })
-  whatsappUser: string; 
+  whatsappUser: string;
 
   @Column({ nullable: true })
   birthday: Date;
 
   @Column({ nullable: true })
-  country: string; 
+  country: string;
 
   @Exclude()
+  @Transform(() => undefined)
+
   @Transform(() => undefined)
 
   @Column()
   password: string;
 
   @Exclude()
+  @Transform(() => undefined)
+
   @Transform(() => undefined)
 
   @Column()
@@ -80,6 +85,8 @@ export class User extends TimestampEntity {
     enum: UserRoleEnum,
   })
   role: string;
+  @Exclude()
+  @Transform(() => undefined)
   @Column({
     type: 'json',
     nullable:true,
@@ -93,6 +100,8 @@ export class User extends TimestampEntity {
   @Transform(() => undefined)
   @Column({ nullable: true })
   resetCode: string;
+  @Exclude()
+  @Transform(() => undefined)
   @Exclude()
   @Transform(() => undefined)
   @Column({ type: 'timestamp', nullable: true })
@@ -109,11 +118,16 @@ export class User extends TimestampEntity {
 
   @OneToMany(() => LikeComment, (like) => like.user, { nullable: true })
   likesComment: LikeComment[];
+  @OneToMany(() => LikeEpisode, (like) => like.user, { nullable: true })
+  likesEpisode: LikeEpisode[];
 
-  @OneToMany(() => Bookmark, (bookmark) => bookmark.user)
+  @OneToMany(() => LikeComment, (like) => like.user, { nullable: true })
+  likesComment: LikeComment[];
+
+  @OneToMany(() => Bookmark, (bookmark) => bookmark.user,{ nullable: true })
   bookmarks: Bookmark[];
 
-  @ManyToMany(() => Podcast, (podcast) => podcast.subscribers)
+  @ManyToMany(() => Podcast, (podcast) => podcast.subscribers,{ nullable: true })
   @JoinTable()
   subscriptions: Podcast[];
 

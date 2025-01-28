@@ -45,6 +45,9 @@ export class UserService extends CrudService<User> {
     throw new UnauthorizedException('Non autorisé');
   }
 
+  async findOne(id: number) {
+    return await this.userRepository.findOne({ where: { id } });
+  }
   async findOneByEmail(email: string) {
     return await this.userRepository.findOneBy({ email });
   }

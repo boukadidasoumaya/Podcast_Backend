@@ -1,6 +1,9 @@
 /* eslint-disable prettier/prettier */
 import { IsString, IsOptional, IsUrl, IsNumber, IsNotEmpty } from 'class-validator';
+import { IsString, IsOptional, IsUrl, IsNumber, IsNotEmpty } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
+import { User } from '../../user/entities/user.entity';
 import { Type } from 'class-transformer';
 import { User } from '../../user/entities/user.entity';
 
