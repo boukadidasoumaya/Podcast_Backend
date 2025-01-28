@@ -183,18 +183,23 @@ export class CommentService {
 
   async softDelete(id: number, user: User) {
     const commentToRemove = await this.findOne(id);
+
+    // Check if comment exists
     if (!commentToRemove) {
       throw new NotFoundException(`Commentaire avec l'ID ${id} non trouvé`);
     }
 
-    if (commentToRemove.user.id === user.id) {
-      return await this.commentRepository.softDelete(id);
-    } else {
+    // Check if the logged-in user is the owner of the comment
+    if (commentToRemove.user.id !== user.id) {
       throw new UnauthorizedException(
         "Vous n'êtes pas autorisé à supprimer ce commentaire",
       );
     }
+
+    // Proceed with the soft delete if the user is the owner
+    return await this.commentRepository.softDelete(id);
   }
+
 
   async restore(id: number, user: User) {
     const [comment] = await this.commentRepository.query(
