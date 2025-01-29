@@ -9,6 +9,7 @@ import {
   Delete,
   Req,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import { PodcastService } from './podcast.service';
 import { CreatePodcastDto } from './dto/create-podcast.dto';
@@ -18,8 +19,8 @@ import { ApiBearerAuth, ApiOkResponse } from '@nestjs/swagger';
 import { User } from 'src/user/entities/user.entity';
 
 @Controller('podcast')
-export class PodcastController { 
-  constructor(private readonly podcastService: PodcastService) {}
+export class PodcastController {
+  constructor(private readonly podcastService: PodcastService) { }
 
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth('JWT-auth')
@@ -29,18 +30,23 @@ export class PodcastController {
   }
 
   @Get()
+  filterpodcasts(@Query() filtres) {
+    return this.podcastService.filterpodcasts(filtres)
+
+  }
+
+  @Get()
   findAll() {
     return this.podcastService.findAll();
   }
 
-  
   @Get('withusers')
-  getpodswithusers(){
+  getpodswithusers() {
     return this.podcastService.getpodswithusers();
   }
 
   @Get('withepisodes')
-  getpodswithepisodes(){
+  getpodswithepisodes() {
     return this.podcastService.getpodswithepisodes();
   }
 
@@ -67,20 +73,18 @@ export class PodcastController {
   @Post(':p_id/subscribe')
   subscribe(@Param('p_id') p_id: string, @Req() req) {
     const u_id = req.user.id;
-    return this.podcastService.subscribe(+u_id,+p_id);
+    return this.podcastService.subscribe(+u_id, +p_id);
   }
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth('JWT-auth')
   @Post(':p_id/unsubscribe')
   unsubscribe(@Param('p_id') p_id: string, @Req() req) {
     const u_id = req.user.id;
-    return this.podcastService.unsubscribe(+u_id,+p_id);
+    return this.podcastService.unsubscribe(+u_id, +p_id);
   }
 
   @Get(':id/podcasts')
   getpodsbyuser(@Param('id') id: string) {
     return this.podcastService.getpodsparuser(+id);
   }
-
-
 }
