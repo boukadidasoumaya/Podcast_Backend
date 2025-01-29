@@ -34,10 +34,6 @@ export class CommentService {
   clientToUser: any = {};
 
   async create(createCommentDto: CreateCommentDto) {
-    console.log(typeof createCommentDto.user);
-    console.log(typeof createCommentDto.podcast);
-    console.log(typeof createCommentDto.episode);
-
     const newComment = this.commentRepository.create({ ...createCommentDto });
     await this.commentRepository.save(newComment);
 
@@ -50,12 +46,9 @@ export class CommentService {
     if (!comment) {
       throw new NotFoundException(`Commentaire non trouvé après la création.`);
     }
-
-    // Comptage des likes associés à ce commentaire
     const likesCount = await this.likeCommentRepository.count({
       where: { comment: { id: comment.id } },
     });
-
     // Retourner le commentaire formaté comme dans organizeMessages
     return {
       ...comment,
@@ -118,7 +111,7 @@ export class CommentService {
         podcast: { id: podcast.id },
         episode: { id: episode.id }, // Condition pour filtrer par épisode
       },
-      relations: ['parent', 'user', 'podcast', 'episode', 'likesComment'],
+      relations: ['parent', 'user', 'podcast', 'episode', 'likesComment.user'],
     });
 
     // Pour chaque commentaire, nous allons compter le nombre de likes
@@ -222,7 +215,6 @@ export class CommentService {
     // Proceed with the soft delete if the user is the owner
     return await this.commentRepository.softDelete(id);
   }
-
 
   async restore(id: number, user: User) {
     const [comment] = await this.commentRepository.query(

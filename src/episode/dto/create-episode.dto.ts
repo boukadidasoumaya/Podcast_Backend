@@ -21,20 +21,12 @@ export class CreateEpisodeDto {
   number: number; // Episode number (this matches the 'number' column in the entity)
 
   @ApiProperty({
-    description: 'Indicates if the episode is premium content',
-    example: true,
-  })
-  @IsBoolean()
-  @IsNotEmpty()
-  premium: boolean; // This property is not in the entity but you can keep it for logic purposes
-
-  @ApiProperty({
     description: 'Duration of the episode in seconds',
     example: 3600,
   })
   @IsNumber()
   @IsNotEmpty()
-  duration: number; // Duration in seconds (this matches the 'duration' column in the entity)
+  duration: number;
 
   @ApiProperty({
     description: 'Filepath to the episode file',
@@ -44,11 +36,6 @@ export class CreateEpisodeDto {
   @IsNotEmpty()
   coverImage: string; // Filepath to the episode file (this matches the 'filepath' column in the entity)
 
-  @ApiProperty({
-    description: 'Podcast ID the episode belongs to',
-    example: 1,
-  })
- 
 
   @ApiProperty({
     description: 'Podcast',
