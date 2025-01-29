@@ -1,5 +1,7 @@
 import { IsString, IsBoolean, IsNumber, IsNotEmpty } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
+import { Podcast } from '../../podcast/entities/podcast.entity';
 
 export class CreateEpisodeDto {
   @ApiProperty({
@@ -8,7 +10,15 @@ export class CreateEpisodeDto {
   })
   @IsString()
   @IsNotEmpty()
-  name: string; // Name of the episode
+  title: string;
+
+  @ApiProperty({
+    description: 'Description of the episode',
+    example: 'Lorem Ipsum',
+  })
+  @IsString()
+  @IsNotEmpty()
+  description: string; // Name of the episode
 
   @ApiProperty({
     description: 'Episode number in the series',
@@ -16,15 +26,7 @@ export class CreateEpisodeDto {
   })
   @IsNumber()
   @IsNotEmpty()
-  number: number; // Episode number
-
-  @ApiProperty({
-    description: 'Indicates if the episode is premium content',
-    example: true,
-  })
-  @IsBoolean()
-  @IsNotEmpty()
-  premium: boolean; // Whether the episode is premium
+  number: number;
 
   @ApiProperty({
     description: 'Duration of the episode in seconds',
@@ -40,5 +42,15 @@ export class CreateEpisodeDto {
   })
   @IsString()
   @IsNotEmpty()
-  filepath: string; // Filepath to the episode file
+  coverImage: string; // Filepath to the episode file
+
+
+  @ApiProperty({
+    description: 'Podcast',
+    example: 1,
+  })
+  @IsNotEmpty()
+  @Type(() => Podcast)
+  podcast: Podcast;
+
 }

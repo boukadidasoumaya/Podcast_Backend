@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToMany } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany, ManyToMany, ManyToOne } from 'typeorm';
 import { TimestampEntities } from '../../Generics/timestamp.entities';
 import { Comment } from '../../comment/entities/comment.entity';
 import { User } from 'src/user/entities/user.entity';
@@ -39,8 +39,10 @@ export class Podcast extends TimestampEntities{
     @ManyToMany(() => User, (user) => user.subscriptions)
     subscribers: User[];
 
-    @OneToMany(()=>Episode, (episode)=>episode.podcast)
+    @OneToMany(() => Episode, (episode) => episode.podcast, { cascade: true })
     episodes: Episode[];
 
+    @ManyToOne(()=>User,(user)=>user.podcasts,{cascade:true})
+    user: User;
 
-  }
+}
