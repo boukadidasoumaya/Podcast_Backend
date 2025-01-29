@@ -7,9 +7,10 @@ import { Podcast } from './entities/podcast.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Episode } from 'src/episode/entities/episode.entity';
 import { User } from 'src/user/entities/user.entity';
+import { Topic } from 'src/topics/entities/topic.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Podcast,Episode,User])],
+  imports: [TypeOrmModule.forFeature([Podcast,Topic,Episode,User])],
   controllers: [PodcastController],
   providers: [PodcastService],
   exports: [PodcastService],

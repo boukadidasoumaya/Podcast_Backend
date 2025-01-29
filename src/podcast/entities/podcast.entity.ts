@@ -42,10 +42,8 @@ export class Podcast extends TimestampEntities{
 
     @OneToMany(() => Episode, (episode) => episode.podcast, { cascade: true })
     episodes: Episode[];
-    @OneToMany(() => Topic, (Topic) => Topic.podcasts)
+    @ManyToOne(() => Topic, (Topic) => Topic.Podcasts)
     Topic: Topic;
 
-    @ManyToOne(()=>User,(user)=>user.podcasts,{cascade:true})
-    user: User;
-
+    
 }
