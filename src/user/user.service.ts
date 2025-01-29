@@ -199,7 +199,6 @@ export class UserService extends CrudService<User> {
     const owners = await this.userRepository.find({
       where: { isOwner: true },
       select: ['firstName', 'photo', 'interests'],
-      select: ['firstName', 'photo', 'interests'],
     });
   
     return owners.length > 0 ? owners.map(owner => ({

@@ -19,7 +19,7 @@ export class Episode extends TimestampEntity {
   @PrimaryGeneratedColumn()
   id: number;
   @Column()
-  title: string;
+  name: string;
 
   @Column({ type: 'int' })
   number: number;
@@ -31,6 +31,8 @@ export class Episode extends TimestampEntity {
 
   @Column({ type: 'varchar', length: 255 })
   coverImage: string;
+  @Column({ type: 'varchar', length: 255 })
+  filepath: string;
 
   @Column({ type: 'int', default: 0 })
   views: number;

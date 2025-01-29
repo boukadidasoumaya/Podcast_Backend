@@ -10,7 +10,7 @@ export class CreateEpisodeDto {
   })
   @IsString()
   @IsNotEmpty()
-  title: string;
+  name: string;
 
   @ApiProperty({
     description: 'Description of the episode',
@@ -43,6 +43,14 @@ export class CreateEpisodeDto {
   @IsString()
   @IsNotEmpty()
   coverImage: string; // Filepath to the episode file
+
+  @ApiProperty({
+    description: 'Filepath to the episode audio file',
+    example: '/uploads/episodes/introduction-to-ai.mp3',
+  })
+  @IsString()
+  @IsNotEmpty()
+  filepath: string; 
 
 
   @ApiProperty({

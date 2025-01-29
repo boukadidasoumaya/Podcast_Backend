@@ -11,7 +11,6 @@ import {
 } from 'typeorm';
 import { TimestampEntity } from '../../shared/entities/timestamps.entity';
 import { Exclude, Transform } from 'class-transformer';
-import { Exclude, Transform } from 'class-transformer';
 import { UserRoleEnum } from '../../shared/Enums/user-role.enum';
 import { ApiProperty } from '@nestjs/swagger';
 import { Payment } from '../../payment/entities/payment.entity';
@@ -113,11 +112,6 @@ export class User extends TimestampEntity {
   @OneToMany(() => Comment, (comment) => comment.user, { nullable: true })
   comments: Comment[];
 
-  @OneToMany(() => LikeEpisode, (like) => like.user, { nullable: true })
-  likesEpisode: LikeEpisode[];
-
-  @OneToMany(() => LikeComment, (like) => like.user, { nullable: true })
-  likesComment: LikeComment[];
   @OneToMany(() => LikeEpisode, (like) => like.user, { nullable: true })
   likesEpisode: LikeEpisode[];
 

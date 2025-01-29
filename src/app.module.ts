@@ -31,7 +31,7 @@ import { LikeCommentModule } from './like-comment/like-comment.module';
       database: process.env.DB_NAME,
       autoLoadEntities: true,
       entities: ['dist/**/*.entity{.ts,.js}'],
-      synchronize: false,
+      synchronize: true,
     }),
     AuthModule,
     UserModule,
