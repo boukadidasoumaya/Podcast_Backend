@@ -19,8 +19,8 @@
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "typeorm": "typeorm",
-  "migration:generate": "typeorm migration:generate -n CreateEpisodeTable",
-  "migration:run": "typeorm migration:run"
+    "migration:generate": "typeorm migration:generate -n CreateEpisodeTable",
+    "migration:run": "typeorm migration:run"
   },
   "dependencies": {
     "@nest-middlewares/helmet": "^10.0.0",
@@ -33,7 +33,7 @@
     "@nestjs/passport": "^10.0.3",
     "@nestjs/platform-express": "^10.4.15",
     "@nestjs/platform-socket.io": "^10.4.15",
-    "@nestjs/swagger": "^8.1.0",
+    "@nestjs/swagger": "^8.1.1",
     "@nestjs/typeorm": "^10.0.2",
     "@nestjs/websockets": "^10.4.15",
     "@types/passport-jwt": "^4.0.1",
@@ -55,6 +55,7 @@
     "rxjs": "^7.8.1",
     "socket-io": "^1.0.0",
     "socket.io": "^4.7.5",
+    "swagger-ui-express": "^5.0.1",
     "typeorm": "^0.3.20"
   },
   "devDependencies": {

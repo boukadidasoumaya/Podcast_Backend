@@ -20,6 +20,7 @@ import { OwnerModule } from './owner/owner.module';
 import { SubscribeModule } from './subscribe/subscribe.module';
 import { LikeEpisodeModule } from './like-episode/like-episode.module';
 import { LikeCommentModule } from './like-comment/like-comment.module';
+import { topicModule } from './topics/topic.module';
 @Module({
   imports: [
     EventEmitterModule.forRoot(),
@@ -49,8 +50,8 @@ import { LikeCommentModule } from './like-comment/like-comment.module';
     OwnerModule,
     SubscribeModule,
     LikeEpisodeModule,
-    LikeCommentModule
-  ],
+    LikeCommentModule,
+topicModule  ],
   controllers: [AppController],
   providers: [AppService],
 })
