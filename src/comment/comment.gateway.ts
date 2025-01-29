@@ -39,7 +39,7 @@ export class CommentGateway {
   async createComment(
     @MessageBody() createCommentDto: CreateCommentDto,
     @ConnectedSocket() socket: Socket,
-  ): Promise<CreateCommentDto> {
+  ) {
     try {
       const sender = this.commentService.clientToUser[socket.id];
       const comment = await this.commentService.create(createCommentDto);

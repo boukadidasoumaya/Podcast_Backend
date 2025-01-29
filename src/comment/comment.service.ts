@@ -37,14 +37,37 @@ export class CommentService {
     console.log(typeof createCommentDto.user);
     console.log(typeof createCommentDto.podcast);
     console.log(typeof createCommentDto.episode);
-    const newComment = this.commentRepository.create({
-      ...createCommentDto,
-    });
-    console.log(createCommentDto);
 
+    const newComment = this.commentRepository.create({ ...createCommentDto });
     await this.commentRepository.save(newComment);
 
-    return newComment;
+    // Récupération du commentaire avec les relations nécessaires
+    const comment = await this.commentRepository.findOne({
+      where: { id: newComment.id },
+      relations: ['parent', 'user', 'podcast', 'episode', 'likesComment'],
+    });
+
+    if (!comment) {
+      throw new NotFoundException(`Commentaire non trouvé après la création.`);
+    }
+
+    // Comptage des likes associés à ce commentaire
+    const likesCount = await this.likeCommentRepository.count({
+      where: { comment: { id: comment.id } },
+    });
+
+    // Retourner le commentaire formaté comme dans organizeMessages
+    return {
+      ...comment,
+      likesCount,
+      user: {
+        photo: comment.user.photo,
+        username: comment.user.username,
+        role: comment.user.role,
+        id: comment.user.id,
+      },
+      replies: [],
+    };
   }
 
   private organizeMessages(messages: any[]): any[] {
