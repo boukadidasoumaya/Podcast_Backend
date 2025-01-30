@@ -45,6 +45,9 @@ export class UserService extends CrudService<User> {
     throw new UnauthorizedException('Non autorisé');
   }
 
+  async findOne(id: number) {
+    return await this.userRepository.findOne({ where: { id } });
+  }
   async findOneByEmail(email: string) {
     return await this.userRepository.findOneBy({ email });
   }
@@ -190,22 +193,18 @@ export class UserService extends CrudService<User> {
     return users;
   }
 
-  async getOwnerDetails(): Promise<{
-    firstName: string;
-    photo: string;
-    interests: string[];
-  } | null> {
-    const owner = await this.userRepository.findOne({
+  async getOwnerDetails(): Promise<{ firstName: string; photo: string; interests: string[] }[] | null> {
+    const owners = await this.userRepository.find({
       where: { isOwner: true },
       select: ['firstName', 'photo', 'interests'],
     });
-
-    return owner
-      ? {
-          firstName: owner.firstName,
-          photo: owner.photo,
-          interests: owner.interests,
-        }
-      : null;
+  
+    return owners.length > 0 ? owners.map(owner => ({
+      firstName: owner.firstName,
+      photo: owner.photo,
+      interests: owner.interests,
+    })) : null;
   }
+  
+  
 }

@@ -1,6 +1,7 @@
+
 /* eslint-disable prettier/prettier */
 
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreatePodcastDto } from './dto/create-podcast.dto';
@@ -10,6 +11,7 @@ import { User } from 'src/user/entities/user.entity';
 import { EmailService } from 'src/email/email.service';
 import { UserService } from 'src/user/user.service';
 import { SubscribeService } from 'src/subscribe/subscribe.service';
+import { Episode } from 'src/episode/entities/episode.entity';
 
 @Injectable()
 export class PodcastService {
@@ -18,35 +20,51 @@ export class PodcastService {
     private readonly podcastRepository: Repository<Podcast>,
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+    @InjectRepository(Episode)
+    private episodeRepository: Repository<Episode>,
     private readonly mailService: EmailService,
     private readonly UserService:UserService,
     private readonly subscribeAllService : SubscribeService
   ) {}
 
-  async create(createPodcastDto: CreatePodcastDto): Promise<Podcast> {
-    const newPodcast = this.podcastRepository.create(createPodcastDto);
-    const {name} = createPodcastDto;
-    const subscribers = await this.subscribeAllService.findAll();
-    if (!subscribers.length) {
-      throw new Error('No subscribers found in the SubscribeAll table.');
+
+  async createPodcast(currentUser: User, createPodcastDto: CreatePodcastDto): Promise<number> {
+    if (!currentUser.isOwner) {
+      currentUser.isOwner = true;
+      await this.userRepository.save(currentUser);
     }
-    for (const subscriber of subscribers) {
-      const { email } = subscriber;
-      try {
-        await this.mailService.sendSubscribeAllEmail({
-          name: name,
-          email: email
-        });
-        console.log(`Email successfully sent to: ${email}`);
-      } catch (error) {
-        console.error(`Failed to send email to: ${email}`, error);
+  
+    const podcast = this.podcastRepository.create({
+      ...createPodcastDto,
+      user: currentUser,
+    });
+  
+    // Step 4: Fetch subscribers
+    const subscribers = await this.subscribeAllService.findAll();
+  
+    // Step 5: Notify subscribers
+    if (subscribers && subscribers.length > 0) {
+      for (const subscriber of subscribers) {
+        const { email } = subscriber;
+        try {
+          await this.mailService.sendSubscribeAllEmail({
+            name: createPodcastDto.name, 
+            email: email,
+          });
+          console.log(`Email successfully sent to: ${email}`);
+        } catch (error) {
+          console.error(`Failed to send email to: ${email}`, error);
+        }
       }
     }
-
-
-    return await this.podcastRepository.save(newPodcast);
+  
+    // Step 6: Save the new podcast and return its ID
+    const savedPodcast = await this.podcastRepository.save(podcast);
+    return savedPodcast.id;
   }
-
+  
+  
+  
   async findAll(): Promise<Podcast[]> {
     return await this.podcastRepository.find();
   }

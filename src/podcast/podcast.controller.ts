@@ -9,21 +9,40 @@ import {
   Delete,
   Req,
   UseGuards,
+  BadRequestException,
+  UseInterceptors,
 } from '@nestjs/common';
 import { PodcastService } from './podcast.service';
 import { CreatePodcastDto } from './dto/create-podcast.dto';
 import { UpdatePodcastDto } from './dto/update-podcast.dto';
 import { JwtAuthGuard } from 'src/auth/guard/jwt-auth.guard';
+import { Podcast } from './entities/podcast.entity';
+import { CurrentUser } from 'src/shared/Decorators/user.decorator';
+import { User } from 'src/user/entities/user.entity';
+import { createFileUploadInterceptor } from 'src/shared/interceptors/file-upload.interceptor';
 
 @Controller('podcast')
 export class PodcastController { 
   constructor(private readonly podcastService: PodcastService) {}
-
-  //@UseGuards(JwtAuthGuard)
+  @UseInterceptors(
+    createFileUploadInterceptor({
+      fieldName: 'image',
+      destination: 'articles',
+      allowedFileTypes: /\.(png|jpeg|jpg)$/i,
+      fileSizeLimit: 1000000,
+      defaultPhotoPath: 'uploads/pod-talk-logo.png',
+    }),
+  )
+  @UseGuards(JwtAuthGuard)
   @Post()
-  create(@Body() createPodcastDto: CreatePodcastDto) {
-    return this.podcastService.create(createPodcastDto);
+  async createPodcast(
+    @Body() createPodcastDto: CreatePodcastDto,
+    @CurrentUser() currentUser: User 
+  ): Promise<number> {
+    return this.podcastService.createPodcast(currentUser, createPodcastDto);
   }
+  
+ 
 
   @Get()
   findAll() {
