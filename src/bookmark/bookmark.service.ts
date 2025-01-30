@@ -1,62 +1,49 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { CreateBookmarkDto } from './dto/create-bookmark.dto';
 import { Bookmark } from './entities/bookmark.entity';
-import { User } from '../user/entities/user.entity';
-import { Episode } from '../episode/entities/episode.entity';
-
+import { Episode } from 'src/episode/entities/episode.entity';
+import { User } from 'src/user/entities/user.entity';
 @Injectable()
 export class BookmarkService {
   constructor(
-    @InjectRepository(Bookmark)
-    private readonly bookmarkRepository: Repository<Bookmark>,
-
-    @InjectRepository(User)
-    private readonly userRepository: Repository<User>,
-
-    @InjectRepository(Episode)
-    private readonly episodeRepository: Repository<Episode>,
+    @InjectRepository(Bookmark) private bookmarkRepository: Repository<Bookmark>,
+    @InjectRepository(User) private userRepository: Repository<User>,
+    @InjectRepository(Episode) private episodeRepository: Repository<Episode>,
   ) {}
 
-  // Create a bookmark
-  async createBookmark(createBookmarkDto: CreateBookmarkDto): Promise<Bookmark> {
-    // Find the user by userId (number)
-    const user = await this.userRepository.findOne({
-      where: { id: createBookmarkDto.userId },
-    });
-    if (!user) {
-      throw new NotFoundException('User not found');
+  async addBookmark(userId: number, episodeId: number): Promise<Bookmark> {
+    const user = await this.userRepository.findOne({ where: { id: userId } });
+    const episode = await this.episodeRepository.findOne({ where: { id: episodeId } });
+
+    if (!user || !episode) {
+      throw new NotFoundException('User or Episode not found');
     }
 
-    // Find the episode by episodeId (number)
-    const episode = await this.episodeRepository.findOne({
-      where: { id: createBookmarkDto.episodeId },
-    });
-    if (!episode) {
-      throw new NotFoundException('Episode not found');
-    }
-
-    // Create the bookmark
-    const bookmark = this.bookmarkRepository.create({
-      user,
-      episode,
-    });
-
-    // Save and return the bookmark
+    const bookmark = this.bookmarkRepository.create({ user, episode });
     return this.bookmarkRepository.save(bookmark);
   }
 
-  // Delete a bookmark
   async removeBookmark(userId: number, episodeId: number): Promise<void> {
-    // Find the bookmark by userId and episodeId (both numbers)
-    const bookmark = await this.bookmarkRepository.findOne({
-      where: { user: { id: userId }, episode: { id: episodeId } },
-    });
-    if (!bookmark) {
-      throw new NotFoundException('Bookmark not found');
-    }
+    await this.bookmarkRepository.delete({ user: { id: userId }, episode: { id: episodeId } });
+  }
 
-    // Delete the bookmark
-    await this.bookmarkRepository.remove(bookmark);
-  }}
+  async getUserBookmarks(userId: number): Promise<Bookmark[]> {
+    return this.bookmarkRepository.find({
+      where: { user: { id: userId } },
+      relations: ['episode'],
+    });
+  }
+  async isBookmarked(userId: number, episodeId: number): Promise<boolean> {
+    const bookmark = await this.bookmarkRepository.findOne({
+      where: {
+        user: { id: userId } as any,
+        episode: { id: episodeId } as any,
+      },
+    });
+    console.log(bookmark)
+    console.log(bookmark)
+
+    return !!bookmark; // Returns true if a bookmark exists, false otherwise
+  }
+}
