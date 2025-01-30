@@ -17,68 +17,57 @@ export class TopicService {
   ) {}
 
   async create(createTopicDto: CreatetopicDto): Promise<Topic> {
-    console.log('Creating topic...');
   
-    // Extract DTO properties
-    const { title, image, podcastId } = createTopicDto;
-  
-    // Fetch the podcast by its ID
-    const podcast = await this.podcastRepository.findOne({
-      where: { id: podcastId },
-    });
-  
-    if (!podcast) {
-      throw new NotFoundException('Podcast not found');
-    }
-  
-    // Create a new topic and associate it with the podcast
-    const topic = this.topicRepository.create({
-      title,
-      image,
-      podcasts: [podcast],  // Ensure your entity supports this relation
-    });
-  
-    // Save to the database
-    return this.topicRepository.save(topic);
+   
+    return this.topicRepository.save(createTopicDto);
   }
   
   async update(id: number, updateTopicDto: UpdatetopicDto): Promise<Topic> {
     const topic = await this.findOne(id);
     
-    if (!topic) {
-      throw new NotFoundException('Topic not found');
-    }
+    
   
-    const { title, image, podcastId } = updateTopicDto;
-    const podcast = await this.podcastRepository.findOne({ where: { id: podcastId } });
+   
   
-    if (!podcast) {
-      throw new NotFoundException('Podcast not found');
-    }
-  
-    // Update topic details
-    topic.title = title;
-    topic.image = image;
-    topic.podcasts = [podcast];
-  
-    return this.topicRepository.save(topic);
+    return this.topicRepository.save(updateTopicDto);
   }
   
   async remove(id: number): Promise<void> {
     const topic = await this.findOne(id);
     await this.topicRepository.remove(topic);
   }
-// ✅ Add missing `findAll` method
-async findAll(): Promise<Topic[]> {
-  return this.topicRepository.find({ relations: ['podcasts'] });
+ // ✅ Method to get all topics
+ async findAll(): Promise<Topic[]> {
+  return await this.topicRepository.find();
 }
 
-// ✅ Add missing `findOne` method
+// ✅ Method to find a single topic by ID
 async findOne(id: number): Promise<Topic> {
-  const topic = await this.topicRepository.findOne({ where: { id }, relations: ['podcasts'] });
+  const topic = await this.topicRepository.findOneBy({ id });
   if (!topic) {
-    throw new NotFoundException('Topic not found');
+    throw new NotFoundException(`Topic with ID ${id} not found`);
   }
   return topic;
 }
+
+
+  // Count podcasts for each topic
+  async getTopicsWithPodcastCount() {
+    try {
+      console.log('Fetching topics with podcast count...');
+      return await this.topicRepository
+        .createQueryBuilder('topic')
+        .leftJoin('podcast', 'podcast', 'podcast.topicId = topic.id')  // Join podcast table (not topic)
+        .select('topic.id', 'id')
+        .addSelect('topic.title', 'title')
+        .addSelect('topic.image', 'image')
+        .addSelect('COUNT(podcast.id)', 'podcastCount')  // Count podcasts for each topic
+        .groupBy('topic.id')  // Group by Topic id to get the count per topic
+        .getRawMany();  // Returns the raw result
+    } catch (error) {
+      console.error('Error occurred:', error);
+      throw error;  // Handle error or re-throw
+    }
+  }
+  
 }

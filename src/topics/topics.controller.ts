@@ -16,7 +16,13 @@ export class TopicController {
   async findAll(): Promise<Topic[]> {
     return this.topicService.findAll();
   }
+  @Get('with-podcast-count')
+  @ApiOperation({ summary: 'Get all topics' })
+  @ApiResponse({ status: 200, description: 'Successfully fetched all topics', type: [Topic] })
+  async counted(): Promise<any[]> {
 
+    return this.topicService.getTopicsWithPodcastCount();
+  }
   // Get a topic by ID
   @Get(':id')
   @ApiOperation({ summary: 'Get a topic by ID' })
@@ -25,6 +31,8 @@ export class TopicController {
   async findOne(@Param('id') id: number): Promise<Topic> {
     return this.topicService.findOne(id);
   }
+
+ 
 
   // Create a new topic
   @Post()
@@ -49,4 +57,6 @@ export class TopicController {
   async remove(@Param('id') id: number): Promise<void> {
     return this.topicService.remove(id);
   }
+ 
+
 }

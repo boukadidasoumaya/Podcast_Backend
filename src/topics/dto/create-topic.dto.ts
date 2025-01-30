@@ -13,9 +13,5 @@ export class CreatetopicDto  {
   })
   image: string;
 
-  @ApiProperty({
-    description: 'The ID of the podcast this topic belongs to',
-    example: 1,
-  })
-  podcastId: number;
+ 
 }

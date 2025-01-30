@@ -10,6 +10,5 @@ export class Topic {
 
   @Column()
   image: string;
-  @OneToMany(() => Podcast, (Podcast) => Podcast.Topic)
-  Podcasts: Podcast[];
+ 
 }

@@ -3,6 +3,7 @@ import { IsString, IsOptional, IsUrl, IsNumber, IsNotEmpty } from 'class-validat
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { User } from '../../user/entities/user.entity';
+import { Topic } from 'src/topics/entities/topic.entity';
 
 export class CreatePodcastDto {
   @ApiProperty({
@@ -47,5 +48,10 @@ export class CreatePodcastDto {
   @IsNotEmpty()
   @Type(() => User)
   user: User;
-
+  @ApiProperty({
+    description: 'Topic ID associated with the podcast',
+    example: 1,
+  })
+  @IsNotEmpty()
+  topic: Topic;
 }
