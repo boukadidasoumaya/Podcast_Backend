@@ -73,7 +73,7 @@ export class UserController {
   async getUserProfile(@CurrentUser() user: User) {
     return user;
   }
-  
+
   @Put('profile')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth('JWT-auth')
@@ -109,7 +109,6 @@ export class UserController {
   // ) {
   //   return await this.userService.findOne(id, user);
   // }
-
 
   // @Patch(':id')
   // @UseGuards(JwtAuthGuard)

@@ -33,15 +33,7 @@ export class PodcastController {
       defaultPhotoPath: 'uploads/pod-talk-logo.png',
     }),
   )
-  @UseGuards(JwtAuthGuard)
-  @Post()
-  async createPodcast(
-    @Body() createPodcastDto: CreatePodcastDto,
-    @CurrentUser() currentUser: User 
-  ): Promise<number> {
-    return this.podcastService.createPodcast(currentUser, createPodcastDto);
-  }
-  
+
  
 
   @Get()

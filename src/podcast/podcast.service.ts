@@ -28,41 +28,6 @@ export class PodcastService {
   ) {}
 
 
-  async createPodcast(currentUser: User, createPodcastDto: CreatePodcastDto): Promise<number> {
-    if (!currentUser.isOwner) {
-      currentUser.isOwner = true;
-      await this.userRepository.save(currentUser);
-    }
-  
-    const podcast = this.podcastRepository.create({
-      ...createPodcastDto,
-      user: currentUser,
-    });
-  
-    // Step 4: Fetch subscribers
-    const subscribers = await this.subscribeAllService.findAll();
-
-    // Step 5: Notify subscribers
-    if (subscribers && subscribers.length > 0) {
-      for (const subscriber of subscribers) {
-        const { email } = subscriber;
-        try {
-          await this.mailService.sendSubscribeAllEmail({
-            name: createPodcastDto.name, 
-            email: email,
-          });
-          console.log(`Email successfully sent to: ${email}`);
-        } catch (error) {
-          console.error(`Failed to send email to: ${email}`, error);
-        }
-      }
-    }
-  
-    // Step 6: Save the new podcast and return its ID
-    const savedPodcast = await this.podcastRepository.save(podcast);
-    return savedPodcast.id;
-  }
-
 
 
   async findAll(): Promise<Podcast[]> {
