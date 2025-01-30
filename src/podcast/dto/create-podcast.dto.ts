@@ -13,13 +13,6 @@ export class CreatePodcastDto {
   name: string;
 
   @ApiProperty({
-    description: 'Duration of the podcast (e.g., HH:MM:SS)',
-    example: '01:30:45',
-  })
-  @IsString()
-  duration: string;
-
-  @ApiProperty({
     description: 'topic of the podcast',
     example: 'Education Health .',
   })

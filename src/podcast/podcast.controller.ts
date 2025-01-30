@@ -38,7 +38,7 @@ export class PodcastController {
   async createPodcast(
     @Body() createPodcastDto: CreatePodcastDto,
     @CurrentUser() currentUser: User 
-  ): Promise<number> {
+  ): Promise<Podcast> {
     return this.podcastService.createPodcast(currentUser, createPodcastDto);
   }
   

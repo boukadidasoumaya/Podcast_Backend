@@ -28,7 +28,7 @@ export class PodcastService {
   ) {}
 
 
-  async createPodcast(currentUser: User, createPodcastDto: CreatePodcastDto): Promise<number> {
+  async createPodcast(currentUser: User, createPodcastDto: CreatePodcastDto): Promise<Podcast> {
     if (!currentUser.isOwner) {
       currentUser.isOwner = true;
       await this.userRepository.save(currentUser);
@@ -58,9 +58,8 @@ export class PodcastService {
       }
     }
   
-    // Step 6: Save the new podcast and return its ID
-    const savedPodcast = await this.podcastRepository.save(podcast);
-    return savedPodcast.id;
+
+    return await this.podcastRepository.save(podcast);;
   }
   
   
