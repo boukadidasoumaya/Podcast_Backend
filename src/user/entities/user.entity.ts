@@ -61,10 +61,12 @@ export class User extends TimestampEntity {
   country: string;
 
   @Exclude()
+  @Transform(() => undefined)
   @Column()
   password: string;
 
   @Exclude()
+
   @Transform(() => undefined)
 
   @Column()
@@ -90,12 +92,10 @@ export class User extends TimestampEntity {
     default: false,
   })
   isOwner: boolean;
-
   @Exclude()
   @Transform(() => undefined)
   @Column({ nullable: true })
   resetCode: string;
-  @Exclude()
   @Transform(() => undefined)
   @Column({ type: 'timestamp', nullable: true })
   resetCodeExpiration: Date;
@@ -112,10 +112,10 @@ export class User extends TimestampEntity {
   @OneToMany(() => LikeComment, (like) => like.user, { nullable: true })
   likesComment: LikeComment[];
 
-  @OneToMany(() => Bookmark, (bookmark) => bookmark.user)
+  @OneToMany(() => Bookmark, (bookmark) => bookmark.user,{ nullable: true })
   bookmarks: Bookmark[];
 
-  @ManyToMany(() => Podcast, (podcast) => podcast.subscribers)
+  @ManyToMany(() => Podcast, (podcast) => podcast.subscribers,{ nullable: true })
   @JoinTable()
   subscriptions: Podcast[];
 

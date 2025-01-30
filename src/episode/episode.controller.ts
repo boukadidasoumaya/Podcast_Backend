@@ -8,13 +8,15 @@ import {
   Delete,
   UseGuards,
   Req,
+  UseInterceptors,
 } from '@nestjs/common';
 import { EpisodeService } from './episode.service';
 import { CreateEpisodeDto } from './dto/create-episode.dto';
 import { UpdateEpisodeDto } from './dto/update-episode.dto';
 import { EpisodeGateway } from './gateway/episode.gateway';
 import { Episode } from './entities/episode.entity';
-
+import { ApiConsumes } from '@nestjs/swagger';
+import { createFileUploadInterceptor } from 'src/shared/interceptors/filemp-uplaod.interceptor';
 @Controller('episodes')
 export class EpisodeController {
   constructor(
@@ -23,6 +25,13 @@ export class EpisodeController {
   ) {}
 
   @Post()
+  @ApiConsumes('multipart/form-data')
+  @UseInterceptors(createFileUploadInterceptor({
+      fieldName: 'file',
+      destination: 'media',
+      allowedFileTypes: /\.(mp4|mp3)$/i,  
+      fileSizeLimit: 50 * 1024 * 1024, 
+    }))
   async create(@Body() createEpisodeDto: CreateEpisodeDto) {
     const episode = await this.episodeService.create(createEpisodeDto);
     return episode;

@@ -10,7 +10,15 @@ export class CreateEpisodeDto {
   })
   @IsString()
   @IsNotEmpty()
-  name: string; // Name of the episode (this matches the 'name' column in the entity)
+  name: string;
+
+  @ApiProperty({
+    description: 'Description of the episode',
+    example: 'Lorem Ipsum',
+  })
+  @IsString()
+  @IsNotEmpty()
+  description: string; // Name of the episode
 
   @ApiProperty({
     description: 'Episode number in the series',
@@ -35,6 +43,14 @@ export class CreateEpisodeDto {
   @IsString()
   @IsNotEmpty()
   coverImage: string; // Filepath to the episode file (this matches the 'filepath' column in the entity)
+
+  @ApiProperty({
+    description: 'Filepath to the episode audio file',
+    example: '/uploads/episodes/introduction-to-ai.mp3',
+  })
+  @IsString()
+  @IsNotEmpty()
+  filepath: string; 
 
 
   @ApiProperty({

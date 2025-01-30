@@ -27,9 +27,10 @@ export class Episode extends TimestampEntity {
   duration: number; // Duration in seconds (or minutes depending on your choice)
 
   @Column({ type: 'varchar', length: 255 })
-  coverImage: string; // URL or file path to cover image
+  coverImage: string;
   @Column({ type: 'varchar', length: 255 })
-  filepath: string; // Path to the file on the server
+  filepath: string;
+
   @Column({ type: 'int', default: 0 })
   views: number; // Number of views
 
