@@ -43,7 +43,6 @@ export class AuthService {
     const user = this.adminRepository.create({
       ...adminData,
     });
-    // Un mot de passe crypté par défaut (utilisant son nom) est créé pour l'Admin et sera envoyé par e-email
     const password = crypto.randomBytes(4).toString('hex');
     user.password = password;
     user.salt = await bcrypt.genSalt();
@@ -141,6 +140,21 @@ export class AuthService {
     if (user.password !== hashedPassword) {
       throw new NotFoundException('Mot de passe incorrect');
     }
+    const payload = {
+      id: user.id,
+      email: user.email,
+      username: user.username,
+      role: user.role,
+      firstName: user.firstName,
+      lastName: user.lastName,
+    };
+    const jwt = this.jwtService.sign(payload);
+    return {
+      accessToken: jwt,
+    };
+  }
+
+  async update_token(user) {
     const payload = {
       id: user.id,
       email: user.email,

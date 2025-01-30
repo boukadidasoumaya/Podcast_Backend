@@ -105,9 +105,7 @@ export class UserService extends CrudService<User> {
     if (userData.email !== oldEmail) {
       throw new NotFoundException('Email ancien invalide');
     }
-    const salt = await bcrypt.genSalt();
     user.email = newEmail;
-    user.salt = salt;
     await this.userRepository.save(user);
     return {
       id: user.id,

@@ -54,6 +54,9 @@ export class User extends TimestampEntity {
   whatsappUser: string; 
 
   @Column({ nullable: true })
+  twitterUser: string; 
+
+  @Column({ nullable: true })
   birthday: Date;
 
   @Column({ nullable: true })
@@ -76,7 +79,7 @@ export class User extends TimestampEntity {
   })
   role: string;
   @Column({
-    type: 'simple-json',
+    type: 'json',
   })
   interests: InterestsEnum[];
   @Column({

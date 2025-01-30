@@ -3,6 +3,7 @@ import {
   Body,
   Controller,
   Get,
+  Put,
   Post,
   UseGuards,
 } from '@nestjs/common';
@@ -26,6 +27,7 @@ import { User } from '../user/entities/user.entity';
 import { CreateSuperAdminDto } from '../user/dto/create-superadmin.dto';
 import { SuperAdmin } from '../user/entities/superAdmin.entity';
 import { InterestsEnum } from 'src/shared/Enums/interests.enum';
+import { UpdateTokenDto } from './dto/updatetoken.dto';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -76,6 +78,13 @@ export class AuthController {
   })
   async login(@Body() loginCredentialsDto: LoginCredentialsDto) {
     return await this.authService.login(loginCredentialsDto);
+  }
+
+  @Post('update-token')
+  @ApiOkResponse({ description: 'Token mis à jour avec succès' })
+  @ApiBadRequestResponse({description: 'Requête incorrecte, veuillez vérifier votre demande',})
+  async updateToken(@Body() updateTokenDto: UpdateTokenDto) {
+    return await this.authService.update_token(updateTokenDto); 
   }
 
   @Post('forgot-password')

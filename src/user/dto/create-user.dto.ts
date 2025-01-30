@@ -47,6 +47,11 @@ export class CreateUserDto {
   @IsString()
   instagramLink?: string;
 
+  @ApiProperty({example:"samy.chaffai"})
+  @IsOptional()
+  @IsString()
+  twitterUser?: string;
+
   @IsNotEmpty()
   @ApiProperty({ example: 12345678 })
   password: string;
@@ -69,12 +74,6 @@ export class CreateUserDto {
     required: false,
   })
   photo?: string;
-
-  @IsNotEmpty()
-  @IsEnum(UserRoleEnum)
-  @ApiProperty({ example: UserRoleEnum.USER, enum: UserRoleEnum })
-  role: UserRoleEnum;
-
 
   @IsNotEmpty()
   @IsArray()

@@ -4,11 +4,11 @@ import { ApiProperty } from '@nestjs/swagger';
 export class ChangeEmailDto {
   @IsNotEmpty()
   @IsString()
-  @ApiProperty({ example: '12345678' })
+  @ApiProperty({ example: 'example@test.com' })
   oldEmail: string;
 
   @IsNotEmpty()
   @IsString()
-  @ApiProperty({ example: '12345678' })
+  @ApiProperty({ example: 'example@test.com' })
   newEmail: string;
 }
