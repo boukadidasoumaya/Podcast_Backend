@@ -26,7 +26,7 @@ export class EpisodeService {
     if (!podcast) {
       throw new Error('Podcast not found');
     }
-  
+    console.log(createEpisodeDto);
     // Create a new episode and associate it with the podcast
     const episode = this.episodeRepository.create({
       ...createEpisodeDto, 
