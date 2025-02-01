@@ -34,13 +34,6 @@ export class CreatePodcastDto {
   })
   image: string;
 
-  @ApiProperty({
-    description: 'Number of episodes in the podcast',
-    example: 10,
-  })
-  
-  @IsNumber()
-  nbre_episode: number;
 
 
 

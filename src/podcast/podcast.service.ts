@@ -11,6 +11,7 @@ import { EmailService } from 'src/email/email.service';
 import { UserService } from 'src/user/user.service';
 import { SubscribeService } from 'src/subscribe/subscribe.service';
 import { Episode } from 'src/episode/entities/episode.entity';
+import { CreatePodcastDto } from './dto/create-podcast.dto';
 
 @Injectable()
 export class PodcastService {
