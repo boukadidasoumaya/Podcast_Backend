@@ -26,7 +26,7 @@ export class EpisodeService {
     if (!podcast) {
       throw new Error('Podcast not found');
     }
-  
+    console.log(createEpisodeDto);
     // Create a new episode and associate it with the podcast
     const episode = this.episodeRepository.create({
       ...createEpisodeDto, 
@@ -52,14 +52,17 @@ export class EpisodeService {
   async findAllTrending(): Promise<Episode[]> {
     const episodes = await this.episodeRepository.find({
       order: { views: 'DESC' },
-      relations: ['podcast', 'likes', 'comments', 'podcast.user'],
+      relations: ['podcast', 'likes', 'likes.user', 'comments', 'podcast.user'],
       where: { deletedAt: null },
     });
-    return episodes.map((episode) => ({
-      ...episode,
-      numberOfLikes: episode.likes?.length || 0,
-      numberOfComments: episode.comments?.length || 0,
-    }));
+
+    return episodes.map((episode) => {
+      return {
+        ...episode,
+        numberOfLikes: episode.likes?.length || 0,
+        numberOfComments: episode.comments?.length || 0,
+      };
+    });
   }
 
   // Get the latest 4 episodes (sorted by createdAt in descending order)
@@ -82,6 +85,7 @@ export class EpisodeService {
       where: { id },
       relations: ['podcast', 'likes', 'comments', 'podcast.user'],
     });
+    console.log('fghjkl');
 
     if (!episode) {
       throw new NotFoundException('Episode not found');

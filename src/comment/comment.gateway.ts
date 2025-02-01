@@ -39,7 +39,7 @@ export class CommentGateway {
   async createComment(
     @MessageBody() createCommentDto: CreateCommentDto,
     @ConnectedSocket() socket: Socket,
-  ): Promise<CreateCommentDto> {
+  ) {
     try {
       const sender = this.commentService.clientToUser[socket.id];
       const comment = await this.commentService.create(createCommentDto);
@@ -73,9 +73,11 @@ export class CommentGateway {
   }
 
   @SubscribeMessage('deleteComment')
-  async remove(@MessageBody() comment: DeleteCommentDto): Promise<void> {
-    const { id, user } = comment;
-    await this.commentService.softDelete(id, user);
-    this.server.emit('deletedComment', id);
+  async remove(
+    @MessageBody() deleteCommentDto: DeleteCommentDto,
+  ): Promise<void> {
+    const { comment, user } = deleteCommentDto;
+    await this.commentService.softDelete(comment.id, user);
+    this.server.emit('deleteComment', comment.id);
   }
 }

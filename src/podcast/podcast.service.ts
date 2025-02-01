@@ -4,7 +4,6 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { CreatePodcastDto } from './dto/create-podcast.dto';
 import { UpdatePodcastDto } from './dto/update-podcast.dto';
 import { Podcast } from './entities/podcast.entity';
 import { User } from 'src/user/entities/user.entity';
@@ -22,6 +21,7 @@ export class PodcastService {
     private readonly userRepository: Repository<User>,
     @InjectRepository(Episode)
     private episodeRepository: Repository<Episode>,
+
     private readonly mailService: EmailService,
     private readonly UserService:UserService,
     private readonly subscribeAllService : SubscribeService
@@ -197,4 +197,12 @@ export class PodcastService {
     
   // }
 
+  async findAllEpisodesByPodcastId(podcastId: number): Promise<Episode[]> {
+
+
+    return  this.episodeRepository.find({
+      where: { podcast: { id: podcastId } },
+      relations: ['podcast'],  // Ensure the relationship is loaded
+    });
+  }
 }

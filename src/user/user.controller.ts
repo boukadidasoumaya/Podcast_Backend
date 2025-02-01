@@ -47,10 +47,20 @@ export class UserController {
     return await this.userService.findAllUsers(user);
   }
 
-  
   @Get('withpods')
-  getuserswithpods(){
+  getuserswithpods() {
     return this.userService.getuserswithpods();
+  }
+  @Get('current-user')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('JWT-auth')
+  @ApiOkResponse({
+    type: [User],
+    description: 'Utilisateur trouvé avec succès',
+  })
+  async currentUser(@CurrentUser() user) {
+    console.log(user);
+    return await user;
   }
 
   @Get('profile')
@@ -63,7 +73,7 @@ export class UserController {
   async getUserProfile(@CurrentUser() user: User) {
     return user;
   }
-  
+
   @Put('profile')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth('JWT-auth')

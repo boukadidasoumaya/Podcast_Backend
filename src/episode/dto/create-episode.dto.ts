@@ -1,4 +1,4 @@
-import { IsString, IsBoolean, IsNumber, IsNotEmpty } from 'class-validator';
+import { IsString, IsBoolean, IsNumber, IsNotEmpty, IsOptional } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { Podcast } from '../../podcast/entities/podcast.entity';
@@ -34,17 +34,18 @@ export class CreateEpisodeDto {
   })
   @IsNumber()
   @IsNotEmpty()
-  duration: number; // Duration of the episode in seconds
+  duration: number;
 
   @ApiProperty({
+    type: 'string',
     description: 'Filepath to the episode file',
     example: '/uploads/episodes/introduction-to-ai.mp3',
   })
-  @IsString()
   @IsNotEmpty()
-  coverImage: string; // Filepath to the episode file
+  coverImage: string; // Filepath to the episode file (this matches the 'filepath' column in the entity)
 
   @ApiProperty({
+    type: 'string',
     description: 'Filepath to the episode audio file',
     example: '/uploads/episodes/introduction-to-ai.mp3',
   })

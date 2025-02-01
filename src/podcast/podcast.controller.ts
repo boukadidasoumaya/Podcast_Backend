@@ -93,6 +93,10 @@ export class PodcastController {
   getpodsbyuser(@Param('id') id: string) {
     return this.podcastService.getpodsparuser(+id);
   }
+  @Get(':id/episodes')
+  findAllEpisodesByPodcastId(@Param('id') id: string){
+    return this.podcastService.findAllEpisodesByPodcastId(+id);  // +id to convert string to number
 
 
-}
+
+  }}

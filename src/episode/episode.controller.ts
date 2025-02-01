@@ -6,6 +6,8 @@ import {
   Param,
   Put,
   Delete,
+  UseGuards,
+  Req,
   UseInterceptors,
 } from '@nestjs/common';
 import { EpisodeService } from './episode.service';
@@ -14,7 +16,7 @@ import { UpdateEpisodeDto } from './dto/update-episode.dto';
 import { EpisodeGateway } from './gateway/episode.gateway';
 import { Episode } from './entities/episode.entity';
 import { ApiConsumes } from '@nestjs/swagger';
-import { createFileUploadInterceptor } from 'src/shared/interceptors/filemp-uplaod.interceptor';
+import { createFileUploadInterceptor } from '../shared/interceptors/filemp-uplaod.interceptor';
 @Controller('episodes')
 export class EpisodeController {
   constructor(
@@ -24,13 +26,16 @@ export class EpisodeController {
 
   @Post()
   @ApiConsumes('multipart/form-data')
-  @UseInterceptors(createFileUploadInterceptor({
-      fieldName: 'file',
+  @UseInterceptors(
+    createFileUploadInterceptor({
+      fieldName: 'filepath',
       destination: 'media',
-      allowedFileTypes: /\.(mp4|mp3)$/i,  
-      fileSizeLimit: 50 * 1024 * 1024, 
-    }))
+      allowedFileTypes: /\.(mp4|mp3)$/i,
+      fileSizeLimit: 50 * 1024 * 1024,
+    }),
+  )
   async create(@Body() createEpisodeDto: CreateEpisodeDto) {
+    console.log(createEpisodeDto);
     const episode = await this.episodeService.create(createEpisodeDto);
     return episode;
   }
@@ -39,6 +44,7 @@ export class EpisodeController {
   findAll(): Promise<Episode[]> {
     return this.episodeService.findAll();
   }
+
   @Get('trending')
   async getTrendingEpisodes(): Promise<Episode[]> {
     return this.episodeService.findAllTrending();
