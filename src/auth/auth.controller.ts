@@ -3,8 +3,9 @@ import {
   Body,
   Controller,
   Get,
-  Put,
+  Param,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import {
@@ -78,6 +79,18 @@ export class AuthController {
   })
   async login(@Body() loginCredentialsDto: LoginCredentialsDto) {
     return await this.authService.login(loginCredentialsDto);
+  }
+
+  @Get('check-username')
+  @ApiOkResponse({
+  description: 'Username availability checked successfully',
+  type: Boolean,
+  })
+  @ApiBadRequestResponse({
+  description: 'Invalid request, please check your input',
+  })
+  async checkUsername(@Query('username') username: string): Promise<boolean> {
+    return this.authService.checkUsernameUnique(username);
   }
 
   @Post('update-token')

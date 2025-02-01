@@ -124,6 +124,7 @@ export class AuthService {
       firstName: user.firstName,
       lastName: user.lastName,
       role: user.role,
+      photo: user.photo
     };
   }
 
@@ -152,6 +153,12 @@ export class AuthService {
     return {
       accessToken: jwt,
     };
+  }
+
+  async checkUsernameUnique(username: string): Promise<boolean> {
+    const user = await this.userRepository.findOneBy({ username });
+  
+    return !!user;
   }
 
   async update_token(user) {
