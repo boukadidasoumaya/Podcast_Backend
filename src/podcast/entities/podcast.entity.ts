@@ -17,7 +17,7 @@ export class Podcast extends TimestampEntities{
     views: number;
 
     @Column()
-    duration: string;
+    duration: number;
 
     @Column()
     description: string;
@@ -44,5 +44,6 @@ export class Podcast extends TimestampEntities{
 
     @ManyToOne(()=>User,(user)=>user.podcasts,{cascade:true})
     user: User;
+    subscriptions: any;
 
 }

@@ -17,7 +17,7 @@ export class CreatePodcastDto {
     example: '01:30:45',
   })
   @IsString()
-  duration: string;
+  duration: number;
 
   @ApiProperty({
     description: 'Description of the podcast',
@@ -40,12 +40,6 @@ export class CreatePodcastDto {
   @IsUrl()
   @IsOptional()
   image?: string;
-  @ApiProperty({
-  description: 'Owner of the podcast',
-  example: 1,
-  })
-  @IsNotEmpty()
-  @Type(() => User)
-  user: User;
+  
 
 }

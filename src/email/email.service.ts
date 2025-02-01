@@ -63,4 +63,22 @@ export class EmailService {
 
 
   }
+  async newepisode(data) {
+    const { name, email, podcast } = data;
+    const subject = `Potcast-eha notification`;
+    await this.mailerService.sendMail({
+      to: email,
+      subject,
+      template: 'notification',
+      context: {
+        name,
+        email,
+        podcast,
+      },
+    });
+
+
+  }
+
+
 }

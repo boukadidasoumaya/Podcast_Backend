@@ -28,7 +28,7 @@ export class UserService extends CrudService<User> {
   }
 
   async findAllUsers(currentUser: User) {
-    if (currentUser.role == UserRoleEnum.SUPER_ADMIN) {
+    // if (currentUser.role == UserRoleEnum.SUPER_ADMIN) {
       const users = await this.userRepository.find();
       return users.map((user) => {
         return {
@@ -40,7 +40,7 @@ export class UserService extends CrudService<User> {
           role: user.role,
         };
       });
-    }
+    // }
     throw new UnauthorizedException('Non autorisé');
   }
 

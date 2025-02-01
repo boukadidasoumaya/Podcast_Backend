@@ -31,12 +31,12 @@ export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Get('users')
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth('JWT-auth')
-  @ApiOkResponse({
-    type: [User],
-    description: 'Utilisateurs trouvés avec succès',
-  })
+  // @UseGuards(JwtAuthGuard)
+  // @ApiBearerAuth('JWT-auth')
+  // @ApiOkResponse({
+  //   type: [User],
+  //   description: 'Utilisateurs trouvés avec succès',
+  // })
   async findAllUsers(@CurrentUser() user) {
     console.log(user);
     return await this.userService.findAllUsers(user);

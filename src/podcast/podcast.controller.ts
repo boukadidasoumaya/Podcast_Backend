@@ -17,20 +17,22 @@ import { UpdatePodcastDto } from './dto/update-podcast.dto';
 import { JwtAuthGuard } from 'src/auth/guard/jwt-auth.guard';
 import { ApiBearerAuth, ApiOkResponse } from '@nestjs/swagger';
 import { User } from 'src/user/entities/user.entity';
+import { CurrentUser } from 'src/shared/Decorators/user.decorator';
 
 @Controller('podcast')
 export class PodcastController {
   constructor(private readonly podcastService: PodcastService) { }
 
+  
+  @Post()
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth('JWT-auth')
-  @Post()
-
-  create(@Body() createPodcastDto: CreatePodcastDto) {
-    return this.podcastService.create(createPodcastDto);
+  create(@Body() createPodcastDto: CreatePodcastDto ,@CurrentUser() user: User) {
+    console.log(user);
+    return this.podcastService.create(createPodcastDto,user);
   }
 
-  @Get()
+  @Get('filter')
   filterpodcasts(@Query() filtres) {
     return this.podcastService.filterpodcasts(filtres)
 
@@ -69,20 +71,20 @@ export class PodcastController {
   }
 
 
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth('JWT-auth')
-  @Post(':p_id/subscribe')
-  subscribe(@Param('p_id') p_id: string, @Req() req) {
-    const u_id = req.user.id;
-    return this.podcastService.subscribe(+u_id, +p_id);
-  }
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth('JWT-auth')
-  @Post(':p_id/unsubscribe')
-  unsubscribe(@Param('p_id') p_id: string, @Req() req) {
-    const u_id = req.user.id;
-    return this.podcastService.unsubscribe(+u_id, +p_id);
-  }
+  // @UseGuards(JwtAuthGuard)
+  // @ApiBearerAuth('JWT-auth')
+  // @Post(':p_id/subscribe')
+  // subscribe(@Param('p_id') p_id: string, @Req() req) {
+  //   const u_id = req.user.id;
+  //   return this.podcastService.subscribe(+u_id, +p_id);
+  // }
+  // @UseGuards(JwtAuthGuard)
+  // @ApiBearerAuth('JWT-auth')
+  // @Post(':p_id/unsubscribe')
+  // unsubscribe(@Param('p_id') p_id: string, @Req() req) {
+  //   const u_id = req.user.id;
+  //   return this.podcastService.unsubscribe(+u_id, +p_id);
+  // }
 
   @Get(':id/podcasts')
   getpodsbyuser(@Param('id') id: string) {

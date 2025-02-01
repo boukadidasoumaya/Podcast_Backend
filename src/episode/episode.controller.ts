@@ -19,9 +19,12 @@ export class EpisodeController {
     private readonly episodeGateway: EpisodeGateway,
   ) {}
 
+  
   @Post()
   async create(@Body() createEpisodeDto: CreateEpisodeDto) {
     const episode = await this.episodeService.create(createEpisodeDto);
+    const id = episode.id;
+    this.episodeService.notify(id);
     return episode;
   }
 
