@@ -70,6 +70,15 @@ export class PodcastService {
   async findOne(id: number): Promise<Podcast> {
     return await this.podcastRepository.findOne({ where: { id } });
   }
+  async findFirstEpisodeByPodcastId(podcastId: number): Promise<Episode | null> {
+    const firstEpisode = await this.episodeRepository.findOne({
+      where: { podcast: { id: podcastId } },
+      relations: ['podcast'],
+      order: { createdAt: 'ASC' },
+    });
+
+    return firstEpisode || null;
+  }
 
   async update(
     id: number,
@@ -91,7 +100,7 @@ export class PodcastService {
     if (!podcast) {
       throw new Error(`Podcast with ID ${id} not found.`);
     }
-    await this.podcastRepository.delete(id);
+    await this.podcastRepository.softDelete(id);
   }
 
   async subscribe(userId: number, podcastId: number): Promise<string> {
