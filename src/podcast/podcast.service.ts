@@ -11,6 +11,7 @@ import { EmailService } from 'src/email/email.service';
 import { UserService } from 'src/user/user.service';
 import { SubscribeService } from 'src/subscribe/subscribe.service';
 import { Episode } from 'src/episode/entities/episode.entity';
+import { CreatePodcastDto } from './dto/create-podcast.dto';
 
 @Injectable()
 export class PodcastService {
@@ -28,6 +29,39 @@ export class PodcastService {
   ) {}
 
 
+  async createPodcast(currentUser: User, createPodcastDto: CreatePodcastDto): Promise<Podcast> {
+    if (!currentUser.isOwner) {
+      currentUser.isOwner = true;
+      await this.userRepository.save(currentUser);
+    }
+
+    const podcast = this.podcastRepository.create({
+      ...createPodcastDto,
+      user: currentUser,
+    });
+
+    // Step 4: Fetch subscribers
+    const subscribers = await this.subscribeAllService.findAll();
+
+    // Step 5: Notify subscribers
+    if (subscribers && subscribers.length > 0) {
+      for (const subscriber of subscribers) {
+        const { email } = subscriber;
+        try {
+          await this.mailService.sendSubscribeAllEmail({
+            name: createPodcastDto.name,
+            email: email,
+          });
+          console.log(`Email successfully sent to: ${email}`);
+        } catch (error) {
+          console.error(`Failed to send email to: ${email}`, error);
+        }
+      }
+    }
+
+
+    return await this.podcastRepository.save(podcast);;
+  }
 
 
   async findAll(): Promise<Podcast[]> {
@@ -158,11 +192,6 @@ export class PodcastService {
 
   }
 
-
-  // async getepisodesbyPodcast(id:number):Promise<Podcast>{
-    
-  // }
-
   async findAllEpisodesByPodcastId(podcastId: number): Promise<Episode[]> {
 
 
@@ -171,4 +200,18 @@ export class PodcastService {
       relations: ['podcast'],  // Ensure the relationship is loaded
     });
   }
+  async getPodcastsByUserId(userId: number): Promise<Podcast[]> {
+    const podcasts = await this.podcastRepository.find({
+      where: { user: { id: userId } },
+      relations: ['user'],
+    });
+
+    if (!podcasts.length) {
+      throw new NotFoundException('Aucun podcast trouvé pour cet utilisateur');
+    }
+
+    return podcasts;
+  }
+
+
 }

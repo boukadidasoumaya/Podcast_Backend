@@ -40,7 +40,7 @@ export class CommentService {
     // Récupération du commentaire avec les relations nécessaires
     const comment = await this.commentRepository.findOne({
       where: { id: newComment.id },
-      relations: ['parent', 'user', 'podcast', 'episode', 'likesComment'],
+      relations: ['parent', 'user', 'podcast', 'episode', 'likesComment.user'],
     });
 
     if (!comment) {

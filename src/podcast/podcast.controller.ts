@@ -33,14 +33,27 @@ export class PodcastController {
       defaultPhotoPath: 'uploads/pod-talk-logo.png',
     }),
   )
+  @UseGuards(JwtAuthGuard)
+  @Post()
+  async createPodcast(
+    @Body() createPodcastDto: CreatePodcastDto,
+    @CurrentUser() currentUser: User
+  ): Promise<Podcast> {
+    return this.podcastService.createPodcast(currentUser, createPodcastDto);
+  }
 
- 
 
   @Get()
   findAll() {
     return this.podcastService.findAll();
   }
-
+  @UseGuards(JwtAuthGuard)
+  @Get('user')
+  async getPodcastsByUser(@CurrentUser() currentUser: User) {
+    console.log(currentUser);
+    const podcasts = await this.podcastService.getPodcastsByUserId(currentUser.id);
+    return podcasts;
+  }
   
   @Get('withusers')
   getpodswithusers(){
@@ -51,6 +64,7 @@ export class PodcastController {
   getpodswithepisodes(){
     return this.podcastService.getpodswithepisodes();
   }
+
 
   @Get(':id')
   findOne(@Param('id') id: string) {
@@ -88,7 +102,8 @@ export class PodcastController {
   @Get(':id/episodes')
   findAllEpisodesByPodcastId(@Param('id') id: string){
     return this.podcastService.findAllEpisodesByPodcastId(+id);  // +id to convert string to number
+  }
 
 
 
-  }}
+}

@@ -17,6 +17,7 @@ import { EpisodeGateway } from './gateway/episode.gateway';
 import { Episode } from './entities/episode.entity';
 import { ApiConsumes } from '@nestjs/swagger';
 import { createFileUploadInterceptor } from '../shared/interceptors/filemp-uplaod.interceptor';
+import { JwtAuthGuard } from '../auth/guard/jwt-auth.guard';
 @Controller('episodes')
 export class EpisodeController {
   constructor(
@@ -34,6 +35,7 @@ export class EpisodeController {
       fileSizeLimit: 50 * 1024 * 1024,
     }),
   )
+  @UseGuards(JwtAuthGuard)
   async create(@Body() createEpisodeDto: CreateEpisodeDto) {
     console.log(createEpisodeDto);
     const episode = await this.episodeService.create(createEpisodeDto);
@@ -60,6 +62,7 @@ export class EpisodeController {
   }
 
   @Put(':id')
+  @UseGuards(JwtAuthGuard)
   async update(
     @Param('id') id: number,
     @Body() updateEpisodeDto: UpdateEpisodeDto,
@@ -72,6 +75,7 @@ export class EpisodeController {
   }
 
   @Delete(':id')
+  @UseGuards(JwtAuthGuard)
   remove(@Param('id') id: number) {
     return this.episodeService.remove(id);
   }

@@ -16,23 +16,24 @@ export class EpisodeService {
     @InjectRepository(Podcast)
     private readonly podcastRepository: Repository<Podcast>,
   ) {}
-    
 
   // Create a new episode
   async create(createEpisodeDto: CreateEpisodeDto): Promise<Episode> {
     // Ensure the podcast exists before creating the episode
-    const podcast = await this.podcastRepository.findOne({where: { id: createEpisodeDto.podcast.id }});
-    
+    const podcast = await this.podcastRepository.findOne({
+      where: { id: createEpisodeDto.podcast.id },
+    });
+
     if (!podcast) {
       throw new Error('Podcast not found');
     }
     console.log(createEpisodeDto);
     // Create a new episode and associate it with the podcast
     const episode = this.episodeRepository.create({
-      ...createEpisodeDto, 
-      podcast, 
+      ...createEpisodeDto,
+      podcast,
     });
-  
+
     // Save the episode to the database
     return await this.episodeRepository.save(episode);
   }
@@ -130,4 +131,5 @@ export class EpisodeService {
     await this.episodeRepository.save(episode);
     return episode;
   }
+
 }

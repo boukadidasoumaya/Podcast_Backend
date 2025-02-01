@@ -63,30 +63,32 @@ export class LikeEpisodeService {
   ): Promise<LikeEpisode> {
     const { user, episode } = deleteLikeEpisodeDto;
 
-    // Vérification si le like existe pour cet utilisateur et cet épisode
+    if (!user || !user.id) {
+      throw new BadRequestException('Utilisateur non valide.');
+    }
+
+    // Vérifier si le like existe et n'est pas déjà supprimé
     const existingLike = await this.likeEpisodeRepository.findOne({
       where: {
         user: { id: user.id },
         episode: { id: episode.id },
+        deletedAt: null, // Vérifie que le like n'est pas déjà supprimé
       },
-      relations: ['user', 'episode'], 
-
+      relations: ['user', 'episode'],
     });
 
     if (!existingLike) {
-      throw new NotFoundException("Vous n'avez pas liké cet épisode.");
+      throw new NotFoundException(
+        "Vous n'avez pas liké cet épisode ou il est déjà supprimé.",
+      );
     }
 
-    // Stocker l'entité avant suppression
-    const deletedLike = { ...existingLike };
+    // Soft remove (marque comme supprimé sans effacer définitivement)
+    await this.likeEpisodeRepository.softRemove(existingLike);
 
-    // Supprimer l'entité
-    await this.likeEpisodeRepository.remove(existingLike);
-
-    // Retourner le like supprimé
-    return deletedLike;
+    // Retourner le like supprimé avec `deletedAt` mis à jour
+    return { ...existingLike};
   }
-
 
   async getEpisodeLikesCount(): Promise<any> {
     const episodes = await this.episodeService.findAll();
@@ -139,7 +141,10 @@ export class LikeEpisodeService {
       .groupBy('like_episode.episodeId, like_episode.userId')
       .getRawMany();
 
-    const episodeLikesMap = new Map<number, { likeCount: number; users: number[] }>();
+    const episodeLikesMap = new Map<
+      number,
+      { likeCount: number; users: number[] }
+    >();
 
     likes.forEach((like) => {
       if (!episodeLikesMap.has(like.episodeId)) {
@@ -164,6 +169,4 @@ export class LikeEpisodeService {
       users: episodeData?.users.map((user) => ({ user })) || [],
     };
   }
-
-
 }
