@@ -11,9 +11,10 @@ import { UserService } from '../user/user.service';
 import { EmailService } from '../email/email.service';
 import { SubscribeModule } from '../subscribe/subscribe.module';
 import { Payment } from '../payment/entities/payment.entity';
+import { Topic } from 'src/topics/entities/topic.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Podcast,User,Episode,Payment]),SubscribeModule],
+  imports: [TypeOrmModule.forFeature([Podcast,User,Topic,Episode,Payment]),SubscribeModule],
   controllers: [PodcastController],
   providers: [PodcastService,EmailService,UserService],
   exports: [PodcastService],

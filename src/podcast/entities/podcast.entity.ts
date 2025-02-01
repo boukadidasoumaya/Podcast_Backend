@@ -4,7 +4,7 @@ import { TimestampEntities } from '../../Generics/timestamp.entities';
 import { Comment } from '../../comment/entities/comment.entity';
 import { User } from 'src/user/entities/user.entity';
 import { Episode } from 'src/episode/entities/episode.entity';
-
+import { Topic } from 'src/topics/entities/topic.entity';
 @Entity('podcast')
 export class Podcast extends TimestampEntities{
     @PrimaryGeneratedColumn()
@@ -44,5 +44,7 @@ export class Podcast extends TimestampEntities{
 
     @ManyToOne(()=>User,(user)=>user.podcasts,{cascade:true})
     user: User;
+    @ManyToOne(() => Topic, { nullable: true }) // Ensures each podcast has exactly one topic
+    topic: Topic;
 
 }
