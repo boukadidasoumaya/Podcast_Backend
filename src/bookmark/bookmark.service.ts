@@ -29,10 +29,16 @@ export class BookmarkService {
   }
 
   async getUserBookmarks(userId: number): Promise<Bookmark[]> {
-    return this.bookmarkRepository.find({
+    const episodebookmarked=await this.bookmarkRepository.find({
       where: { user: { id: userId } },
-      relations: ['episode'],
+      relations: ["episode" ,'episode.podcast', 'episode.likes', 'episode.comments', 'episode.podcast.user'],
     });
+    return episodebookmarked.map((x) => ({
+      ...x,
+      
+      numberOfLikes: x.episode.likes?.length || 0,
+      numberOfComments: x.episode.comments?.length || 0,
+    }));
   }
   async isBookmarked(userId: number, episodeId: number): Promise<boolean> {
     const bookmark = await this.bookmarkRepository.findOne({
