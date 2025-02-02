@@ -81,6 +81,13 @@ export class AuthController {
     return await this.authService.login(loginCredentialsDto);
   }
 
+  @Get('me')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('JWT-auth')
+  async Me(@CurrentUser() user){
+    return user;
+  }
+
   @Get('check-username')
   @ApiOkResponse({
   description: 'Username availability checked successfully',

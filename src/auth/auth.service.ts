@@ -137,6 +137,7 @@ export class AuthService {
     if (!user) {
       throw new NotFoundException('Utilisateur ou mot de passe incorrect');
     }
+
     const hashedPassword = await bcrypt.hash(password, user.salt);
     if (user.password !== hashedPassword) {
       throw new NotFoundException('Mot de passe incorrect');
@@ -152,6 +153,20 @@ export class AuthService {
     const jwt = this.jwtService.sign(payload);
     return {
       accessToken: jwt,
+      user: {
+        id: user.id,
+        email: user.email,
+        username: user.username,
+        role: user.role,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        photo: user.photo,
+        birthday : user.birthday,
+        profession : user.profession,
+        instagramLink : user.instagramLink,
+        whatsappUser : user.whatsappUser,
+        twitterUser : user.twitterUser
+      },
     };
   }
 
