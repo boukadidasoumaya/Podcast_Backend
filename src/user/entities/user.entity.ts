@@ -53,7 +53,10 @@ export class User extends TimestampEntity {
   instagramLink: string;
 
   @Column({ nullable: true })
-  whatsappUser: string;
+  whatsappUser: string; 
+
+  @Column({ nullable: true })
+  twitterUser: string; 
 
   @Column({ nullable: true })
   birthday: Date;

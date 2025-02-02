@@ -3,16 +3,17 @@ import { AppModule } from './app.module';
 import { NestExpressApplication } from '@nestjs/platform-express';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { ClassSerializerInterceptor, ValidationPipe } from '@nestjs/common';
-import * as path from 'node:path';
+import * as path from 'node:path'
+;
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
   const frontendUrl = `${process.env.FRONTEND_URL}:${process.env.FRONTEND_PORT}`;
 
   app.enableCors({
-    origin: "http://localhost:4200", // Replace with your frontend URL
+    origin: 'http://localhost:4200', 
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
-    credentials: true, // Allow cookies and credentials
+    credentials: true, 
     allowedHeaders: 'Content-Type, Authorization, X-Requested-With, Accept',
     exposedHeaders: 'Content-Length, X-Kuma-Revision',
   });

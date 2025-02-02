@@ -85,7 +85,9 @@ export class UserController {
     @CurrentUser() user: User,
     @Body() updateUserDto: UpdateUserDto,
   ) {
-    return await this.userService.update(user.id, updateUserDto);
+    const updatedUser = await this.userService.update(user.id, updateUserDto);
+    console.log('Updated User:', updatedUser);
+    return updatedUser;
   }
 
   // @UseInterceptors(ClassSerializerInterceptor)

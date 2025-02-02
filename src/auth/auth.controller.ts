@@ -3,7 +3,9 @@ import {
   Body,
   Controller,
   Get,
+  Param,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import {
@@ -26,6 +28,7 @@ import { User } from '../user/entities/user.entity';
 import { CreateSuperAdminDto } from '../user/dto/create-superadmin.dto';
 import { SuperAdmin } from '../user/entities/superAdmin.entity';
 import { InterestsEnum } from 'src/shared/Enums/interests.enum';
+import { UpdateTokenDto } from './dto/updatetoken.dto';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -76,6 +79,32 @@ export class AuthController {
   })
   async login(@Body() loginCredentialsDto: LoginCredentialsDto) {
     return await this.authService.login(loginCredentialsDto);
+  }
+
+  @Get('me')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('JWT-auth')
+  async Me(@CurrentUser() user){
+    return user;
+  }
+
+  @Get('check-username')
+  @ApiOkResponse({
+  description: 'Username availability checked successfully',
+  type: Boolean,
+  })
+  @ApiBadRequestResponse({
+  description: 'Invalid request, please check your input',
+  })
+  async checkUsername(@Query('username') username: string): Promise<boolean> {
+    return this.authService.checkUsernameUnique(username);
+  }
+
+  @Post('update-token')
+  @ApiOkResponse({ description: 'Token mis à jour avec succès' })
+  @ApiBadRequestResponse({description: 'Requête incorrecte, veuillez vérifier votre demande',})
+  async updateToken(@Body() updateTokenDto: UpdateTokenDto) {
+    return await this.authService.update_token(updateTokenDto); 
   }
 
   @Post('forgot-password')
