@@ -9,14 +9,16 @@ import { User } from '../user/entities/user.entity';
 import { UserModule } from '../user/user.module';
 import { PodcastModule } from '../podcast/podcast.module';
 import { EpisodeModule } from '../episode/episode.module';
+import { LikeComment } from '../like-comment/entities/like-comment.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Comment, User, Podcast, Episode]),
+    TypeOrmModule.forFeature([Comment, User, Podcast, Episode,LikeComment]),
     UserModule, // Ajouté pour résoudre UserService
     PodcastModule, // Ajouté pour résoudre PodcastService
     EpisodeModule, // Ajouté pour résoudre EpisodeService
   ],
-  providers: [CommentGateway,CommentService],
+  providers: [CommentGateway, CommentService],
+  exports: [CommentService],
 })
 export class CommentModule {}

@@ -7,12 +7,16 @@ import { Podcast } from './entities/podcast.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Episode } from 'src/episode/entities/episode.entity';
 import { User } from 'src/user/entities/user.entity';
+import { UserService } from '../user/user.service';
+import { EmailService } from '../email/email.service';
+import { SubscribeModule } from '../subscribe/subscribe.module';
+import { Payment } from '../payment/entities/payment.entity';
 import { Topic } from 'src/topics/entities/topic.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Podcast,Topic,Episode,User])],
+  imports: [TypeOrmModule.forFeature([Podcast,User,Topic,Episode,Payment]),SubscribeModule],
   controllers: [PodcastController],
-  providers: [PodcastService],
+  providers: [PodcastService,EmailService,UserService],
   exports: [PodcastService],
 })
 export class PodcastModule {}

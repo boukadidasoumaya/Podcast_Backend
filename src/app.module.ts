@@ -16,7 +16,6 @@ import { EpisodeModule } from './episode/episode.module';
 import { PodcastModule } from './podcast/podcast.module';
 import { BookmarkModule } from './bookmark/bookmark.module';
 import { EventsModule } from './test/events.module';
-import { OwnerModule } from './owner/owner.module';
 import { SubscribeModule } from './subscribe/subscribe.module';
 import { LikeEpisodeModule } from './like-episode/like-episode.module';
 import { LikeCommentModule } from './like-comment/like-comment.module';
@@ -31,9 +30,9 @@ import { topicModule } from './topics/topic.module';
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
-      autoLoadEntities: true,
       entities: ['dist/**/*.entity{.ts,.js}'],
-      synchronize:false,
+      autoLoadEntities: true,
+      synchronize: false,
     }),
     AuthModule,
     UserModule,
@@ -47,11 +46,8 @@ import { topicModule } from './topics/topic.module';
     PodcastModule,
     BookmarkModule,
     EventsModule,
-    OwnerModule,
-    SubscribeModule,
-    LikeEpisodeModule,
-    LikeCommentModule,
-topicModule  ],
+    SubscribeModule
+  ],
   controllers: [AppController],
   providers: [AppService],
 })

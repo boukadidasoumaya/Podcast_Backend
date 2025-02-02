@@ -19,6 +19,7 @@ import { Bookmark } from '../../bookmark/entities/bookmark.entity';
 import { LikeEpisode } from '../../like-episode/entities/like-episode.entity';
 import { LikeComment } from '../../like-comment/entities/like-comment.entity';
 import { Podcast } from '../../podcast/entities/podcast.entity';
+import { InterestsEnum } from '../../shared/Enums/interests.enum';
 @Entity('user')
 @TableInheritance({
   column: { type: 'varchar', name: 'role', enum: UserRoleEnum },
@@ -44,18 +45,22 @@ export class User extends TimestampEntity {
   @Column({ nullable: true })
   profession: string;
 
-  @Column({ nullable: true })
-  facebookLink: string;
-
-  @Column({ nullable: true })
+  /*@Column({ nullable: true })
   linkedinLink: string;
-
+*/
   @Column({ nullable: true })
   instagramLink: string;
 
-  @Exclude()
-  @Transform(() => undefined)
+  @Column({ nullable: true })
+  whatsappUser: string;
 
+  @Column({ nullable: true })
+  birthday: Date;
+
+  @Column({ nullable: true })
+  country: string;
+
+  @Exclude()
   @Column()
   password: string;
 
@@ -73,6 +78,19 @@ export class User extends TimestampEntity {
     enum: UserRoleEnum,
   })
   role: string;
+
+
+  @Column({
+    type: 'json', // Utilisation du type JSON natif
+    nullable: true, // Permet de ne pas définir ce champ
+  })
+  interests: InterestsEnum[];
+
+  @Column({
+    default: false,
+  })
+  isOwner: boolean;
+
   @Exclude()
   @Transform(() => undefined)
   @Column({ nullable: true })
@@ -94,13 +112,13 @@ export class User extends TimestampEntity {
   @OneToMany(() => LikeComment, (like) => like.user, { nullable: true })
   likesComment: LikeComment[];
 
-  @OneToMany(() => Bookmark, (bookmark) => bookmark.user)
+  @OneToMany(() => Bookmark, (bookmark) => bookmark.user,{ nullable: true })
   bookmarks: Bookmark[];
 
-  @ManyToMany(() => Podcast, (podcast) => podcast.subscribers)
+  @ManyToMany(() => Podcast, (podcast) => podcast.subscribers,{ nullable: true })
   @JoinTable()
   subscriptions: Podcast[];
 
-  @OneToMany(() => Podcast, (podcast) => podcast.user)
+  @OneToMany(() => Podcast, (podcast) => podcast.user,{ nullable: true })
   podcasts: Podcast[];
 }
