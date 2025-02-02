@@ -46,7 +46,8 @@ import { topicModule } from './topics/topic.module';
     PodcastModule,
     BookmarkModule,
     EventsModule,
-    SubscribeModule
+    SubscribeModule,
+    topicModule,
   ],
   controllers: [AppController],
   providers: [AppService],

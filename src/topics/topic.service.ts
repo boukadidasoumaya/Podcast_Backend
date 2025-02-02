@@ -17,9 +17,9 @@ export class TopicService {
   ) {}
 
   async create(createTopicDto: CreatetopicDto): Promise<Topic> {
-  
+    const topic= await this.topicRepository.create(createTopicDto)
    
-    return this.topicRepository.save(createTopicDto);
+    return await this.topicRepository.save(topic);
   }
   
   async update(id: number, updateTopicDto: UpdatetopicDto): Promise<Topic> {
