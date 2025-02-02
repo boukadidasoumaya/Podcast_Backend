@@ -17,7 +17,6 @@ export class EpisodeService {
     private readonly podcastRepository: Repository<Podcast>,
   ) {}
 
-  // Create a new episode
   async create(createEpisodeDto: CreateEpisodeDto): Promise<Episode> {
     // Ensure the podcast exists before creating the episode
     const podcast = await this.podcastRepository.findOne({
@@ -27,14 +26,16 @@ export class EpisodeService {
     if (!podcast) {
       throw new Error('Podcast not found');
     }
-    console.log(createEpisodeDto);
-    // Create a new episode and associate it with the podcast
+  
     const episode = this.episodeRepository.create({
       ...createEpisodeDto,
       podcast,
     });
-
-    // Save the episode to the database
+  
+    podcast.nbre_episode++;
+  
+    await this.podcastRepository.save(podcast);
+  
     return await this.episodeRepository.save(episode);
   }
 
