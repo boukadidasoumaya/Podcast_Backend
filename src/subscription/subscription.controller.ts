@@ -23,5 +23,14 @@ export class SubscriptionController {
     subscribe(@CurrentUser() user:User,@Param('podcastid') podcastid:number){
         const userid = user.id;
         return this.subscriptionService.subscribe(userid,podcastid);
+    } 
+
+
+    @Post('unsubscribe/:podcastid')
+    @UseGuards(JwtAuthGuard)
+    @ApiBearerAuth('JWT-auth')
+    unsubscribe(@CurrentUser() user:User,@Param('podcastid') podcastid:number){
+        const userid = user.id;
+        return this.subscriptionService.unsubscribe(userid,podcastid);
     }
 }

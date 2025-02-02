@@ -46,7 +46,7 @@ export class SubscriptionService {
       });      
       if (existingSubscription) {
 
-         return 'you are already subscribed to this podcast';
+         return false;//your are already subscribed
        }
         
        const newsubscription = this.subscriptionRepository.create({
@@ -61,41 +61,42 @@ export class SubscriptionService {
           podcast: podcast.name,
         });
 
-        return await this.subscriptionRepository.save(newsubscription);
+       await this.subscriptionRepository.save(newsubscription);
+       return true; // you are not already subscribed+ subscribed successfully
      
   }
 
 
-//   async unsubscribe(userId: number, podcastId: number): Promise<string> {
-//     const user = await this.userRepository.findOne({
-//       where: { id: userId },
-//       relations: ['subscriptions'],
-//     });
+  async unsubscribe(userId: number, podcastId: number): Promise<string> {
+    const user = await this.userRepository.findOne({
+      where: { id: userId },
+      relations: ['subscriptions'],
+    });
 
-//     if (!user) {
-//       throw new NotFoundException('User not found');
-//     }
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
 
-//     const podcast = await this.podcastRepository.findOne({
-//       where: { id: podcastId },
-//     });
+    const podcast = await this.podcastRepository.findOne({
+      where: { id: podcastId },
+    });
 
-//     if (!podcast) {
-//       throw new NotFoundException('Podcast not found');
-//     }
+    if (!podcast) {
+      throw new NotFoundException('Podcast not found');
+    }
 
-//     if (!user.subscriptions.some((p) => p.id === podcast.id)) {
-//       return 'You are not subscribed to this podcast';
-//     }
+    if (!user.subscriptions.some((p) => p.id === podcast.id)) {
+      return 'You are not subscribed to this podcast';
+    }
 
-//     user.subscriptions = user.subscriptions.filter((p) => p.id !== podcast.id);
+    user.subscriptions = user.subscriptions.filter((p) => p.id !== podcast.id);
 
-//     await this.userRepository.save(user);
+    await this.userRepository.save(user);
 
-//     return 'Unsubscribed successfully';
+    return 'Unsubscribed successfully';
 
 
-//   }
+  }
 
 
 async test(){
