@@ -10,7 +10,7 @@ import {
   Req,
   UseGuards,
   BadRequestException,
-  UseInterceptors,
+  UseInterceptors, NotFoundException,
 } from '@nestjs/common';
 import { PodcastService } from './podcast.service';
 import { CreatePodcastDto } from './dto/create-podcast.dto';
@@ -47,11 +47,18 @@ export class PodcastController {
   
  
 
+
   @Get()
   findAll() {
     return this.podcastService.findAll();
   }
-
+  @UseGuards(JwtAuthGuard)
+  @Get('user')
+  async getPodcastsByUser(@CurrentUser() currentUser: User) {
+    console.log(currentUser);
+    const podcasts = await this.podcastService.getPodcastsByUserId(currentUser.id);
+    return podcasts;
+  }
   
   @Get('withusers')
   getpodswithusers(){
@@ -62,6 +69,15 @@ export class PodcastController {
   getpodswithepisodes(){
     return this.podcastService.getpodswithepisodes();
   }
+  @Get(':id/first-episode')
+  async getFirstEpisode(@Param('id') podcastId: number) {
+    const episode = await this.podcastService.findFirstEpisodeByPodcastId(podcastId);
+    if (!episode) {
+      throw new NotFoundException('Aucun épisode trouvé pour ce podcast.');
+    }
+    return episode;
+  }
+
 
   @Get(':id')
   findOne(@Param('id') id: string) {
@@ -99,7 +115,8 @@ export class PodcastController {
   @Get(':id/episodes')
   findAllEpisodesByPodcastId(@Param('id') id: string){
     return this.podcastService.findAllEpisodesByPodcastId(+id);  // +id to convert string to number
+  }
 
 
 
-  }}
+}

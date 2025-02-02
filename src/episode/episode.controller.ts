@@ -8,13 +8,16 @@ import {
   Delete,
   UseGuards,
   Req,
+  UseInterceptors,
 } from '@nestjs/common';
 import { EpisodeService } from './episode.service';
 import { CreateEpisodeDto } from './dto/create-episode.dto';
 import { UpdateEpisodeDto } from './dto/update-episode.dto';
 import { EpisodeGateway } from './gateway/episode.gateway';
 import { Episode } from './entities/episode.entity';
-
+import { ApiConsumes } from '@nestjs/swagger';
+import { createFileUploadInterceptor } from '../shared/interceptors/filemp-uplaod.interceptor';
+import { JwtAuthGuard } from '../auth/guard/jwt-auth.guard';
 @Controller('episodes')
 export class EpisodeController {
   constructor(
@@ -23,7 +26,18 @@ export class EpisodeController {
   ) {}
 
   @Post()
+  @ApiConsumes('multipart/form-data')
+  @UseInterceptors(
+    createFileUploadInterceptor({
+      fieldName: 'filepath',
+      destination: 'media',
+      allowedFileTypes: /\.(mp4|mp3)$/i,
+      fileSizeLimit: 50 * 1024 * 1024,
+    }),
+  )
+  @UseGuards(JwtAuthGuard)
   async create(@Body() createEpisodeDto: CreateEpisodeDto) {
+    console.log(createEpisodeDto);
     const episode = await this.episodeService.create(createEpisodeDto);
     return episode;
   }
@@ -35,7 +49,6 @@ export class EpisodeController {
 
   @Get('trending')
   async getTrendingEpisodes(): Promise<Episode[]> {
-
     return this.episodeService.findAllTrending();
   }
 
@@ -49,6 +62,7 @@ export class EpisodeController {
   }
 
   @Put(':id')
+  @UseGuards(JwtAuthGuard)
   async update(
     @Param('id') id: number,
     @Body() updateEpisodeDto: UpdateEpisodeDto,
@@ -61,6 +75,7 @@ export class EpisodeController {
   }
 
   @Delete(':id')
+  @UseGuards(JwtAuthGuard)
   remove(@Param('id') id: number) {
     return this.episodeService.remove(id);
   }

@@ -6,8 +6,9 @@ import { Episode } from '../../episode/entities/episode.entity';
 export class LikeEpisode extends TimestampEntities {
   @PrimaryGeneratedColumn()
   id: number;
-  @ManyToOne(() => User, (user) => user.likesEpisode)
+  @ManyToOne(() => User, (user) => user.likesComment, { nullable: false })
   user: User;
+
 
   @ManyToOne(() => Episode, (episode) => episode.likes)
   episode: Episode;

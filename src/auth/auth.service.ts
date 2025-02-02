@@ -158,7 +158,7 @@ export class AuthService {
   async sendPasswordResetCode(email: string): Promise<void> {
     const user = await this.userRepository.findOneBy({ email });
     if (!user) {
-      throw new NotFoundException('Admin non trouvé');
+      throw new NotFoundException('User with email unfound');
     }
 
     // Générer un code de sécurité et le sauvegarder avec un horodatage d'expiration
@@ -168,9 +168,6 @@ export class AuthService {
     user.resetCode = resetCode;
     user.resetCodeExpiration = resetCodeExpiration;
     await this.userRepository.save(user);
-
-    console.log('hiii');
-
     // Appeler directement la fonction sendReinitialisationEmail
     await this.mailService.sendReinitialisationEmail({
       resetcode: user.resetCode,

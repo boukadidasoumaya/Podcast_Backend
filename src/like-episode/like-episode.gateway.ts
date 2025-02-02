@@ -27,10 +27,10 @@ export class LikeEpisodeGateway {
     try {
       const like =
         await this.likeEpisodeService.likeEpisode(createEpisodeLikeDto);
-      const totalLikes = await this.likeEpisodeService.getEpisodeLikesCount();
-      this.server.emit('likeEpisode', {
-        totalLikes,
-      });
+      const count = await this.likeEpisodeService.getLikesEpisodeAdded(
+        like.episode,
+      );
+      this.server.emit('likeEpisode', count);
       return like;
     } catch (error) {
       console.error('Error liking the episode:', error);
@@ -45,11 +45,14 @@ export class LikeEpisodeGateway {
     @ConnectedSocket() socket: Socket,
   ) {
     try {
-      await this.likeEpisodeService.unlikeEpisode(deleteLikeEpisodeDto);
-      const totalLikes = await this.likeEpisodeService.getEpisodeLikesCount();
-      this.server.emit('unlikeEpisode', {
-        totalLikes,
-      });
+      const unlike =
+        await this.likeEpisodeService.unlikeEpisode(deleteLikeEpisodeDto);
+      console.log('unlike episode:', unlike);
+      const count = await this.likeEpisodeService.getLikesEpisodeAdded(
+        unlike.episode,
+      );
+
+      this.server.emit('unlikeEpisode', count);
     } catch (error) {
       console.error('Error unliking the episode:', error);
       socket.emit(
@@ -60,11 +63,9 @@ export class LikeEpisodeGateway {
   }
 
   @SubscribeMessage('getLikes')
-  async handleGetLikes(
-    @ConnectedSocket() socket: Socket,
-  ) {
+  async handleGetLikes(@ConnectedSocket() socket: Socket) {
     try {
-      const response= await this.likeEpisodeService.getEpisodeLikesCount();
+      const response = await this.likeEpisodeService.getEpisodeLikesCount();
       this.server.emit('getLikes', { response });
     } catch (error) {
       console.error('Error fetching likes:', error);

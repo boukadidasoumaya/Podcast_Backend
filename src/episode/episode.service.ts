@@ -1,11 +1,12 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, UseInterceptors } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Episode } from './entities/episode.entity';
 import { CreateEpisodeDto } from './dto/create-episode.dto';
 import { UpdateEpisodeDto } from './dto/update-episode.dto';
 import { Podcast } from 'src/podcast/entities/podcast.entity';
-import { User } from '../user/entities/user.entity';
+import { createFileUploadInterceptor } from 'src/shared/interceptors/filemp-uplaod.interceptor';
+import { ApiConsumes } from '@nestjs/swagger';
 
 @Injectable()
 export class EpisodeService {
@@ -26,11 +27,11 @@ export class EpisodeService {
     if (!podcast) {
       throw new Error('Podcast not found');
     }
-
+    console.log(createEpisodeDto);
     // Create a new episode and associate it with the podcast
     const episode = this.episodeRepository.create({
-      ...createEpisodeDto, // Spread the other properties from the DTO
-      podcast, // Associate the found podcast with the episode
+      ...createEpisodeDto,
+      podcast,
     });
 
     // Save the episode to the database
@@ -130,4 +131,5 @@ export class EpisodeService {
     await this.episodeRepository.save(episode);
     return episode;
   }
+
 }

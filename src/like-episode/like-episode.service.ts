@@ -60,23 +60,34 @@ export class LikeEpisodeService {
   }
   async unlikeEpisode(
     deleteLikeEpisodeDto: DeleteLikeEpisodeDto,
-  ): Promise<void> {
+  ): Promise<LikeEpisode> {
     const { user, episode } = deleteLikeEpisodeDto;
 
-    // Vérification si le like existe pour cet utilisateur et cet épisode
+    if (!user || !user.id) {
+      throw new BadRequestException('Utilisateur non valide.');
+    }
+
+    // Vérifier si le like existe et n'est pas déjà supprimé
     const existingLike = await this.likeEpisodeRepository.findOne({
       where: {
-        user: { id: user.id }, // Utilisation de user.id
-        episode: { id: episode.id }, // Utilisation de episode.id
+        user: { id: user.id },
+        episode: { id: episode.id },
+        deletedAt: null, // Vérifie que le like n'est pas déjà supprimé
       },
+      relations: ['user', 'episode'],
     });
 
     if (!existingLike) {
-      throw new NotFoundException("Vous n'avez pas liké cet épisode.");
+      throw new NotFoundException(
+        "Vous n'avez pas liké cet épisode ou il est déjà supprimé.",
+      );
     }
 
-    // Suppression du like
-    await this.likeEpisodeRepository.delete(existingLike.id);
+    // Soft remove (marque comme supprimé sans effacer définitivement)
+    await this.likeEpisodeRepository.softRemove(existingLike);
+
+    // Retourner le like supprimé avec `deletedAt` mis à jour
+    return { ...existingLike};
   }
 
   async getEpisodeLikesCount(): Promise<any> {
@@ -120,5 +131,42 @@ export class LikeEpisodeService {
     });
     return likedEpisodes.map((like) => like.episode);
   }
+  async getLikesEpisodeAdded(episode: Episode): Promise<any> {
+    const likes = await this.likeEpisodeRepository
+      .createQueryBuilder('like_episode')
+      .select(
+        'like_episode.episodeId, COUNT(like_episode.id) AS like_count, like_episode.userId',
+      )
+      .where('like_episode.episodeId = :episodeId', { episodeId: episode.id })
+      .groupBy('like_episode.episodeId, like_episode.userId')
+      .getRawMany();
 
+    const episodeLikesMap = new Map<
+      number,
+      { likeCount: number; users: number[] }
+    >();
+
+    likes.forEach((like) => {
+      if (!episodeLikesMap.has(like.episodeId)) {
+        episodeLikesMap.set(like.episodeId, { likeCount: 0, users: [] });
+      }
+
+      // Avoiding duplicate users
+      const episodeLikes = episodeLikesMap.get(like.episodeId)!;
+      episodeLikes.likeCount += Number(like.like_count);
+
+      if (!episodeLikes.users.includes(like.userId)) {
+        episodeLikes.users.push(like.userId);
+      }
+    });
+
+    // For a specific episode, return the like count and users
+    const episodeData = episodeLikesMap.get(episode.id);
+
+    return {
+      episode: episode.id,
+      numberOfLikes: episodeData?.likeCount || 0,
+      users: episodeData?.users.map((user) => ({ user })) || [],
+    };
+  }
 }

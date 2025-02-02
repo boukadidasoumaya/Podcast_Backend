@@ -39,4 +39,6 @@ export class CreatePodcastDto {
   @Type(() => Topic)
   topic: Topic;
 
+
+
 }
