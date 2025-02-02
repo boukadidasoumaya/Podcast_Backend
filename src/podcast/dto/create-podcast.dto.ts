@@ -14,12 +14,6 @@ export class CreatePodcastDto {
   name: string;
 
   @ApiProperty({
-    description: 'topic of the podcast',
-    example: 'Education Health .',
-  })
- 
-
-  @ApiProperty({
     description: 'Description of the podcast',
     example: 'A podcast about the latest in technology and innovation.',
   })

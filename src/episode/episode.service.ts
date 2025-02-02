@@ -5,14 +5,18 @@ import { Episode } from './entities/episode.entity';
 import { CreateEpisodeDto } from './dto/create-episode.dto';
 import { UpdateEpisodeDto } from './dto/update-episode.dto';
 import { Podcast } from 'src/podcast/entities/podcast.entity';
-import { createFileUploadInterceptor } from 'src/shared/interceptors/filemp-uplaod.interceptor';
-import { ApiConsumes } from '@nestjs/swagger';
 
+
+import { Subscription } from '../subscription/entities/subscription.entity';
+import { EmailService } from 'src/email/email.service';
 @Injectable()
 export class EpisodeService {
   constructor(
     @InjectRepository(Episode)
     private readonly episodeRepository: Repository<Episode>,
+    @InjectRepository(Subscription)
+    private readonly subscriptionRepository: Repository<Subscription>,
+    private readonly emailService: EmailService,
     @InjectRepository(Podcast)
     private readonly podcastRepository: Repository<Podcast>,
   ) {}
@@ -31,12 +35,17 @@ export class EpisodeService {
       ...createEpisodeDto,
       podcast,
     });
+    
   
     podcast.nbre_episode++;
   
     await this.podcastRepository.save(podcast);
   
-    return await this.episodeRepository.save(episode);
+   const epi = await this.episodeRepository.save(episode);
+   const id = episode.id;
+   this.notify(id);
+   return epi;
+
   }
 
   // Get all episodes
@@ -132,5 +141,28 @@ export class EpisodeService {
     await this.episodeRepository.save(episode);
     return episode;
   }
+  async notify(id: number): Promise<any> {
+    const episode = await this.episodeRepository.findOne({
+      where: { id },
+      relations: ['podcast'],
+    });
 
+    if (!episode) {
+      throw new NotFoundException('Episode not found');
+    }
+    const podcast = episode.podcast; 
+    const subscriptions = await this.subscriptionRepository.find({
+      where: { podcast },
+      relations: ['user'],
+    });
+    console.log(subscriptions);
+    for (const subscription of subscriptions) {
+      await this.emailService.newepisode({
+        name: subscription.user.username + ' ' + subscription.user.lastName,
+        email: subscription.user.email,
+        podcast: episode.podcast.name,
+      });
+    }
+    return subscriptions;
+  }
 }

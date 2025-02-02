@@ -20,6 +20,7 @@ import { SubscribeModule } from './subscribe/subscribe.module';
 import { LikeEpisodeModule } from './like-episode/like-episode.module';
 import { LikeCommentModule } from './like-comment/like-comment.module';
 import { topicModule } from './topics/topic.module';
+import { SubscriptionModule } from './subscription/subscription.module';
 @Module({
   imports: [
     EventEmitterModule.forRoot(),
@@ -48,6 +49,7 @@ import { topicModule } from './topics/topic.module';
     EventsModule,
     SubscribeModule,
     topicModule,
+    SubscriptionModule
   ],
   controllers: [AppController],
   providers: [AppService],

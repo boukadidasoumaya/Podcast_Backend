@@ -11,6 +11,7 @@ import {
   UseGuards,
   BadRequestException,
   UseInterceptors, NotFoundException,
+  Query,
 } from '@nestjs/common';
 import { PodcastService } from './podcast.service';
 import { CreatePodcastDto } from './dto/create-podcast.dto';
@@ -44,7 +45,10 @@ export class PodcastController {
     return this.podcastService.createPodcast(currentUser, createPodcastDto);
   }
   
- 
+  @Get('filter')
+  filterpodcasts(@Query() filtres) {
+    return this.podcastService.filterpodcasts(filtres)
+  }
 
 
   @Get()
@@ -60,12 +64,12 @@ export class PodcastController {
   }
   
   @Get('withusers')
-  getpodswithusers(){
+  getpodswithusers() {
     return this.podcastService.getpodswithusers();
   }
 
   @Get('withepisodes')
-  getpodswithepisodes(){
+  getpodswithepisodes() {
     return this.podcastService.getpodswithepisodes();
   }
   @Get(':id/first-episode')
@@ -83,34 +87,41 @@ export class PodcastController {
     return this.podcastService.findOne(+id);
   }
   @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('JWT-auth')
   @Patch(':id')
   update(@Param('id') id: string, @Body() updatePodcastDto: UpdatePodcastDto) {
     return this.podcastService.update(+id, updatePodcastDto);
   }
   @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('JWT-auth')
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.podcastService.remove(+id);
   }
 
 
-  @UseGuards(JwtAuthGuard)
-  @Post(':p_id/subscribe')
-  subscribe(@Param('p_id') p_id: string, @Req() req) {
-    const u_id = req.user.id;
-    return this.podcastService.subscribe(+u_id,+p_id);
-  }
-  @UseGuards(JwtAuthGuard)
-  @Post(':p_id/unsubscribe')
-  unsubscribe(@Param('p_id') p_id: string, @Req() req) {
-    const u_id = req.user.id;
-    return this.podcastService.unsubscribe(+u_id,+p_id);
-  }
+  // @UseGuards(JwtAuthGuard)
+  // @ApiBearerAuth('JWT-auth')
+  // @Post(':p_id/subscribe')
+  // subscribe(@Param('p_id') p_id: string, @Req() req) {
+  //   const u_id = req.user.id;
+  //   return this.podcastService.subscribe(+u_id, +p_id);
+  // }
+  // @UseGuards(JwtAuthGuard)
+  // @ApiBearerAuth('JWT-auth')
+  // @Post(':p_id/unsubscribe')
+  // unsubscribe(@Param('p_id') p_id: string, @Req() req) {
+  //   const u_id = req.user.id;
+  //   return this.podcastService.unsubscribe(+u_id, +p_id);
+  // }
 
   @Get(':id/podcasts')
   getpodsbyuser(@Param('id') id: string) {
     return this.podcastService.getpodsparuser(+id);
   }
+
+
+  
   @Get(':id/episodes')
   findAllEpisodesByPodcastId(@Param('id') id: string){
     return this.podcastService.findAllEpisodesByPodcastId(+id);  // +id to convert string to number
