@@ -27,7 +27,6 @@ export class EpisodeController {
 
   
   @Post()
-  @ApiConsumes('multipart/form-data')
   @UseInterceptors(
     createFileUploadInterceptor({
       fieldName: 'filepath',

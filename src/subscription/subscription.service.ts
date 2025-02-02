@@ -8,6 +8,10 @@ import { NotFoundException } from '@nestjs/common';
 import { EmailService } from '../email/email.service';
 import { User } from '../user/entities/user.entity';
 import { Podcast } from '../podcast/entities/podcast.entity';
+import { SubscriptionDTO } from './dto/subscribe.dto';
+import { UserService } from '../user/user.service';
+import { PodcastService } from '../podcast/podcast.service';
+import { UnSubscriptionDTO } from './dto/unsubscribe.dto';
 
 
 @Injectable()
@@ -21,11 +25,12 @@ export class SubscriptionService {
         private readonly userRepository: Repository<User>,
         @InjectRepository(Podcast)
         private readonly podcastRepository: Repository<Podcast>,
+        private readonly podcastService: PodcastService,
         private readonly emailService: EmailService,
     ){}
 
-    async subscribe(user: User, podcast: Podcast): Promise<any> {
-
+    async subscribe(user: User, subscriptionDTO: SubscriptionDTO): Promise<any> {
+        const {podcast}=subscriptionDTO;
        if (!user) {
          throw new NotFoundException('User not found');
        }
@@ -33,11 +38,7 @@ export class SubscriptionService {
        if (!podcast) {
          throw new NotFoundException('Podcast not found');
        }
-       const podcastExist= await this.podcastRepository.findOne({
-        where: {
-           id: podcast.id 
-        },
-      });
+       const podcastExist= await this.podcastService.findOne(podcast.id);
       console.log("podcast exist",podcastExist);
 
        const existingSubscription = await this.subscriptionRepository.findOne({
@@ -71,8 +72,9 @@ export class SubscriptionService {
   }
 
 
-  async unsubscribe(user: User, podcast: Podcast): Promise<string> {
-    
+  async unsubscribe(user: User, unSubscriptionDTO: UnSubscriptionDTO): Promise<string> {
+    const {podcast}=unSubscriptionDTO;
+
     if (!user) {
       throw new NotFoundException('User not found');
     }
@@ -81,13 +83,13 @@ export class SubscriptionService {
       throw new NotFoundException('Podcast not found');
     }
 
-    if (!user.subscriptions.some((p) => p.id === podcast.id)) {
-      return 'You are not subscribed to this podcast';
-    }
-
-    user.subscriptions = user.subscriptions.filter((p) => p.id !== podcast.id);
-
-    await this.userRepository.save(user);
+    const existingSubscription = await this.subscriptionRepository.findOne({
+      where: {
+        user: { id: user.id },
+        podcast: { id: podcast.id },
+      },
+    });
+    await this.subscriptionRepository.softDelete(existingSubscription.id);
 
     return 'Unsubscribed successfully';
 
