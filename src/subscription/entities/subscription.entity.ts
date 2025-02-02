@@ -6,21 +6,13 @@ import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 't
 
 @Entity('subscription')
 export class Subscription {
-    @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn()
     id: number;
-    
-    @Column()
-    userid: number;
 
-    @Column()
-    podcastid: number;
-
-    @ManyToOne(() => User, (user) => user.subscriptions)
-  @JoinColumn({ name: 'userid' })
+  @ManyToOne(() => User, (user) => user.subscriptions, { nullable: false })
   user: User;
 
-  @ManyToOne(() => Podcast, (podcast) => podcast.subscriptions)
-  @JoinColumn({ name: 'podcastid' })
+  @ManyToOne(() => Podcast, (podcast) => podcast.subscriptions, { nullable: false })
   podcast: Podcast;
 
 }

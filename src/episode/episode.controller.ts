@@ -40,8 +40,7 @@ export class EpisodeController {
   async create(@Body() createEpisodeDto: CreateEpisodeDto) {
     console.log(createEpisodeDto);
     const episode = await this.episodeService.create(createEpisodeDto);
-    const id = episode.id;
-    this.episodeService.notify(id);
+   
     return episode;
   }
 

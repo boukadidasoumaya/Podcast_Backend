@@ -24,62 +24,58 @@ export class SubscriptionService {
         private readonly emailService: EmailService,
     ){}
 
-    async subscribe(userId: number, podcastId: number): Promise<any> {
-       const user = await this.userRepository.findOne({
-         where: { id: userId },
-       });
+    async subscribe(user: User, podcast: Podcast): Promise<any> {
 
        if (!user) {
          throw new NotFoundException('User not found');
        }
 
-       const podcast = await this.podcastRepository.findOne({
-         where: { id: podcastId },
-       });
-
        if (!podcast) {
          throw new NotFoundException('Podcast not found');
        }
+       const podcastExist= await this.podcastRepository.findOne({
+        where: {
+           id: podcast.id 
+        },
+      });
+      console.log("podcast exist",podcastExist);
 
        const existingSubscription = await this.subscriptionRepository.findOne({
-        where: { userid: userId, podcastid: podcastId },
-      });      
+        where: {
+          user: { id: user.id },
+          podcast: { id: podcast.id },
+        },
+      });
+      console.log(existingSubscription)
+
       if (existingSubscription) {
 
          return false;//your are already subscribed
        }
-        
        const newsubscription = this.subscriptionRepository.create({
-            userid: userId,
-            podcastid: podcastId,
+            user: user,
+            podcast: podcastExist,
         });
-        
+        await this.subscriptionRepository.save(newsubscription);
 
-        await this.emailService.sendSubscriptionEmail({
-          name: user.username + ' ' + user.lastName,
-          email: user.email,
-          podcast: podcast.name,
-        });
+        console.log("hello");
 
-       await this.subscriptionRepository.save(newsubscription);
+        // await this.emailService.sendSubscriptionEmail({
+        //   name: user.username + ' ' + user.lastName,
+        //   email: user.email,
+        //   podcast: podcast.name,
+        // });
+
        return true; // you are not already subscribed+ subscribed successfully
      
   }
 
 
-  async unsubscribe(userId: number, podcastId: number): Promise<string> {
-    const user = await this.userRepository.findOne({
-      where: { id: userId },
-      relations: ['subscriptions'],
-    });
-
+  async unsubscribe(user: User, podcast: Podcast): Promise<string> {
+    
     if (!user) {
       throw new NotFoundException('User not found');
     }
-
-    const podcast = await this.podcastRepository.findOne({
-      where: { id: podcastId },
-    });
 
     if (!podcast) {
       throw new NotFoundException('Podcast not found');

@@ -20,6 +20,7 @@ import { LikeEpisode } from '../../like-episode/entities/like-episode.entity';
 import { LikeComment } from '../../like-comment/entities/like-comment.entity';
 import { Podcast } from '../../podcast/entities/podcast.entity';
 import { InterestsEnum } from '../../shared/Enums/interests.enum';
+import { Subscription } from 'src/subscription/entities/subscription.entity';
 @Entity('user')
 @TableInheritance({
   column: { type: 'varchar', name: 'role', enum: UserRoleEnum },
@@ -115,9 +116,9 @@ export class User extends TimestampEntity {
   @OneToMany(() => Bookmark, (bookmark) => bookmark.user,{ nullable: true })
   bookmarks: Bookmark[];
 
-  @ManyToMany(() => Podcast, (podcast) => podcast.subscribers,{ nullable: true })
+  @OneToMany(() => Subscription, (subscription) => subscription.user,{ nullable: true })
   @JoinTable()
-  subscriptions: Podcast[];
+  subscriptions: Subscription[];
 
   @OneToMany(() => Podcast, (podcast) => podcast.user)
   podcasts: Podcast[];
