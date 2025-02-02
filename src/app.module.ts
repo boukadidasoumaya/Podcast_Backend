@@ -33,7 +33,7 @@ import { topicModule } from './topics/topic.module';
       database: process.env.DB_NAME,
       autoLoadEntities: true,
       entities: ['dist/**/*.entity{.ts,.js}'],
-      synchronize: false,
+      synchronize:false,
     }),
     AuthModule,
     UserModule,
