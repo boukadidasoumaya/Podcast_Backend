@@ -1,3 +1,4 @@
+import { topicModule } from './../topics/topic.module';
 /* eslint-disable prettier/prettier */
 
 import { Module } from '@nestjs/common';
@@ -14,7 +15,7 @@ import { Payment } from '../payment/entities/payment.entity';
 import { Topic } from 'src/topics/entities/topic.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Podcast,User,Topic,Episode,Payment]),SubscribeModule],
+  imports: [TypeOrmModule.forFeature([Podcast,User,Episode,Payment]),SubscribeModule,topicModule],
   controllers: [PodcastController],
   providers: [PodcastService,EmailService,UserService],
   exports: [PodcastService],

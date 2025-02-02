@@ -12,8 +12,7 @@ export class TopicService {
     @InjectRepository(Topic)
     private readonly topicRepository: Repository<Topic>,
 
-    @InjectRepository(Podcast)
-    private readonly podcastRepository: Repository<Podcast>,
+
   ) {}
 
   async create(createTopicDto: CreatetopicDto): Promise<Topic> {

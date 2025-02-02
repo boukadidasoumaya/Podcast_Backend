@@ -12,6 +12,7 @@ import { UserService } from 'src/user/user.service';
 import { SubscribeService } from 'src/subscribe/subscribe.service';
 import { Episode } from 'src/episode/entities/episode.entity';
 import { CreatePodcastDto } from './dto/create-podcast.dto';
+import { TopicService } from 'src/topics/topic.service';
 
 @Injectable()
 export class PodcastService {
@@ -25,19 +26,26 @@ export class PodcastService {
 
     private readonly mailService: EmailService,
     private readonly UserService:UserService,
-    private readonly subscribeAllService : SubscribeService
+    private readonly subscribeAllService : SubscribeService,
+    private readonly topicService:TopicService
   ) {}
 
 
   async createPodcast(currentUser: User, createPodcastDto: CreatePodcastDto): Promise<Podcast> {
+    const { topic, ...rest } = createPodcastDto;
+    const newTopic = await this.topicService.create({
+      title: topic,
+      image: 'uploads/pod-talk-logo.png' 
+    });
     if (!currentUser.isOwner) {
       currentUser.isOwner = true;
       await this.userRepository.save(currentUser);
     }
   
     const podcast = this.podcastRepository.create({
-      ...createPodcastDto,
+      ...rest,
       user: currentUser,
+      topic:newTopic,
     });
   
     // Step 4: Fetch subscribers
@@ -89,9 +97,15 @@ export class PodcastService {
     if (!podcast) {
       throw new Error(`Podcast with ID ${id} not found.`);
     }
+    const { topic, ...rest } = updatePodcastDto;
+    const newTopic = await this.topicService.create({
+      title: topic,
+      image: 'uploads/pod-talk-logo.png' 
+    });
     const updatedPodcast = this.podcastRepository.merge(
       podcast,
-      updatePodcastDto,
+      rest,
+      newTopic
     );
     return await this.podcastRepository.save(updatedPodcast);
   }

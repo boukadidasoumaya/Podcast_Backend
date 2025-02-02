@@ -36,8 +36,8 @@ export class CreatePodcastDto {
 
 
   @IsNotEmpty()
-  @Type(() => Topic)
-  topic: Topic;
+  @IsString()
+  topic: string;
 
 
 

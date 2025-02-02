@@ -31,7 +31,6 @@ export class PodcastController {
       destination: 'articles',
       allowedFileTypes: /\.(png|jpeg|jpg)$/i,
       fileSizeLimit: 1000000,
-      defaultPhotoPath: 'uploads/pod-talk-logo.png',
     }),
   )
   @UseGuards(JwtAuthGuard)
