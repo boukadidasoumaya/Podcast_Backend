@@ -19,6 +19,7 @@ import { EventsModule } from './test/events.module';
 import { SubscribeModule } from './subscribe/subscribe.module';
 import { LikeEpisodeModule } from './like-episode/like-episode.module';
 import { LikeCommentModule } from './like-comment/like-comment.module';
+import { topicModule } from './topics/topic.module';
 @Module({
   imports: [
     EventEmitterModule.forRoot(),

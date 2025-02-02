@@ -6,12 +6,15 @@ import {
   Param,
   Put,
   Delete,
+  UseGuards,
+  Req,
 } from '@nestjs/common';
 import { EpisodeService } from './episode.service';
 import { CreateEpisodeDto } from './dto/create-episode.dto';
 import { UpdateEpisodeDto } from './dto/update-episode.dto';
 import { EpisodeGateway } from './gateway/episode.gateway';
 import { Episode } from './entities/episode.entity';
+
 @Controller('episodes')
 export class EpisodeController {
   constructor(
@@ -29,8 +32,10 @@ export class EpisodeController {
   findAll(): Promise<Episode[]> {
     return this.episodeService.findAll();
   }
+
   @Get('trending')
   async getTrendingEpisodes(): Promise<Episode[]> {
+
     return this.episodeService.findAllTrending();
   }
 

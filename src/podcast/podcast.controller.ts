@@ -8,22 +8,43 @@ import {
   Param,
   Delete,
   Req,
-  UseGuards,
+  UseGuards, BadRequestException,
 } from '@nestjs/common';
 import { PodcastService } from './podcast.service';
 import { CreatePodcastDto } from './dto/create-podcast.dto';
 import { UpdatePodcastDto } from './dto/update-podcast.dto';
-import { JwtAuthGuard } from '../auth/guard/jwt-auth.guard';
+import { JwtAuthGuard } from 'src/auth/guard/jwt-auth.guard';
 
 @Controller('podcast')
 export class PodcastController { 
   constructor(private readonly podcastService: PodcastService) {}
 
-  //@UseGuards(JwtAuthGuard)
+  @UseGuards(JwtAuthGuard)
   @Post()
+  async createPodcast(
+    @Req() req,
+    @Body() body: { podcastData: any; episodesData: any[] },
+  ) {
+    const userId = req.user?.id;
+    // Validate userId
+    if (!userId || isNaN(Number(userId))) {
+      throw new BadRequestException('Invalid or missing userId.');
+    }
+    const numericUserId = Number(userId);
 
-  create(@Body() createPodcastDto: CreatePodcastDto) {
-    return this.podcastService.create(createPodcastDto);
+    // Validate request body
+    if (!body.podcastData || !body.episodesData) {
+      throw new BadRequestException('Missing podcastData or episodesData.');
+    }
+    if (!Array.isArray(body.episodesData)) {
+      throw new BadRequestException('Invalid episodesData: must be an array.');
+    }
+
+    return await this.podcastService.createPodcast(
+      numericUserId,
+      body.podcastData,
+      body.episodesData,
+    );
   }
 
   @Get()
@@ -75,6 +96,10 @@ export class PodcastController {
   getpodsbyuser(@Param('id') id: string) {
     return this.podcastService.getpodsparuser(+id);
   }
+  @Get(':id/episodes')
+  findAllEpisodesByPodcastId(@Param('id') id: string){
+    return this.podcastService.findAllEpisodesByPodcastId(+id);  // +id to convert string to number
 
 
-}
+
+  }}

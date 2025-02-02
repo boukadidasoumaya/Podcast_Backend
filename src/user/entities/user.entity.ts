@@ -61,8 +61,6 @@ export class User extends TimestampEntity {
   country: string;
 
   @Exclude()
-  @Transform(() => undefined)
-
   @Column()
   password: string;
 
@@ -80,17 +78,21 @@ export class User extends TimestampEntity {
     enum: UserRoleEnum,
   })
   role: string;
-  @Exclude()
-  @Transform(() => undefined)
+
+
   @Column({
-    type: 'simple-json',
+    type: 'json', // Utilisation du type JSON natif
+    nullable: true, // Permet de ne pas définir ce champ
   })
   interests: InterestsEnum[];
+
   @Column({
     default: false,
   })
   isOwner: boolean;
 
+  @Exclude()
+  @Transform(() => undefined)
   @Column({ nullable: true })
   resetCode: string;
   @Exclude()

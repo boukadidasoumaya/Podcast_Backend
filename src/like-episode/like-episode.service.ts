@@ -10,7 +10,6 @@ import { Episode } from '../episode/entities/episode.entity';
 import { User } from '../user/entities/user.entity';
 import { CreateLikeEpisodeDto } from './dto/create-like-episode.dto';
 import { DeleteLikeEpisodeDto } from './dto/delete-like-episode.dto';
-import { GetEpisodeResponseDto } from './dto/get-episode-response.dto';
 import { EpisodeService } from '../episode/episode.service';
 import { UserService } from '../user/user.service';
 
@@ -110,9 +109,16 @@ export class LikeEpisodeService {
       episode: episode.id,
       numberOfLikes: episodeLikesMap.get(episode.id)?.likeCount || 0,
       users:
-        episodeLikesMap
-          .get(episode.id)
-          ?.users.map((user) => ({ user })) || [],
+        episodeLikesMap.get(episode.id)?.users.map((user) => ({ user })) || [],
     }));
   }
+  async findLikedEpisodesByUser(user: User): Promise<Episode[]> {
+    console.log(user);
+    const likedEpisodes = await this.likeEpisodeRepository.find({
+      where: { user: { id: user.id } },
+      relations: ['episode'],
+    });
+    return likedEpisodes.map((like) => like.episode);
+  }
+
 }

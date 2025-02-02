@@ -149,7 +149,7 @@ export class UserService extends CrudService<User> {
   ): Promise<{ message: string; premiumUntil: Date }> {
     const user = await this.userRepository.findOne({
       where: { id: userId },
-      relations: ['payments'], // Charger les paiements existants
+      relations: ['payments'],
     });
 
     if (!user) {
