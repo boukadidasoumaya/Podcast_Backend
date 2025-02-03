@@ -5,6 +5,7 @@ import { Comment } from '../../comment/entities/comment.entity';
 import { User } from 'src/user/entities/user.entity';
 import { Episode } from 'src/episode/entities/episode.entity';
 import { Topic } from 'src/topics/entities/topic.entity';
+import { Subscription } from 'src/subscription/entities/subscription.entity';
 @Entity('podcast')
 export class Podcast extends TimestampEntities{
     @PrimaryGeneratedColumn()
@@ -17,7 +18,7 @@ export class Podcast extends TimestampEntities{
     views: number;
 
     @Column()
-    duration: string;
+    duration: number;
 
     @Column()
     description: string;
@@ -46,5 +47,8 @@ export class Podcast extends TimestampEntities{
     user: User;
     @ManyToOne(() => Topic, { nullable: true }) // Ensures each podcast has exactly one topic
     topic: Topic;
+
+    @OneToMany(()=>Subscription,(subscription)=>subscription.podcast)
+    subscriptions: Subscription[];
 
 }

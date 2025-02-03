@@ -5,6 +5,7 @@ import { Topic } from './entities/topic.entity';
 import { TopicService } from './topic.service';
 import { CreatetopicDto } from './dto/create-topic.dto';
 import { UpdatetopicDto } from './dto/update-topic.dto';
+
 @Controller('topics')
 export class TopicController {
   constructor(private readonly topicService: TopicService) {}
@@ -39,6 +40,7 @@ export class TopicController {
   @ApiOperation({ summary: 'Create a new topic' })
   @ApiResponse({ status: 201, description: 'Successfully created the topic', type: Topic })
   create(@Body() createTopicDto: CreatetopicDto) {
+    console.log(createTopicDto);
     return this.topicService.create(createTopicDto);
   }
   // Update a topic by ID

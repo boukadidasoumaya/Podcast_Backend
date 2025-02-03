@@ -1,22 +1,26 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, UseInterceptors } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Episode } from './entities/episode.entity';
 import { CreateEpisodeDto } from './dto/create-episode.dto';
 import { UpdateEpisodeDto } from './dto/update-episode.dto';
 import { Podcast } from 'src/podcast/entities/podcast.entity';
-import { User } from '../user/entities/user.entity';
 
+
+import { Subscription } from '../subscription/entities/subscription.entity';
+import { EmailService } from 'src/email/email.service';
 @Injectable()
 export class EpisodeService {
   constructor(
     @InjectRepository(Episode)
     private readonly episodeRepository: Repository<Episode>,
+    @InjectRepository(Subscription)
+    private readonly subscriptionRepository: Repository<Subscription>,
+    private readonly emailService: EmailService,
     @InjectRepository(Podcast)
     private readonly podcastRepository: Repository<Podcast>,
   ) {}
 
-  // Create a new episode
   async create(createEpisodeDto: CreateEpisodeDto): Promise<Episode> {
     // Ensure the podcast exists before creating the episode
     const podcast = await this.podcastRepository.findOne({
@@ -26,15 +30,22 @@ export class EpisodeService {
     if (!podcast) {
       throw new Error('Podcast not found');
     }
-
-    // Create a new episode and associate it with the podcast
+  
     const episode = this.episodeRepository.create({
-      ...createEpisodeDto, // Spread the other properties from the DTO
-      podcast, // Associate the found podcast with the episode
+      ...createEpisodeDto,
+      podcast,
     });
+    
+  
+    podcast.nbre_episode++;
+  
+    await this.podcastRepository.save(podcast);
+  
+   const epi = await this.episodeRepository.save(episode);
+   const id = episode.id;
+   this.notify(id);
+   return epi;
 
-    // Save the episode to the database
-    return await this.episodeRepository.save(episode);
   }
 
   // Get all episodes
@@ -128,5 +139,29 @@ export class EpisodeService {
     episode.views += 1;
     await this.episodeRepository.save(episode);
     return episode;
+  }
+  async notify(id: number): Promise<any> {
+    const episode = await this.episodeRepository.findOne({
+      where: { id },
+      relations: ['podcast'],
+    });
+
+    if (!episode) {
+      throw new NotFoundException('Episode not found');
+    }
+    const podcast = episode.podcast; 
+    const subscriptions = await this.subscriptionRepository.find({
+      where: { podcast },
+      relations: ['user'],
+    });
+    console.log(subscriptions);
+    for (const subscription of subscriptions) {
+      await this.emailService.newepisode({
+        name: subscription.user.username + ' ' + subscription.user.lastName,
+        email: subscription.user.email,
+        podcast: episode.podcast.name,
+      });
+    }
+    return subscriptions;
   }
 }

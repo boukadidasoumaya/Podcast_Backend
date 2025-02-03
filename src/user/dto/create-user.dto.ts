@@ -1,24 +1,26 @@
 import { IsArray, IsEmail, IsEnum, IsNotEmpty, IsOptional, IsString ,IsDateString} from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
-import { UserRoleEnum } from 'src/shared/Enums/user-role.enum';
 import { InterestsEnum } from 'src/shared/Enums/interests.enum';
 
 export class CreateUserDto {
   @IsNotEmpty()
   @IsEmail()
+  @IsString()
   @ApiProperty({ example: 'example@test.com' })
   email: string;
 
   @IsNotEmpty()
+  @IsString()
   @ApiProperty({ example: 'Salah123' })
   username: string;
 
   @IsNotEmpty()
+  @IsString()
   @ApiProperty({ example: 'Salah' })
-  @IsNotEmpty()
   firstName: string;
 
   @IsNotEmpty()
+  @IsString()
   @ApiProperty({ example: 'Foulen' })
   lastName: string;
   
@@ -47,7 +49,13 @@ export class CreateUserDto {
   @IsString()
   instagramLink?: string;
 
+  @ApiProperty({example:"samy.chaffai"})
+  @IsOptional()
+  @IsString()
+  twitterUser?: string;
+
   @IsNotEmpty()
+  @IsString()
   @ApiProperty({ example: 12345678 })
   password: string;
 
@@ -64,27 +72,12 @@ export class CreateUserDto {
   @IsOptional()
   @ApiProperty({
     type: 'string',
-    format: 'binary',
-    description: 'Photo of the user',
     required: false,
   })
   photo?: string;
 
   @IsNotEmpty()
-  @IsEnum(UserRoleEnum)
-  @ApiProperty({ example: UserRoleEnum.USER, enum: UserRoleEnum })
-  role: UserRoleEnum;
-
-
-  @IsNotEmpty()
   @IsArray()
   @IsEnum(InterestsEnum, { each: true })
-  @ApiProperty({
-    example: ['MUSIC', 'SPORTS'],
-    type: [String],
-    enum: InterestsEnum,
-    isArray: true,
-    description: 'An array of interests',
-  })
   interests: InterestsEnum[];
 }

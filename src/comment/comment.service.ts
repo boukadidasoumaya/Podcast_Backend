@@ -34,17 +34,33 @@ export class CommentService {
   clientToUser: any = {};
 
   async create(createCommentDto: CreateCommentDto) {
-    console.log(typeof createCommentDto.user);
-    console.log(typeof createCommentDto.podcast);
-    console.log(typeof createCommentDto.episode);
-    const newComment = this.commentRepository.create({
-      ...createCommentDto,
-    });
-    console.log(createCommentDto);
-
+    const newComment = this.commentRepository.create({ ...createCommentDto });
     await this.commentRepository.save(newComment);
 
-    return newComment;
+    // Récupération du commentaire avec les relations nécessaires
+    const comment = await this.commentRepository.findOne({
+      where: { id: newComment.id },
+      relations: ['parent', 'user', 'podcast', 'episode', 'likesComment.user'],
+    });
+
+    if (!comment) {
+      throw new NotFoundException(`Commentaire non trouvé après la création.`);
+    }
+    const likesCount = await this.likeCommentRepository.count({
+      where: { comment: { id: comment.id } },
+    });
+    // Retourner le commentaire formaté comme dans organizeMessages
+    return {
+      ...comment,
+      likesCount,
+      user: {
+        photo: comment.user.photo,
+        username: comment.user.username,
+        role: comment.user.role,
+        id: comment.user.id,
+      },
+      replies: [],
+    };
   }
 
   private organizeMessages(messages: any[]): any[] {
@@ -95,7 +111,7 @@ export class CommentService {
         podcast: { id: podcast.id },
         episode: { id: episode.id }, // Condition pour filtrer par épisode
       },
-      relations: ['parent', 'user', 'podcast', 'episode', 'likesComment'],
+      relations: ['parent', 'user', 'podcast', 'episode', 'likesComment.user'],
     });
 
     // Pour chaque commentaire, nous allons compter le nombre de likes
@@ -199,7 +215,6 @@ export class CommentService {
     // Proceed with the soft delete if the user is the owner
     return await this.commentRepository.softDelete(id);
   }
-
 
   async restore(id: number, user: User) {
     const [comment] = await this.commentRepository.query(

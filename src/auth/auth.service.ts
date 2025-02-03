@@ -43,7 +43,6 @@ export class AuthService {
     const user = this.adminRepository.create({
       ...adminData,
     });
-    // Un mot de passe crypté par défaut (utilisant son nom) est créé pour l'Admin et sera envoyé par e-email
     const password = crypto.randomBytes(4).toString('hex');
     user.password = password;
     user.salt = await bcrypt.genSalt();
@@ -125,6 +124,7 @@ export class AuthService {
       firstName: user.firstName,
       lastName: user.lastName,
       role: user.role,
+      photo: user.photo
     };
   }
 
@@ -137,10 +137,46 @@ export class AuthService {
     if (!user) {
       throw new NotFoundException('Utilisateur ou mot de passe incorrect');
     }
+
     const hashedPassword = await bcrypt.hash(password, user.salt);
     if (user.password !== hashedPassword) {
       throw new NotFoundException('Mot de passe incorrect');
     }
+    const payload = {
+      id: user.id,
+      email: user.email,
+      username: user.username,
+      role: user.role,
+      firstName: user.firstName,
+      lastName: user.lastName,
+    };
+    const jwt = this.jwtService.sign(payload);
+    return {
+      accessToken: jwt,
+      user: {
+        id: user.id,
+        email: user.email,
+        username: user.username,
+        role: user.role,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        photo: user.photo,
+        birthday : user.birthday,
+        profession : user.profession,
+        instagramLink : user.instagramLink,
+        whatsappUser : user.whatsappUser,
+        twitterUser : user.twitterUser
+      },
+    };
+  }
+
+  async checkUsernameUnique(username: string): Promise<boolean> {
+    const user = await this.userRepository.findOneBy({ username });
+  
+    return !!user;
+  }
+
+  async update_token(user) {
     const payload = {
       id: user.id,
       email: user.email,
@@ -158,7 +194,7 @@ export class AuthService {
   async sendPasswordResetCode(email: string): Promise<void> {
     const user = await this.userRepository.findOneBy({ email });
     if (!user) {
-      throw new NotFoundException('Admin non trouvé');
+      throw new NotFoundException('User with email unfound');
     }
 
     // Générer un code de sécurité et le sauvegarder avec un horodatage d'expiration
@@ -168,9 +204,6 @@ export class AuthService {
     user.resetCode = resetCode;
     user.resetCodeExpiration = resetCodeExpiration;
     await this.userRepository.save(user);
-
-    console.log('hiii');
-
     // Appeler directement la fonction sendReinitialisationEmail
     await this.mailService.sendReinitialisationEmail({
       resetcode: user.resetCode,

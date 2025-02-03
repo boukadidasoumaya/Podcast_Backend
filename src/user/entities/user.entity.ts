@@ -20,6 +20,7 @@ import { LikeEpisode } from '../../like-episode/entities/like-episode.entity';
 import { LikeComment } from '../../like-comment/entities/like-comment.entity';
 import { Podcast } from '../../podcast/entities/podcast.entity';
 import { InterestsEnum } from '../../shared/Enums/interests.enum';
+import { Subscription } from 'src/subscription/entities/subscription.entity';
 @Entity('user')
 @TableInheritance({
   column: { type: 'varchar', name: 'role', enum: UserRoleEnum },
@@ -52,7 +53,10 @@ export class User extends TimestampEntity {
   instagramLink: string;
 
   @Column({ nullable: true })
-  whatsappUser: string;
+  whatsappUser: string; 
+
+  @Column({ nullable: true })
+  twitterUser: string; 
 
   @Column({ nullable: true })
   birthday: Date;
@@ -61,10 +65,12 @@ export class User extends TimestampEntity {
   country: string;
 
   @Exclude()
+  @Transform(() => undefined)
   @Column()
   password: string;
 
   @Exclude()
+
   @Transform(() => undefined)
 
   @Column()
@@ -90,12 +96,10 @@ export class User extends TimestampEntity {
     default: false,
   })
   isOwner: boolean;
-
   @Exclude()
   @Transform(() => undefined)
   @Column({ nullable: true })
   resetCode: string;
-  @Exclude()
   @Transform(() => undefined)
   @Column({ type: 'timestamp', nullable: true })
   resetCodeExpiration: Date;
@@ -115,10 +119,10 @@ export class User extends TimestampEntity {
   @OneToMany(() => Bookmark, (bookmark) => bookmark.user,{ nullable: true })
   bookmarks: Bookmark[];
 
-  @ManyToMany(() => Podcast, (podcast) => podcast.subscribers,{ nullable: true })
+  @OneToMany(() => Subscription, (subscription) => subscription.user,{ nullable: true })
   @JoinTable()
-  subscriptions: Podcast[];
+  subscriptions: Subscription[];
 
-  @OneToMany(() => Podcast, (podcast) => podcast.user,{ nullable: true })
+  @OneToMany(() => Podcast, (podcast) => podcast.user)
   podcasts: Podcast[];
 }

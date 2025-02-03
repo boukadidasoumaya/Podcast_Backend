@@ -10,6 +10,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { IsNull, Not, Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { ChangePasswordDto } from './dto/change-password.dto';
+import { ChangeEmailDto } from './dto/change-email.dto';
 import { UserRoleEnum } from '../shared/Enums/user-role.enum';
 import { PaymentService } from '../payment/payment.service';
 import { CreatePaymentDto } from '../payment/dto/create-payment.dto';
@@ -28,7 +29,7 @@ export class UserService extends CrudService<User> {
   }
 
   async findAllUsers(currentUser: User) {
-    if (currentUser.role == UserRoleEnum.SUPER_ADMIN) {
+    // if (currentUser.role == UserRoleEnum.SUPER_ADMIN) {
       const users = await this.userRepository.find();
       return users.map((user) => {
         return {
@@ -40,7 +41,7 @@ export class UserService extends CrudService<User> {
           role: user.role,
         };
       });
-    }
+    // }
     throw new UnauthorizedException('Non autorisé');
   }
 
@@ -100,6 +101,24 @@ export class UserService extends CrudService<User> {
       role: user.role,
     };
   }
+
+  async changeEmail(user: User, changeEmailDto: ChangeEmailDto) {
+    const { oldEmail, newEmail } = changeEmailDto;
+    const userData = await this.userRepository.findOneBy({ id: user.id });
+    if (userData.email !== oldEmail) {
+      throw new NotFoundException('Email ancien invalide');
+    }
+    user.email = newEmail;
+    await this.userRepository.save(user);
+    return {
+      id: user.id,
+      email: user.email,
+      firstnName: user.firstName,
+      lastName: user.lastName,
+      role: user.role,
+    };
+  }
+
 
   async softRemove(id: number, currentUser: User) {
     if (currentUser.role == UserRoleEnum.SUPER_ADMIN) {
@@ -174,18 +193,18 @@ export class UserService extends CrudService<User> {
     return users;
   }
 
-  async getOwnerDetails(): Promise<{ firstName: string; photo: string; interests: string[] } | null> {
-    const owner = await this.userRepository.findOne({
+  async getOwnerDetails(): Promise<{ firstName: string; photo: string; interests: string[] }[] | null> {
+    const owners = await this.userRepository.find({
       where: { isOwner: true },
-      select: ['firstName', 'photo', 'interests'], 
+      select: ['firstName', 'photo', 'interests'],
     });
-
-    return owner ? { 
-      firstName: owner.firstName, 
-      photo: owner.photo, 
-      interests: owner.interests 
-    } : null;
+  
+    return owners.length > 0 ? owners.map(owner => ({
+      firstName: owner.firstName,
+      photo: owner.photo,
+      interests: owner.interests,
+    })) : null;
   }
-
+  
   
 }

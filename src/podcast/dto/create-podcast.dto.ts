@@ -14,44 +14,25 @@ export class CreatePodcastDto {
   name: string;
 
   @ApiProperty({
-    description: 'Duration of the podcast (e.g., HH:MM:SS)',
-    example: '01:30:45',
-  })
-  @IsString()
-  duration: string;
-
-  @ApiProperty({
     description: 'Description of the podcast',
     example: 'A podcast about the latest in technology and innovation.',
   })
   @IsString()
   description: string;
-
-  @ApiProperty({
-    description: 'Number of episodes in the podcast',
-    example: 10,
-  })
-  @IsNumber()
-  nbre_episode: number;
-
-  @ApiPropertyOptional({
-    description: 'URL of the podcast image',
-    example: 'https://example.com/podcast-image.jpg',
-  })
-  @IsUrl()
   @IsOptional()
-  image?: string;
   @ApiProperty({
-  description: 'Owner of the podcast',
-  example: 1,
+    type: 'string',
+    format: 'binary',
+    description: 'image',
+    required: false,
   })
+  image: string;
+
+
   @IsNotEmpty()
-  @Type(() => User)
-  user: User;
-  @ApiProperty({
-    description: 'Topic ID associated with the podcast',
-    example: 1,
-  })
-  @IsNotEmpty()
-  topic: Topic;
+  @IsString()
+  topic: string;
+
+
+
 }

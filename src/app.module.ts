@@ -20,6 +20,7 @@ import { SubscribeModule } from './subscribe/subscribe.module';
 import { LikeEpisodeModule } from './like-episode/like-episode.module';
 import { LikeCommentModule } from './like-comment/like-comment.module';
 import { topicModule } from './topics/topic.module';
+import { SubscriptionModule } from './subscription/subscription.module';
 import { WebSocketGateway } from '@nestjs/websockets';
 import { EpisodeGateway } from './episode/gateway/episode.gateway';
 @Module({
@@ -32,8 +33,8 @@ import { EpisodeGateway } from './episode/gateway/episode.gateway';
       username: process.env.DB_USERNAME,
       password: process.env.DB_PASSWORD,
       database: process.env.DB_NAME,
-      entities: ['dist/**/*.entity{.ts,.js}'],
       autoLoadEntities: true,
+      entities: ['dist/**/*.entity{.ts,.js}'],
       synchronize: false,
     }),
     AuthModule,
@@ -48,7 +49,9 @@ import { EpisodeGateway } from './episode/gateway/episode.gateway';
     PodcastModule,
     BookmarkModule,
     EventsModule,
-    SubscribeModule,topicModule
+    SubscribeModule,
+    topicModule,
+    SubscriptionModule
   ],
   controllers: [AppController],
   providers: [AppService,EpisodeGateway],
