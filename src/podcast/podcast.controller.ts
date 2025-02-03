@@ -11,7 +11,7 @@ import {
   UseGuards,
   BadRequestException,
   UseInterceptors, NotFoundException,
-  Query,
+  Query, UploadedFile,
 } from '@nestjs/common';
 import { PodcastService } from './podcast.service';
 import { CreatePodcastDto } from './dto/create-podcast.dto';
@@ -22,20 +22,15 @@ import { CurrentUser } from 'src/shared/Decorators/user.decorator';
 import { User } from 'src/user/entities/user.entity';
 import { createFileUploadInterceptor } from 'src/shared/interceptors/file-upload.interceptor';
 import { ApiBearerAuth } from '@nestjs/swagger';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { createFileTypeInterceptor } from '../shared/interceptors/uplaod-file.interceptor';
 
 @Controller('podcast')
 export class PodcastController { 
   constructor(private readonly podcastService: PodcastService) {}
-  @UseInterceptors(
-    createFileUploadInterceptor({
-      fieldName: 'image',
-      destination: 'articles',
-      allowedFileTypes: /\.(png|jpeg|jpg)$/i,
-      fileSizeLimit: 1000000,
-    }),
-  )
+
   @UseGuards(JwtAuthGuard)
-    @ApiBearerAuth('JWT-auth')
+  @ApiBearerAuth('JWT-auth')
   
   @Post()
   async createPodcast(
@@ -44,7 +39,15 @@ export class PodcastController {
   ): Promise<Podcast> {
     return this.podcastService.createPodcast(currentUser, createPodcastDto);
   }
-  
+  @Post('image')
+  @UseInterceptors(
+    FileInterceptor('image'),
+    createFileTypeInterceptor('image'),
+  )
+  uploadImage(@UploadedFile() file: Express.Multer.File) {
+    return { message: 'Image uploadée avec succès', filename: file.originalname };
+  }
+
   @Get('filter')
   filterpodcasts(@Query() filtres) {
     return this.podcastService.filterpodcasts(filtres)
