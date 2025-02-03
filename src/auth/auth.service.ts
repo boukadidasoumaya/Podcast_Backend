@@ -135,12 +135,12 @@ export class AuthService {
       .where('user.email = :email', { email })
       .getOne();
     if (!user) {
-      throw new NotFoundException('Utilisateur ou mot de passe incorrect');
+      throw new NotFoundException({ message: 'Utilisateur ou mot de passe incorrect' });
     }
 
     const hashedPassword = await bcrypt.hash(password, user.salt);
     if (user.password !== hashedPassword) {
-      throw new NotFoundException('Mot de passe incorrect');
+      throw new NotFoundException({ message: 'Mot de passe incorrect' });
     }
     const payload = {
       id: user.id,
@@ -172,6 +172,12 @@ export class AuthService {
 
   async checkUsernameUnique(username: string): Promise<boolean> {
     const user = await this.userRepository.findOneBy({ username });
+  
+    return !!user;
+  }
+
+  async checkEmailUnique(email: string): Promise<boolean> {
+    const user = await this.userRepository.findOneBy({ email });
   
     return !!user;
   }
