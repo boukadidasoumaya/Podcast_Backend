@@ -38,6 +38,7 @@ export class EpisodeService {
     
   
     podcast.nbre_episode++;
+    podcast.duration+=episode.duration;
   
     await this.podcastRepository.save(podcast);
   
