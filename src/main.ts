@@ -8,6 +8,8 @@ import * as path from 'node:path'
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
+  const frontendUrl = `${process.env.FRONTEND_URL}:${process.env.FRONTEND_PORT}`;
+
   app.enableCors({
     origin: 'http://localhost:4200', 
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',

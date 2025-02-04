@@ -3,6 +3,7 @@ import { IsString, IsOptional, IsUrl, IsNumber, IsNotEmpty } from 'class-validat
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import { User } from '../../user/entities/user.entity';
+import { Topic } from 'src/topics/entities/topic.entity';
 
 export class CreatePodcastDto {
   @ApiProperty({
@@ -11,20 +12,6 @@ export class CreatePodcastDto {
   })
   @IsString()
   name: string;
-
-  @ApiProperty({
-    description: 'Duration of the podcast (e.g., HH:MM:SS)',
-    example: '01:30:45',
-  })
-  @IsString()
-  duration: string;
-
-  @ApiProperty({
-    description: 'topic of the podcast',
-    example: 'Education Health .',
-  })
-  @IsString()
-  topic :string;
 
   @ApiProperty({
     description: 'Description of the podcast',
@@ -41,13 +28,10 @@ export class CreatePodcastDto {
   })
   image: string;
 
-  @ApiProperty({
-    description: 'Number of episodes in the podcast',
-    example: 10,
-  })
-  
-  @IsNumber()
-  nbre_episode: number;
+
+  @IsNotEmpty()
+  @IsString()
+  topic: string;
 
 
 

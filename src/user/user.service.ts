@@ -1,13 +1,12 @@
 import {
-  ConflictException,
   Injectable,
+  InternalServerErrorException,
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
-import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { IsNull, Not, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { ChangePasswordDto } from './dto/change-password.dto';
 import { ChangeEmailDto } from './dto/change-email.dto';
@@ -16,6 +15,9 @@ import { PaymentService } from '../payment/payment.service';
 import { CreatePaymentDto } from '../payment/dto/create-payment.dto';
 import { Payment } from '../payment/entities/payment.entity';
 import { CrudService } from 'src/common/common.service';
+import { ContactUsDto } from './dto/contact-us.dto';
+import { EmailService } from '../email/email.service';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
 export class UserService extends CrudService<User> {
@@ -24,24 +26,25 @@ export class UserService extends CrudService<User> {
     private userRepository: Repository<User>,
     @InjectRepository(Payment)
     private readonly paymentService: PaymentService,
+    private readonly emailService: EmailService,
   ) {
     super(userRepository);
   }
 
   async findAllUsers(currentUser: User) {
-    if (currentUser.role == UserRoleEnum.SUPER_ADMIN) {
-      const users = await this.userRepository.find();
-      return users.map((user) => {
-        return {
-          id: user.id,
-          username: user.username,
-          firstName: user.firstName,
-          lastName: user.lastName,
-          email: user.email,
-          role: user.role,
-        };
-      });
-    }
+    // if (currentUser.role == UserRoleEnum.SUPER_ADMIN) {
+    const users = await this.userRepository.find();
+    return users.map((user) => {
+      return {
+        id: user.id,
+        username: user.username,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        role: user.role,
+      };
+    });
+    // }
     throw new UnauthorizedException('Non autorisé');
   }
 
@@ -119,7 +122,6 @@ export class UserService extends CrudService<User> {
     };
   }
 
-
   async softRemove(id: number, currentUser: User) {
     if (currentUser.role == UserRoleEnum.SUPER_ADMIN) {
       return await this.userRepository.softDelete(id);
@@ -193,18 +195,52 @@ export class UserService extends CrudService<User> {
     return users;
   }
 
-  async getOwnerDetails(): Promise<{ firstName: string; photo: string; interests: string[] }[] | null> {
+  async getOwnerDetails(): Promise<
+    { firstName: string; photo: string; interests: string[] }[] | null
+  > {
     const owners = await this.userRepository.find({
       where: { isOwner: true },
       select: ['firstName', 'photo', 'interests'],
     });
-  
-    return owners.length > 0 ? owners.map(owner => ({
-      firstName: owner.firstName,
-      photo: owner.photo,
-      interests: owner.interests,
-    })) : null;
+
+    return owners.length > 0
+      ? owners.map((owner) => ({
+          firstName: owner.firstName,
+          photo: owner.photo,
+          interests: owner.interests,
+        }))
+      : null;
   }
-  
-  
+  async contactSupport(contactDto: ContactUsDto) {
+    const { email, subject, content } = contactDto;
+
+    await this.emailService.sendContactUsEmail({
+      email,
+      subject,
+      message: content, // On passe le message
+    });
+
+    return { message: 'Votre message a été envoyé avec succès.' };
+  }
+  // async updatePersonnalInfo(userId: number, updateDto: UpdateUserDto) {
+  //   try {
+  //     const user = await this.userRepository.findOne({ where: { id: userId } });
+  //     if (!user) {
+  //       throw new NotFoundException('User not found');
+  //     }
+  //
+  //     await this.userRepository.update(userId, updateDto);
+  //
+  //     const updatedUser = await this.userRepository.findOne({
+  //       where: { id: userId },
+  //     });
+  //
+  //     return {
+  //       message: 'User Updated',
+  //       user: updatedUser,
+  //     };
+  //   } catch (error) {
+  //     throw new InternalServerErrorException('Error in updating');
+  //   }
+  // }
 }

@@ -128,16 +128,8 @@ export class AuthController {
   })
   async forgotPassword(@Body() sendPasswordResetDto: SendPasswordResetDto) {
     const { email } = sendPasswordResetDto;
-
-    try {
-      await this.authService.sendPasswordResetCode(email);
-      return { message: 'Code de réinitialisation du mot de passe envoyé' };
-    } catch (error) {
-      throw new BadRequestException(
-        'Impossible d envoyer le code de réinitialisation du mot de passe. ' +
-          error.message,
-      );
-    }
+    await this.authService.sendPasswordResetCode(email);
+    return { message: 'Code de réinitialisation du mot de passe envoyé' };
   }
 
   @Post('verify-reset-code')

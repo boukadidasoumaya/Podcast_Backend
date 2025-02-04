@@ -5,36 +5,44 @@ import { Episode } from './entities/episode.entity';
 import { CreateEpisodeDto } from './dto/create-episode.dto';
 import { UpdateEpisodeDto } from './dto/update-episode.dto';
 import { Podcast } from 'src/podcast/entities/podcast.entity';
-import { createFileUploadInterceptor } from 'src/shared/interceptors/filemp-uplaod.interceptor';
-import { ApiConsumes } from '@nestjs/swagger';
 
+import { Subscription } from '../subscription/entities/subscription.entity';
+import { EmailService } from 'src/email/email.service';
 @Injectable()
 export class EpisodeService {
   constructor(
     @InjectRepository(Episode)
     private readonly episodeRepository: Repository<Episode>,
+    @InjectRepository(Subscription)
+    private readonly subscriptionRepository: Repository<Subscription>,
+    private readonly emailService: EmailService,
     @InjectRepository(Podcast)
     private readonly podcastRepository: Repository<Podcast>,
   ) {}
-    
 
-  // Create a new episode
   async create(createEpisodeDto: CreateEpisodeDto): Promise<Episode> {
     // Ensure the podcast exists before creating the episode
-    const podcast = await this.podcastRepository.findOne({where: { id: createEpisodeDto.podcast.id }});
-    
+    const podcast = await this.podcastRepository.findOne({
+      where: { id: createEpisodeDto.podcast.id },
+    });
+
     if (!podcast) {
       throw new Error('Podcast not found');
     }
-  
-    // Create a new episode and associate it with the podcast
+
     const episode = this.episodeRepository.create({
-      ...createEpisodeDto, 
-      podcast, 
+      ...createEpisodeDto,
+      podcast,
     });
-  
-    // Save the episode to the database
-    return await this.episodeRepository.save(episode);
+
+    podcast.nbre_episode++;
+
+    await this.podcastRepository.save(podcast);
+
+    const epi = await this.episodeRepository.save(episode);
+    const id = episode.id;
+    this.notify(id);
+    return epi;
   }
 
   // Get all episodes
@@ -52,14 +60,17 @@ export class EpisodeService {
   async findAllTrending(): Promise<Episode[]> {
     const episodes = await this.episodeRepository.find({
       order: { views: 'DESC' },
-      relations: ['podcast', 'likes', 'comments', 'podcast.user'],
+      relations: ['podcast', 'likes', 'likes.user', 'comments', 'podcast.user'],
       where: { deletedAt: null },
     });
-    return episodes.map((episode) => ({
-      ...episode,
-      numberOfLikes: episode.likes?.length || 0,
-      numberOfComments: episode.comments?.length || 0,
-    }));
+
+    return episodes.map((episode) => {
+      return {
+        ...episode,
+        numberOfLikes: episode.likes?.length || 0,
+        numberOfComments: episode.comments?.length || 0,
+      };
+    });
   }
 
   // Get the latest 4 episodes (sorted by createdAt in descending order)
@@ -125,5 +136,29 @@ export class EpisodeService {
     episode.views += 1;
     await this.episodeRepository.save(episode);
     return episode;
+  }
+  async notify(id: number): Promise<any> {
+    const episode = await this.episodeRepository.findOne({
+      where: { id },
+      relations: ['podcast'],
+    });
+
+    if (!episode) {
+      throw new NotFoundException('Episode not found');
+    }
+    const podcast = episode.podcast;
+    const subscriptions = await this.subscriptionRepository.find({
+      where: { podcast },
+      relations: ['user'],
+    });
+    console.log(subscriptions);
+    for (const subscription of subscriptions) {
+      await this.emailService.newepisode({
+        name: subscription.user.username + ' ' + subscription.user.lastName,
+        email: subscription.user.email,
+        podcast: episode.podcast.name,
+      });
+    }
+    return subscriptions;
   }
 }
