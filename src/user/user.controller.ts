@@ -40,10 +40,7 @@ export class UserController {
     return this.userService.contactSupport(contactDto);
   }
   @Post('photo')
-  @UseInterceptors(
-    FileInterceptor('photo'),
-    createFileTypeInterceptor('image'),
-  )
+  @UseInterceptors(FileInterceptor('photo'), createFileTypeInterceptor('image'))
   uploadImage(@UploadedFile() file: Express.Multer.File) {
     return {
       message: 'Image uploadée avec succès',

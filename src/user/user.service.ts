@@ -1,11 +1,12 @@
 import {
   Injectable,
+  InternalServerErrorException,
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { User } from './entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import {  Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { ChangePasswordDto } from './dto/change-password.dto';
 import { ChangeEmailDto } from './dto/change-email.dto';
@@ -16,6 +17,7 @@ import { Payment } from '../payment/entities/payment.entity';
 import { CrudService } from 'src/common/common.service';
 import { ContactUsDto } from './dto/contact-us.dto';
 import { EmailService } from '../email/email.service';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
 export class UserService extends CrudService<User> {
@@ -220,4 +222,25 @@ export class UserService extends CrudService<User> {
 
     return { message: 'Votre message a été envoyé avec succès.' };
   }
+  // async updatePersonnalInfo(userId: number, updateDto: UpdateUserDto) {
+  //   try {
+  //     const user = await this.userRepository.findOne({ where: { id: userId } });
+  //     if (!user) {
+  //       throw new NotFoundException('User not found');
+  //     }
+  //
+  //     await this.userRepository.update(userId, updateDto);
+  //
+  //     const updatedUser = await this.userRepository.findOne({
+  //       where: { id: userId },
+  //     });
+  //
+  //     return {
+  //       message: 'User Updated',
+  //       user: updatedUser,
+  //     };
+  //   } catch (error) {
+  //     throw new InternalServerErrorException('Error in updating');
+  //   }
+  // }
 }

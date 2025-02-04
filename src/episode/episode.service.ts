@@ -6,7 +6,6 @@ import { CreateEpisodeDto } from './dto/create-episode.dto';
 import { UpdateEpisodeDto } from './dto/update-episode.dto';
 import { Podcast } from 'src/podcast/entities/podcast.entity';
 
-
 import { Subscription } from '../subscription/entities/subscription.entity';
 import { EmailService } from 'src/email/email.service';
 @Injectable()
@@ -30,22 +29,20 @@ export class EpisodeService {
     if (!podcast) {
       throw new Error('Podcast not found');
     }
-  
+
     const episode = this.episodeRepository.create({
       ...createEpisodeDto,
       podcast,
     });
-    
-  
-    podcast.nbre_episode++;
-  
-    await this.podcastRepository.save(podcast);
-  
-   const epi = await this.episodeRepository.save(episode);
-   const id = episode.id;
-   this.notify(id);
-   return epi;
 
+    podcast.nbre_episode++;
+
+    await this.podcastRepository.save(podcast);
+
+    const epi = await this.episodeRepository.save(episode);
+    const id = episode.id;
+    this.notify(id);
+    return epi;
   }
 
   // Get all episodes
@@ -96,7 +93,6 @@ export class EpisodeService {
       where: { id },
       relations: ['podcast', 'likes', 'comments', 'podcast.user'],
     });
-    console.log('fghjkl');
 
     if (!episode) {
       throw new NotFoundException('Episode not found');
@@ -150,7 +146,7 @@ export class EpisodeService {
     if (!episode) {
       throw new NotFoundException('Episode not found');
     }
-    const podcast = episode.podcast; 
+    const podcast = episode.podcast;
     const subscriptions = await this.subscriptionRepository.find({
       where: { podcast },
       relations: ['user'],
