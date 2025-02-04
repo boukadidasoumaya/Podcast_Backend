@@ -132,7 +132,6 @@ export class EpisodeService {
     if (!episode) {
       throw new Error('Episode not found');
     }
-
     episode.views += 1;
     await this.episodeRepository.save(episode);
     return episode;
