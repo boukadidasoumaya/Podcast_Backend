@@ -21,6 +21,8 @@ import { LikeEpisodeModule } from './like-episode/like-episode.module';
 import { LikeCommentModule } from './like-comment/like-comment.module';
 import { topicModule } from './topics/topic.module';
 import { SubscriptionModule } from './subscription/subscription.module';
+import { WebSocketGateway } from '@nestjs/websockets';
+import { EpisodeGateway } from './episode/gateway/episode.gateway';
 @Module({
   imports: [
     EventEmitterModule.forRoot(),
@@ -52,7 +54,7 @@ import { SubscriptionModule } from './subscription/subscription.module';
     SubscriptionModule
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService,EpisodeGateway],
 })
 export class AppModule {}
 
