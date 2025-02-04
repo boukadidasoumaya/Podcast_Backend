@@ -1,10 +1,12 @@
 import { MailerService } from '@nestjs-modules/mailer';
 import { Injectable } from '@nestjs/common';
+import * as dotenv from 'dotenv';
+
+dotenv.config(); // Charge les variables d'environnement
 
 @Injectable()
 export class EmailService {
-  constructor(
-  private readonly mailerService: MailerService) {}
+  constructor(private readonly mailerService: MailerService) {}
 
   async sendRegistrationEmail(data) {
     const { name, email, password } = data;
@@ -35,21 +37,18 @@ export class EmailService {
     });
   }
   async sendSubscribeAllEmail(data) {
-  
-    const {  email, name } = data;
-      const subject = `You're In! Discover What's New on Podcast-eha`;
-  
-        await this.mailerService.sendMail({
-          to: email,
-          subject,
-          template: 'subscribe-all', 
-          context: {
-            name,
-            email, 
-          },
-        });
-     
-    
+    const { email, name } = data;
+    const subject = `You're In! Discover What's New on Podcast-eha`;
+
+    await this.mailerService.sendMail({
+      to: email,
+      subject,
+      template: 'subscribe-all',
+      context: {
+        name,
+        email,
+      },
+    });
   }
 
   async sendSubscriptionEmail(data) {
@@ -65,8 +64,6 @@ export class EmailService {
         podcast,
       },
     });
-
-
   }
   async newepisode(data) {
     const { name, email, podcast } = data;
@@ -81,9 +78,19 @@ export class EmailService {
         podcast,
       },
     });
-
-
   }
+  async sendContactUsEmail(data) {
+    const { email, subject, message } = data;
+    const emailSubject = `New Message: ${subject}`;
 
-
+    await this.mailerService.sendMail({
+      to: process.env.EMAIL,
+      from: email,
+      subject: emailSubject,
+      template: 'contact-us',
+      context: {
+        message,
+      },
+    });
+  }
 }

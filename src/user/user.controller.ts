@@ -7,7 +7,9 @@ import {
   Param,
   ParseIntPipe,
   Patch,
+  Post,
   Put,
+  UploadedFile,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
@@ -25,24 +27,42 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { ChangePasswordDto } from './dto/change-password.dto';
 import { ChangeEmailDto } from './dto/change-email.dto';
 import { User } from './entities/user.entity';
+import { ContactUsDto } from './dto/contact-us.dto';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { createFileTypeInterceptor } from '../shared/interceptors/uplaod-file.interceptor';
 
 @ApiTags('User')
 @Controller('user')
 export class UserController {
   constructor(private readonly userService: UserService) {}
+  @Post('contact')
+  async contactSupport(@Body() contactDto: ContactUsDto) {
+    return this.userService.contactSupport(contactDto);
+  }
+  @Post('photo')
+  @UseInterceptors(
+    FileInterceptor('photo'),
+    createFileTypeInterceptor('image'),
+  )
+  uploadImage(@UploadedFile() file: Express.Multer.File) {
+    return {
+      message: 'Image uploadée avec succès',
+      filename: file.originalname,
+    };
+  }
   @Get('owner-details')
   async getOwnerDetails() {
     return await this.userService.getOwnerDetails();
   }
 
   @Get('users')
-  // @UseGuards(JwtAuthGuard)
-  // @ApiBearerAuth('JWT-auth')
-  // @ApiOkResponse({
-  //   type: [User],
-  //   description: 'Utilisateurs trouvés avec succès',
-  // })
-  async findAllUsers(@CurrentUser() user) {
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('JWT-auth')
+  @ApiOkResponse({
+    type: [User],
+    description: 'Utilisateurs trouvés avec succès',
+  })
+  async findAllUsers(@CurrentUser() user: User) {
     console.log(user);
     return await this.userService.findAllUsers(user);
   }

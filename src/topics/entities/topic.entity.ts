@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column,OneToMany } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 import { Podcast } from 'src/podcast/entities/podcast.entity';
 @Entity()
 export class Topic {
@@ -10,5 +10,4 @@ export class Topic {
 
   @Column()
   image: string;
- 
 }
