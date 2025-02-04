@@ -161,6 +161,7 @@ export class AuthService {
         firstName: user.firstName,
         lastName: user.lastName,
         photo: user.photo,
+        county: user.country,
         birthday : user.birthday,
         profession : user.profession,
         instagramLink : user.instagramLink,
