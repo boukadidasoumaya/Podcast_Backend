@@ -10,18 +10,19 @@ import { subscriptionPodcast } from './dto/subscriptionPodcast.dto';
 import { Episode } from 'src/episode/entities/episode.entity';
 
 @Controller('subscription')
-export class SubscriptionController { 
+export class SubscriptionController {
 
     constructor(private subscriptionService:SubscriptionService){}
-    
+
 
 
     @Post('subscribe')
     @UseGuards(JwtAuthGuard)
     @ApiBearerAuth('JWT-auth')
-    subscribe(@CurrentUser() user:User,@Body() subscriptionDTO:SubscriptionDTO){
-        return this.subscriptionService.subscribe(user,subscriptionDTO);
-    } 
+    subscribe(@CurrentUser() user:User,@Body() podcast:subscriptionPodcast){
+        console.log("podcast",  podcast);
+        return this.subscriptionService.subscribe(user,podcast);
+    }
 
 
     @Post('unsubscribe')
@@ -37,7 +38,7 @@ export class SubscriptionController {
     @UseGuards(JwtAuthGuard)
     @ApiBearerAuth('JWT-auth')
     async getsubscribedEpisodesByUser(@CurrentUser() user: User): Promise<Episode[]> {
-      console.log(user);
-      return this.subscriptionService.findsubscribedEpisodesByUser(user);
+        console.log(user);
+        return this.subscriptionService.findsubscribedEpisodesByUser(user);
     }
 }
