@@ -21,7 +21,7 @@ import { SubscribeModule } from 'src/subscribe/subscribe.module';
           pass: process.env.EMAIL_PASSWORD,
         },
         tls: {
-          rejectUnauthorized: false, // Allow self-signed certificates
+          rejectUnauthorized: false, 
         },
       },
       defaults: {

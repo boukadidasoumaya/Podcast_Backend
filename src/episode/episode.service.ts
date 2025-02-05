@@ -52,11 +52,11 @@ export class EpisodeService {
     });
     return episodes.map((episode) => ({
       ...episode,
-      numberOfLikes: episode.likes?.length || 0, // Compte le nombre de likes
-      numberOfComments: episode.comments?.length || 0, // Compte le nombre de commentaires
+      numberOfLikes: episode.likes?.length || 0, 
+      numberOfComments: episode.comments?.length || 0, 
     }));
   }
-  // Get trending episodes (sorted by views in descending order)
+
   async findAllTrending(): Promise<Episode[]> {
     const episodes = await this.episodeRepository.find({
       order: { views: 'DESC' },
@@ -73,7 +73,6 @@ export class EpisodeService {
     });
   }
 
-  // Get the latest 4 episodes (sorted by createdAt in descending order)
   async findAllLatest(): Promise<Episode[]> {
     const episodes = await this.episodeRepository.find({
       order: { createdAt: 'DESC' },
@@ -87,7 +86,6 @@ export class EpisodeService {
     }));
   }
 
-  // Get a single episode by ID
   async findOne(id: number): Promise<Episode> {
     const episode = await this.episodeRepository.findOne({
       where: { id },
@@ -100,7 +98,6 @@ export class EpisodeService {
     return episode;
   }
 
-  // Update an existing episode
   async update(
     id: number,
     updateEpisodeDto: UpdateEpisodeDto,
@@ -110,13 +107,11 @@ export class EpisodeService {
       throw new Error('Episode not found');
     }
 
-    // Update the episode fields based on the DTO
     const updatedEpisode = Object.assign(episode, updateEpisodeDto);
     await this.episodeRepository.save(updatedEpisode);
     return updatedEpisode;
   }
 
-  // Delete an episode by ID (soft delete)
   async remove(id: number): Promise<void> {
     const episode = await this.episodeRepository.findOne({ where: { id } });
     if (!episode) {
@@ -126,7 +121,6 @@ export class EpisodeService {
     await this.episodeRepository.softDelete(id); // Soft delete
   }
 
-  // Increment views for an episode
   async incrementViews(id: number): Promise<Episode> {
     const episode = await this.episodeRepository.findOne({ where: { id } });
     if (!episode) {

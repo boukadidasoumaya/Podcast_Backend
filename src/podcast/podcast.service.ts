@@ -197,7 +197,7 @@ export class PodcastService {
 
     return  this.episodeRepository.find({
       where: { podcast: { id: podcastId } },
-      relations: ['podcast'],  // Ensure the relationship is loaded
+      relations: ['podcast'],  
     });
   }
   async getPodcastsByUserId(userId: number): Promise<Podcast[]> {

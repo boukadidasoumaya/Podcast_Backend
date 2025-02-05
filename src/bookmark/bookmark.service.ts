@@ -50,6 +50,6 @@ export class BookmarkService {
     console.log(bookmark)
     console.log(bookmark)
 
-    return !!bookmark; // Returns true if a bookmark exists, false otherwise
+    return !!bookmark; 
   }
 }

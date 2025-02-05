@@ -173,29 +173,6 @@ export class CommentService {
     return comment;
   }
 
-  // async update(
-  //   id: number,
-  //   updateCommentDto: FindCommentDto,
-  //   user: User,
-  // ): Promise<Comment> {
-  //   const comment = await this.findOne(id);
-  //   const updatedComment = await this.commentRepository.preload({
-  //     id,
-  //     ...updateCommentDto,
-  //   });
-  //
-  //   if (!updatedComment) {
-  //     throw new NotFoundException(`Commentaire avec l'ID ${id} non trouvé`);
-  //   }
-  //
-  //   if (comment.user?.id === user.id) {
-  //     return await this.commentRepository.save(updatedComment);
-  //   } else {
-  //     throw new UnauthorizedException(
-  //       "Vous n'êtes pas autorisé à mettre à jour ce commentaire",
-  //     );
-  //   }
-  // }
 
   async softDelete(id: number, user: User) {
     const commentToRemove = await this.findOne(id);

@@ -203,14 +203,13 @@ export class AuthService {
       throw new NotFoundException('User with email unfound');
     }
 
-    // Générer un code de sécurité et le sauvegarder avec un horodatage d'expiration
     const resetCode = randomBytes(4).toString('hex');
-    const resetCodeExpiration = new Date(Date.now() + 3600000); // Expiration dans 1 heure
+    const resetCodeExpiration = new Date(Date.now() + 3600000); 
 
     user.resetCode = resetCode;
     user.resetCodeExpiration = resetCodeExpiration;
     await this.userRepository.save(user);
-    // Appeler directement la fonction sendReinitialisationEmail
+
     await this.mailService.sendReinitialisationEmail({
       resetcode: user.resetCode,
       email: user.email,
@@ -219,10 +218,9 @@ export class AuthService {
   }
 
   async verifyResetCode(email: string, code: string): Promise<boolean> {
-    // Trouver l'admin par e-email
+
     const user = await this.userRepository.findOneBy({ email });
 
-    // Vérifier si l'admin existe et si le code de réinitialisation correspond et n'est pas expiré
     if (
       !user ||
       user.resetCode !== code ||
@@ -239,7 +237,7 @@ export class AuthService {
     newPassword: string,
     code: string,
   ): Promise<void> {
-    // Vérifier le code de réinitialisation
+
     const isCodeValid = await this.verifyResetCode(email, code);
     if (!isCodeValid) {
       throw new ConflictException(
@@ -247,13 +245,13 @@ export class AuthService {
       );
     }
 
-    // Trouver l'admin et mettre à jour le mot de passe
+
     const user = await this.userRepository.findOneBy({ email });
     if (!user) {
       throw new NotFoundException('Admin non trouvé');
     }
 
-    // Hasher le nouveau mot de passe
+
     user.password = await bcrypt.hash(newPassword, user.salt);
     user.resetCode = null;
     user.resetCodeExpiration = null;
