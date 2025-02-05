@@ -77,6 +77,15 @@ export class PodcastService {
   async findAll(): Promise<Podcast[]> {
     return await this.podcastRepository.find();
   }
+
+
+  async getsallpods(): Promise<Podcast[]> {
+    return await this.podcastRepository.find({
+      relations: ['user', 'topic'],
+    });
+  }
+
+
   async findOne(id: number): Promise<Podcast> {
     return await this.podcastRepository.findOne({ where: { id } });
   }
@@ -149,9 +158,11 @@ export class PodcastService {
 
   }
   async filterpodcasts({ title, topic, nbre_episodes, user, minDuration, maxDuration }): Promise<Podcast[]> {
-    const querybuilder = this.podcastRepository.createQueryBuilder('podcast');
+    const querybuilder = this.podcastRepository.createQueryBuilder('podcast')
+                .leftJoinAndSelect('podcast.user', 'user')
+                .leftJoinAndSelect('podcast.topic', 'topic');
 
-    if (title) {
+    if (title) { 
       querybuilder.andWhere('podcast.name = :title', { title });
     }
 
@@ -169,12 +180,12 @@ export class PodcastService {
 
     if (user) {
       querybuilder
-        .leftJoinAndSelect('podcast.user', 'user')
         .andWhere('user.username = :user', { user: user });
     }
 
     if (topic) {
-      // querybuilder.andWhere('topic = :topic',{topic});
+      querybuilder
+        .andWhere('topic.title = :topic', { topic: topic });
     }
 
     return await querybuilder.getMany();

@@ -54,9 +54,9 @@ export class PodcastController {
   }
 
 
-  @Get()
+  @Get('reset')
   findAll() {
-    return this.podcastService.findAll();
+    return this.podcastService.getsallpods();
   }
   @UseGuards(JwtAuthGuard)
   @Get('user')
