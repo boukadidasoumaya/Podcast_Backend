@@ -1,6 +1,6 @@
 /* eslint-disable prettier/prettier */
 
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Subscription } from './entities/subscription.entity';
@@ -8,6 +8,8 @@ import { NotFoundException } from '@nestjs/common';
 import { EmailService } from '../email/email.service';
 import { User } from '../user/entities/user.entity';
 import { Podcast } from '../podcast/entities/podcast.entity';
+import { subscriptionPodcast } from './dto/subscriptionPodcast.dto';
+import { Episode } from 'src/episode/entities/episode.entity';
 
 
 @Injectable()
@@ -22,9 +24,11 @@ export class SubscriptionService {
         @InjectRepository(Podcast)
         private readonly podcastRepository: Repository<Podcast>,
         private readonly emailService: EmailService,
+        @InjectRepository(Episode)
+        private readonly episodeRepository: Repository<Episode>,
     ){}
 
-    async subscribe(user: User, podcast: Podcast): Promise<any> {
+    async subscribe(user: User, podcast: subscriptionPodcast): Promise<any> {
 
        if (!user) {
          throw new NotFoundException('User not found');
@@ -60,18 +64,18 @@ export class SubscriptionService {
 
         console.log("hello");
 
-        // await this.emailService.sendSubscriptionEmail({
-        //   name: user.username + ' ' + user.lastName,
-        //   email: user.email,
-        //   podcast: podcast.name,
-        // });
+        await this.emailService.sendSubscriptionEmail({
+          name: user.username + ' ' + user.lastName,
+          email: user.email,
+          podcast: podcast.name,
+        });
 
        return true; // you are not already subscribed+ subscribed successfully
      
   }
 
 
-  async unsubscribe(user: User, podcast: Podcast): Promise<string> {
+  async unsubscribe(user: User, podcast: subscriptionPodcast): Promise<any> {
     
     if (!user) {
       throw new NotFoundException('User not found');
@@ -81,13 +85,18 @@ export class SubscriptionService {
       throw new NotFoundException('Podcast not found');
     }
 
-    if (!user.subscriptions.some((p) => p.id === podcast.id)) {
+    const existingSubscription= this.subscriptionRepository.findOne({
+      where:{
+        user: {id:user.id},
+        podcast : { id: podcast.id}
+      }
+    });
+    if(!existingSubscription){
       return 'You are not subscribed to this podcast';
     }
+    console.log((await existingSubscription).id)
 
-    user.subscriptions = user.subscriptions.filter((p) => p.id !== podcast.id);
-
-    await this.userRepository.save(user);
+    this.subscriptionRepository.softDelete((await existingSubscription).id)
 
     return 'Unsubscribed successfully';
 
@@ -97,5 +106,23 @@ export class SubscriptionService {
 
 async test(){
     return 'connected successfully';
-}
+};
+
+
+
+async findsubscribedEpisodesByUser(user: User): Promise<Episode[]> {
+    const subscribedpodcasts= await this.subscriptionRepository.find({
+    where:{user:{id:user.id}},
+    relations:['podcast']});
+    const subscribedEpisodes = [];
+    for (let i = 0; i < subscribedpodcasts.length; i++) {
+      const subscribedEpisode= await this.episodeRepository.find({
+        where:{podcast: {id: subscribedpodcasts[i].podcast.id}},
+      });
+      for(let j=0;j<subscribedEpisode.length;j++){
+        subscribedEpisodes.push(subscribedEpisode[j]);
+      }
+    }
+    return subscribedEpisodes;
+  }
 }

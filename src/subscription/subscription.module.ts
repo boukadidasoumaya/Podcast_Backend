@@ -6,9 +6,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from 'src/user/entities/user.entity';
 import { Subscription } from './entities/subscription.entity';
 import { EmailService } from 'src/email/email.service';
+import { Episode } from 'src/episode/entities/episode.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Podcast, User, Subscription])],
+  imports: [TypeOrmModule.forFeature([Podcast, User, Subscription,Episode])],
   controllers: [SubscriptionController],
   providers: [SubscriptionService, EmailService],
 })
