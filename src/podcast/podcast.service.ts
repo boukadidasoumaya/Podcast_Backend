@@ -193,13 +193,13 @@ export class PodcastService {
 
 
   async findAllEpisodesByPodcastId(podcastId: number): Promise<Episode[]> {
-
-
-    return  this.episodeRepository.find({
+    return this.episodeRepository.find({
       where: { podcast: { id: podcastId } },
       relations: ['podcast'],  // Ensure the relationship is loaded
+      order: { number: 'ASC' } // Sort episodes by number in ascending order
     });
   }
+
   async getPodcastsByUserId(userId: number): Promise<Podcast[]> {
     const podcasts = await this.podcastRepository.find({
       where: { user: { id: userId } },
