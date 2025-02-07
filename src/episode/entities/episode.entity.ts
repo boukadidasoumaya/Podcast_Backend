@@ -55,23 +55,23 @@ export class Episode extends TimestampEntity {
   views: number;
 
   // Relationship with Bookmark entity
-  @OneToMany(() => Bookmark, (bookmark) => bookmark.episode)
+  @OneToMany(() => Bookmark, (bookmark) => bookmark.episode, { onDelete: 'CASCADE' })
   @ApiProperty({ type: () => [Bookmark], description: 'List of bookmarks associated with this episode' })
   bookmarks: Bookmark[];
 
   // Relationship with Comment entity
-  @OneToMany(() => Comment, (comment) => comment.episode)
+  @OneToMany(() => Comment, (comment) => comment.episode,  { onDelete: 'CASCADE' })
   @ApiProperty({ type: () => [Comment], description: 'List of comments on this episode' })
   comments: Comment[];
 
   // Many-to-One relationship with Podcast entity
-  @ManyToOne(() => Podcast, (podcast) => podcast.episodes, { onDelete: 'CASCADE' })
+  @ManyToOne(() => Podcast, (podcast) => podcast.episodes)
   @JoinColumn({ name: 'podcastId' })
   @ApiProperty({ type: () => Podcast, description: 'Podcast this episode belongs to' })
   podcast: Podcast;
 
   // Relationship with LikeEpisode entity
-  @OneToMany(() => LikeEpisode, (like) => like.episode)
+  @OneToMany(() => LikeEpisode, (like) => like.episode , { onDelete: 'CASCADE' })
   @ApiProperty({ type: () => [LikeEpisode], description: 'List of likes for this episode' })
   likes: LikeEpisode[];
 }

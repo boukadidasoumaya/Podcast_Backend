@@ -34,21 +34,21 @@ export class Podcast extends TimestampEntities{
 
     @Column({ default: 0 })
     nbre_episode: number;
-    @OneToMany(() => Comment, (comment) => comment.podcast)
+    @OneToMany(() => Comment, (comment) => comment.podcast,  { onDelete: 'CASCADE' })
     comments: Comment[];
 
-    @ManyToMany(() => User, (user) => user.subscriptions)
+    @ManyToMany(() => User, (user) => user.subscriptions,  { onDelete: 'CASCADE' })
     subscribers: User[];
 
-    @OneToMany(() => Episode, (episode) => episode.podcast, { cascade: true })
+    @OneToMany(() => Episode, (episode) => episode.podcast,  { cascade: true, onDelete: 'CASCADE' })
     episodes: Episode[];
 
-    @ManyToOne(()=>User,(user)=>user.podcasts,{cascade:true})
+    @ManyToOne(()=>User,(user)=>user.podcasts)
     user: User;
-    @ManyToOne(() => Topic, { nullable: true }) // Ensures each podcast has exactly one topic
+    @ManyToOne(() => Topic, { nullable: true,cascade:true })
     topic: Topic;
 
-    @OneToMany(()=>Subscription,(subscription)=>subscription.podcast)
+    @OneToMany(()=>Subscription,(subscription)=>subscription.podcast,  { onDelete: 'CASCADE' })
     subscriptions: Subscription[];
 
 }

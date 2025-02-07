@@ -91,7 +91,7 @@ export class UserController {
     return user;
   }
 
-  @Put('profile')
+  @Patch('profile')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth('JWT-auth')
   @ApiOkResponse({

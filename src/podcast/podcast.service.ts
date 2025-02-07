@@ -121,12 +121,25 @@ export class PodcastService {
   }
 
   async remove(id: number): Promise<void> {
-    const podcast = await this.podcastRepository.findOne({ where: { id } });
+    // Récupérer le podcast avec ses relations
+    const podcast = await this.podcastRepository.findOne({
+      where: { id },
+      relations: ['episodes'],
+    });
+
     if (!podcast) {
       throw new Error(`Podcast with ID ${id} not found.`);
     }
-    await this.podcastRepository.softDelete(id);
+
+    // Soft delete des épisodes associés
+    if (podcast.episodes.length > 0) {
+      await this.episodeRepository.softRemove(podcast.episodes);
+    }
+
+    // Soft delete du podcast
+    await this.podcastRepository.softRemove(podcast);
   }
+
 
 
   async getpodsparuser(id: number): Promise<Subscription[]> {
@@ -138,6 +151,7 @@ export class PodcastService {
     if (!user) {
       throw new NotFoundException('User not found');
     }
+
 
     return user.subscriptions;
   }
@@ -195,14 +209,10 @@ export class PodcastService {
   async findAllEpisodesByPodcastId(podcastId: number): Promise<Episode[]> {
     return this.episodeRepository.find({
       where: { podcast: { id: podcastId } },
-<<<<<<< HEAD
-      relations: ['podcast'],  
-=======
       relations: ['podcast'],  // Ensure the relationship is loaded
       order: { number: 'ASC' } // Sort episodes by number in ascending order
->>>>>>> 08c436e113aaaf02c1b57f7d42d73326de3e712b
-    });
-  }
+
+  })}
 
   async getPodcastsByUserId(userId: number): Promise<Podcast[]> {
     const podcasts = await this.podcastRepository.find({
