@@ -15,7 +15,6 @@ export class PaymentService {
     private userRepository: Repository<User>,
   ) {}
 
-  // Create Payment
   async createPayment(user: User, paymentDto: CreatePaymentDto) {
     if (!user) {
       throw new Error('User not found');
@@ -28,15 +27,12 @@ export class PaymentService {
     payment.expirationDate = paymentDto.expirationDate;
     payment.user = user;
 
-    // Sauvegarde le paiement sans retourner l'utilisateur
     await this.paymentRepository.save(payment);
 
-    // Retourne uniquement l'objet payment, sans l'entité user
     const { user: _, ...paymentWithoutUser } = payment;
     return paymentWithoutUser;
   }
 
-  // Get All Payments
   async getAllPayments(): Promise<Payment[]> {
     return this.paymentRepository.find({ relations: ['user'] });
   }

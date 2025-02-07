@@ -64,7 +64,6 @@ export class LikeCommentService {
   ): Promise<void> {
     const { user, comment } = deleteLikeCommentDto;
 
-    // Vérification si le like existe pour cet utilisateur et ce commentaire
     const existingLike = await this.likeCommentRepository.findOne({
       where: {
         user: { id: user.id },
@@ -76,7 +75,6 @@ export class LikeCommentService {
       throw new NotFoundException("You haven't liked this comment.");
     }
 
-    // Suppression du like
     await this.likeCommentRepository.delete(existingLike.id);
   }
 

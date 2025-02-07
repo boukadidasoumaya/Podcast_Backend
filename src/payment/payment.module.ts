@@ -6,7 +6,7 @@ import { PaymentController } from './payment.controller';
 import { User } from '../user/entities/user.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Payment, User])], // Assurez-vous que Payment et User sont correctement ajoutés ici
+  imports: [TypeOrmModule.forFeature([Payment, User])], 
   providers: [PaymentService],
   controllers: [PaymentController],
 })

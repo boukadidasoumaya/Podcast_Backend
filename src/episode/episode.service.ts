@@ -6,7 +6,6 @@ import { CreateEpisodeDto } from './dto/create-episode.dto';
 import { UpdateEpisodeDto } from './dto/update-episode.dto';
 import { Podcast } from 'src/podcast/entities/podcast.entity';
 
-
 import { Subscription } from '../subscription/entities/subscription.entity';
 import { EmailService } from 'src/email/email.service';
 @Injectable()
@@ -30,23 +29,21 @@ export class EpisodeService {
     if (!podcast) {
       throw new Error('Podcast not found');
     }
-  
+
     const episode = this.episodeRepository.create({
       ...createEpisodeDto,
       podcast,
     });
-    
-  
+
     podcast.nbre_episode++;
     podcast.duration+=episode.duration;
   
     await this.podcastRepository.save(podcast);
-  
-   const epi = await this.episodeRepository.save(episode);
-   const id = episode.id;
-   this.notify(id);
-   return epi;
 
+    const epi = await this.episodeRepository.save(episode);
+    const id = episode.id;
+    this.notify(id);
+    return epi;
   }
 
   // Get all episodes
@@ -56,11 +53,11 @@ export class EpisodeService {
     });
     return episodes.map((episode) => ({
       ...episode,
-      numberOfLikes: episode.likes?.length || 0, // Compte le nombre de likes
-      numberOfComments: episode.comments?.length || 0, // Compte le nombre de commentaires
+      numberOfLikes: episode.likes?.length || 0, 
+      numberOfComments: episode.comments?.length || 0, 
     }));
   }
-  // Get trending episodes (sorted by views in descending order)
+
   async findAllTrending(): Promise<Episode[]> {
     const episodes = await this.episodeRepository.find({
       order: { views: 'DESC' },
@@ -77,7 +74,6 @@ export class EpisodeService {
     });
   }
 
-  // Get the latest 4 episodes (sorted by createdAt in descending order)
   async findAllLatest(): Promise<Episode[]> {
     const episodes = await this.episodeRepository.find({
       order: { createdAt: 'DESC' },
@@ -91,13 +87,11 @@ export class EpisodeService {
     }));
   }
 
-  // Get a single episode by ID
   async findOne(id: number): Promise<Episode> {
     const episode = await this.episodeRepository.findOne({
       where: { id },
       relations: ['podcast', 'likes', 'comments', 'podcast.user'],
     });
-    console.log('fghjkl');
 
     if (!episode) {
       throw new NotFoundException('Episode not found');
@@ -105,7 +99,6 @@ export class EpisodeService {
     return episode;
   }
 
-  // Update an existing episode
   async update(
     id: number,
     updateEpisodeDto: UpdateEpisodeDto,
@@ -115,13 +108,11 @@ export class EpisodeService {
       throw new Error('Episode not found');
     }
 
-    // Update the episode fields based on the DTO
     const updatedEpisode = Object.assign(episode, updateEpisodeDto);
     await this.episodeRepository.save(updatedEpisode);
     return updatedEpisode;
   }
 
-  // Delete an episode by ID (soft delete)
   async remove(id: number): Promise<void> {
     const episode = await this.episodeRepository.findOne({ where: { id } });
     if (!episode) {
@@ -131,13 +122,11 @@ export class EpisodeService {
     await this.episodeRepository.softDelete(id); // Soft delete
   }
 
-  // Increment views for an episode
   async incrementViews(id: number): Promise<Episode> {
     const episode = await this.episodeRepository.findOne({ where: { id } });
     if (!episode) {
       throw new Error('Episode not found');
     }
-
     episode.views += 1;
     await this.episodeRepository.save(episode);
     return episode;
@@ -151,7 +140,7 @@ export class EpisodeService {
     if (!episode) {
       throw new NotFoundException('Episode not found');
     }
-    const podcast = episode.podcast; 
+    const podcast = episode.podcast;
     const subscriptions = await this.subscriptionRepository.find({
       where: { podcast },
       relations: ['user'],

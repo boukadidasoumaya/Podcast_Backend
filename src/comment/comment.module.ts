@@ -14,9 +14,9 @@ import { LikeComment } from '../like-comment/entities/like-comment.entity';
 @Module({
   imports: [
     TypeOrmModule.forFeature([Comment, User, Podcast, Episode,LikeComment]),
-    UserModule, // Ajouté pour résoudre UserService
-    PodcastModule, // Ajouté pour résoudre PodcastService
-    EpisodeModule, // Ajouté pour résoudre EpisodeService
+    UserModule, 
+    PodcastModule, 
+    EpisodeModule, 
   ],
   providers: [CommentGateway, CommentService],
   exports: [CommentService],

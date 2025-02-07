@@ -28,20 +28,18 @@ export class LikeEpisodeService {
     const { user, episode } = createLikeEpisodeDto;
     console.log(episode);
     console.log(typeof user);
-    // Vérification si l'utilisateur existe
+
     const existingUser = await this.userService.findOne(user.id);
     console.log(existingUser);
     if (!existingUser) {
       throw new NotFoundException("User doesn't exist.");
     }
 
-    // Vérification si l'épisode existe
     const existingEpisode = await this.episodeService.findOne(episode.id);
     if (!existingEpisode) {
       throw new NotFoundException("Episode doesn't exist.");
     }
 
-    // Vérification si le like existe déjà pour cet utilisateur et cet épisode
     const existingLike = await this.likeEpisodeRepository.findOne({
       where: {
         user: { id: user.id },
@@ -67,12 +65,11 @@ export class LikeEpisodeService {
       throw new BadRequestException('Utilisateur non valide.');
     }
 
-    // Vérifier si le like existe et n'est pas déjà supprimé
     const existingLike = await this.likeEpisodeRepository.findOne({
       where: {
         user: { id: user.id },
         episode: { id: episode.id },
-        deletedAt: null, // Vérifie que le like n'est pas déjà supprimé
+        deletedAt: null, 
       },
       relations: ['user', 'episode'],
     });
@@ -83,10 +80,8 @@ export class LikeEpisodeService {
       );
     }
 
-    // Soft remove (marque comme supprimé sans effacer définitivement)
     await this.likeEpisodeRepository.softRemove(existingLike);
 
-    // Retourner le like supprimé avec `deletedAt` mis à jour
     return { ...existingLike};
   }
 
@@ -151,7 +146,6 @@ export class LikeEpisodeService {
         episodeLikesMap.set(like.episodeId, { likeCount: 0, users: [] });
       }
 
-      // Avoiding duplicate users
       const episodeLikes = episodeLikesMap.get(like.episodeId)!;
       episodeLikes.likeCount += Number(like.like_count);
 
@@ -160,7 +154,6 @@ export class LikeEpisodeService {
       }
     });
 
-    // For a specific episode, return the like count and users
     const episodeData = episodeLikesMap.get(episode.id);
 
     return {

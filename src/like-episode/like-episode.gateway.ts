@@ -18,7 +18,6 @@ export class LikeEpisodeGateway {
 
   constructor(private readonly likeEpisodeService: LikeEpisodeService) {}
 
-  // Gestion de l'ajout d'un like
   @SubscribeMessage('likeEpisode')
   async handleLike(
     @MessageBody() createEpisodeLikeDto: CreateLikeEpisodeDto,
@@ -38,7 +37,6 @@ export class LikeEpisodeGateway {
     }
   }
 
-  // Gestion de la suppression d'un like
   @SubscribeMessage('unlikeEpisode')
   async handleUnlike(
     @MessageBody() deleteLikeEpisodeDto: DeleteLikeEpisodeDto,

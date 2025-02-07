@@ -1,11 +1,12 @@
 import {
   Injectable,
+  InternalServerErrorException,
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { User } from './entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import {  Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { ChangePasswordDto } from './dto/change-password.dto';
 import { ChangeEmailDto } from './dto/change-email.dto';
@@ -16,6 +17,7 @@ import { Payment } from '../payment/entities/payment.entity';
 import { CrudService } from 'src/common/common.service';
 import { ContactUsDto } from './dto/contact-us.dto';
 import { EmailService } from '../email/email.service';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
 export class UserService extends CrudService<User> {
@@ -53,32 +55,6 @@ export class UserService extends CrudService<User> {
     return await this.userRepository.findOneBy({ email });
   }
 
-  // async update(id: number, updateUserDto: UpdateUserDto, currentUser: User) {
-  //   // Éliminer la mise à jour du mot de passe
-  //   if (updateUserDto.password) {
-  //     throw new UnauthorizedException('Non autorisé');
-  //   }
-
-  //   // Vérifier si l'email est unique
-  //   if (updateUserDto.email) {
-  //     const existingUser = await this.userRepository.findOneBy({
-  //       email: updateUserDto.email,
-  //       id: Not(id),
-  //     });
-  //     if (existingUser) {
-  //       throw new ConflictException('Cet email est déjà utilisé');
-  //     }
-  //   }
-
-  //   if (
-  //     currentUser.id === id ||
-  //     currentUser.role === UserRoleEnum.SUPER_ADMIN
-  //   ) {
-  //     return await this.userRepository.update(id, updateUserDto);
-  //   }
-
-  //   throw new UnauthorizedException('Non autorisé');
-  // }
 
   async changePassword(user: User, changePasswordDto: ChangePasswordDto) {
     const { oldPassword, newPassword } = changePasswordDto;
@@ -175,10 +151,8 @@ export class UserService extends CrudService<User> {
       throw new NotFoundException('User not found');
     }
 
-    // Créer le paiement via le PaymentService
     await this.paymentService.createPayment(user, createPaymentDto);
 
-    // Retourner un message de succès avec la date d'expiration
     return {
       message:
         'Le paiement a été effectué avec succès. Vous êtes maintenant Premium.',
@@ -220,4 +194,5 @@ export class UserService extends CrudService<User> {
 
     return { message: 'Votre message a été envoyé avec succès.' };
   }
+  
 }

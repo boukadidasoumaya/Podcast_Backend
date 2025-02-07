@@ -54,9 +54,9 @@ export class PodcastController {
   }
 
 
-  @Get()
+  @Get('reset')
   findAll() {
-    return this.podcastService.findAll();
+    return this.podcastService.getsallpods();
   }
   @UseGuards(JwtAuthGuard)
   @Get('user')
@@ -102,21 +102,6 @@ export class PodcastController {
     return this.podcastService.remove(+id);
   }
 
-
-  // @UseGuards(JwtAuthGuard)
-  // @ApiBearerAuth('JWT-auth')
-  // @Post(':p_id/subscribe')
-  // subscribe(@Param('p_id') p_id: string, @Req() req) {
-  //   const u_id = req.user.id;
-  //   return this.podcastService.subscribe(+u_id, +p_id);
-  // }
-  // @UseGuards(JwtAuthGuard)
-  // @ApiBearerAuth('JWT-auth')
-  // @Post(':p_id/unsubscribe')
-  // unsubscribe(@Param('p_id') p_id: string, @Req() req) {
-  //   const u_id = req.user.id;
-  //   return this.podcastService.unsubscribe(+u_id, +p_id);
-  // }
 
   @Get(':id/podcasts')
   getpodsbyuser(@Param('id') id: string) {

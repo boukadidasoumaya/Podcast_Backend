@@ -100,6 +100,18 @@ export class AuthController {
     return this.authService.checkUsernameUnique(username);
   }
 
+  @Get('check-email')
+  @ApiOkResponse({
+  description: 'Email availability checked successfully',
+  type: Boolean,
+  })
+  @ApiBadRequestResponse({
+  description: 'Invalid request, please check your input',
+  })
+  async checkEmail(@Query('email') email: string): Promise<boolean> {
+    return this.authService.checkEmailUnique(email);
+  }
+
   @Post('update-token')
   @ApiOkResponse({ description: 'Token mis à jour avec succès' })
   @ApiBadRequestResponse({description: 'Requête incorrecte, veuillez vérifier votre demande',})
